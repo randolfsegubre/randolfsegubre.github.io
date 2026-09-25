@@ -151,6 +151,43 @@ public sealed partial class ContentTests
     }
 
     [Fact]
+    public void Every_floating_backdrop_tag_is_backed_up_by_the_projects_roles_or_skills()
+    {
+        // ADR-0006: the animated background may not advertise a technology the rest of the page does not show.
+        var evidenced = Content.Projects.SelectMany(p => p.Stack)
+            .Concat(Content.Experience.SelectMany(r => r.Stack))
+            .Concat(Content.Skills.SelectMany(g => g.Items))
+            .Concat(Content.Profile.SignatureStack)
+            .ToHashSet(StringComparer.OrdinalIgnoreCase);
+
+        var unbacked = Content.Profile.BackdropTags.Where(tag => !evidenced.Contains(tag)).ToList();
+
+        Assert.Empty(unbacked);
+        Assert.Equal(Content.Profile.BackdropTags.Count, Content.Profile.BackdropTags.Distinct().Count());
+    }
+
+    [Fact]
+    public void Backdrop_code_streams_each_have_code_and_a_valid_position()
+    {
+        Assert.NotEmpty(BackdropCode.Streams);
+        Assert.All(BackdropCode.Streams, stream =>
+        {
+            Assert.False(string.IsNullOrWhiteSpace(stream.Code));
+            Assert.EndsWith("%", stream.PageX);
+            Assert.InRange(stream.Seconds, 30, 180);
+        });
+        Assert.True(BackdropCode.Streams.Count(s => s.HeroX is not null) >= 4);
+    }
+
+    [Fact]
+    public void Portrait_has_alt_text_and_is_a_site_relative_path()
+    {
+        Assert.NotNull(Content.Profile.PhotoUrl);
+        Assert.StartsWith("/", Content.Profile.PhotoUrl);
+        Assert.False(string.IsNullOrWhiteSpace(Content.Profile.PhotoAlt));
+    }
+
+    [Fact]
     public void Features_a_project_and_does_not_link_the_private_repository()
     {
         Assert.Contains(Content.Projects, p => p.Featured);

@@ -1,6 +1,8 @@
 using AngleSharp.Dom;
 using AngleSharp.Html.Parser;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.Extensions.DependencyInjection;
 using Portfolio.Web.Content;
 
 namespace Portfolio.Tests;
@@ -157,7 +159,61 @@ public sealed class PageRenderTests(WebApplicationFactory<Program> factory) : IC
         var backdrop = page.QuerySelector(".code-backdrop");
         Assert.NotNull(backdrop);
         Assert.Equal("true", backdrop.GetAttribute("aria-hidden"));
-        Assert.True(backdrop.QuerySelectorAll(".code-bit").Length >= 6);
+
+        // Scrolling code columns, each holding its code twice so the loop has no visible jump.
+        var streams = backdrop.QuerySelectorAll(".code-stream").ToList();
+        Assert.True(streams.Count >= 4);
+        Assert.All(streams, stream => Assert.Equal("true", stream.ParentElement?.GetAttribute("aria-hidden") ?? backdrop.GetAttribute("aria-hidden")));
+        Assert.All(streams, stream =>
+        {
+            var text = stream.QuerySelector("pre")!.TextContent;
+            var half = text.Length / 2;
+            Assert.Equal(text[..half].Trim(), text[half..].Trim());
+        });
+
+        // Floating technology tags come from the profile data.
+        var tags = backdrop.QuerySelectorAll(".tech-float").Select(t => t.TextContent.Trim()).ToList();
+        Assert.Equal(Content.Profile.BackdropTags.Take(tags.Count), tags);
+        Assert.True(tags.Count >= 6);
+    }
+
+    [Fact]
+    public async Task Faint_page_wide_code_layer_is_decorative_and_sits_outside_the_content()
+    {
+        var page = await GetPageAsync("/");
+
+        var layer = page.QuerySelector(".code-streams--page");
+        Assert.NotNull(layer);
+        Assert.Equal("true", layer.GetAttribute("aria-hidden"));
+        Assert.Null(layer.Closest("main"));
+    }
+
+    [Fact]
+    public async Task Portrait_is_in_the_hero_with_alt_text_a_size_and_no_lazy_loading()
+    {
+        var page = await GetPageAsync("/");
+
+        var avatar = page.QuerySelector(".hero img.avatar");
+        Assert.NotNull(avatar);
+        Assert.Equal(Content.Profile.PhotoUrl, avatar.GetAttribute("src"));
+        Assert.False(string.IsNullOrWhiteSpace(avatar.GetAttribute("alt")));
+        Assert.NotNull(avatar.GetAttribute("width"));
+        Assert.NotNull(avatar.GetAttribute("height"));
+        Assert.NotEqual("lazy", avatar.GetAttribute("loading"));
+    }
+
+    [Fact]
+    public async Task Portrait_file_exists_and_link_previews_use_it_with_an_absolute_address()
+    {
+        var page = await GetPageAsync("/");
+
+        var webRoot = factory.Services.GetRequiredService<IWebHostEnvironment>().WebRootPath;
+        Assert.True(File.Exists(Path.Combine(webRoot, Content.Profile.PhotoUrl!.TrimStart('/'))));
+
+        var preview = page.QuerySelector("meta[property='og:image']")?.GetAttribute("content");
+        Assert.NotNull(preview);
+        Assert.StartsWith("https://", preview);
+        Assert.EndsWith(Content.Profile.PhotoUrl, preview);
     }
 
     [Fact]

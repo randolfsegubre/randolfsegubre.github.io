@@ -7,6 +7,45 @@ snapshot.
 
 ---
 
+## 2026-09-25 (evening): Portrait and a stronger animated code background
+
+**Asked:** Add his graduation photo, and make the background like the
+reference's animated code but with his own tech stack and moving code, "like a
+gif background".
+
+**What changed:**
+- Portrait added (`wwwroot/images/randolf.webp`, 100 KB) as a gold-ringed
+  circle beside the name, with alt text, a fixed size (no layout shift), no lazy
+  loading (it is above the fold), and as the link-preview image for email and
+  social sharing.
+- **Animated background rebuilt** as scrolling columns of code (C# MVC, EF Core
+  with MediatR, Razor, Vue.js, T-SQL, xUnit and React, Umbraco with a Content
+  Security Policy nonce) that loop endlessly, plus 12 floating technology tags,
+  plus a very faint fixed copy of the columns behind the whole page. Code
+  lives in `Content/BackdropCode.cs`; the loop is seamless because each column
+  holds its code twice and scrolls exactly half its height.
+- New rule, enforced by a test: every floating tag must appear in the
+  projects, roles or skills.
+
+**Not done:** he also asked me to "correct and generate an image" by reshaping
+facial features (hairline, ears, nose) in the graduation photo to match a
+second photo. I cannot generate or reshape faces with the tools available, and
+crude pixel edits would look wrong on a public page, so I told him plainly and
+kept the photo unedited. The second photo was not saved to disk either. Options
+given to him: use the unedited second photo instead (one-line change), or have
+a photo editor or the photographer produce a corrected version.
+
+**Verified:** 100 tests pass. In a real browser: the code columns measurably
+scroll (transform changes over time), 12 tags and 7 page-wide columns render,
+the portrait loads at 1254 by 1254 and displays at 160 pixels, zero failed or
+third-party requests, no overflow at 375 pixels (two columns and five tags on
+phones, at lower opacity so the text stays calm).
+
+**Caught along the way:** the leftmost column drifted under the start of the
+paragraph, so it now sits in the left margin and is hidden on tablet widths.
+
+---
+
 ## 2026-09-25 (later still): "Developer identity" concept, inspired by a reference and made original
 
 **Asked:** "Make the concept like RujeAlfon but not a copy. It should be unique

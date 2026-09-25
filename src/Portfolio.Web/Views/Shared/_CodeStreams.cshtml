@@ -1,0 +1,24 @@
+@model string
+@*
+    Columns of code scrolling slowly and endlessly, like a looping animated background
+    (ADR-0008). The variant decides where they live: "hero" is the stronger layer inside
+    the hero, "page" is a very faint layer fixed behind the whole page so the motion
+    continues as the visitor scrolls. Each column's code is rendered twice in a row and the
+    stylesheet scrolls exactly half its height, so the loop has no visible jump.
+
+    Purely decorative: hidden from assistive technology, no pointer events, and the
+    stylesheet stops the motion for visitors who prefer reduced motion.
+*@
+@using Portfolio.Web.Content
+@{
+    var isHero = Model == "hero";
+    var streams = isHero ? BackdropCode.Streams.Where(s => s.HeroX is not null).ToList() : BackdropCode.Streams.ToList();
+}
+<div class="code-streams code-streams--@Model" aria-hidden="true">
+    @foreach (var stream in streams)
+    {
+        var x = isHero ? stream.HeroX : stream.PageX;
+        <div class="code-stream" style="--x:@x;--dur:@(stream.Seconds)s;--dir:@(stream.Reverse ? "reverse" : "normal")"><pre>@stream.Code
+@stream.Code</pre></div>
+    }
+</div>

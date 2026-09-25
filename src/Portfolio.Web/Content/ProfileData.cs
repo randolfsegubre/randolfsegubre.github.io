@@ -32,5 +32,12 @@ public static class ProfileData
             new Stat("5", "employers since 2017"),
             new Stat("660+", "commits across eight repositories on one client platform"),
         ],
+        BackdropTags:
+        [
+            "C#", ".NET 10", "ASP.NET Core", "Umbraco", "Vue.js", "React",
+            "SQL Server", "EF Core", "MediatR", "Azure", "Docker", "xUnit",
+        ],
+        PhotoUrl: "/images/randolf.webp",
+        PhotoAlt: "Portrait of Randolf Segubre",
         ResumeUrl: null);
 }

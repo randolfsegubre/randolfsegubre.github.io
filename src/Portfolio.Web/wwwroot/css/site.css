@@ -695,7 +695,7 @@ a:hover {
   }
 }
 
-/* Backdrop of drifting C# fragments (decorative, ADR-0008) */
+/* Animated background: scrolling code plus floating technology tags (decorative, ADR-0008) */
 
 .code-backdrop {
   position: absolute;
@@ -706,34 +706,148 @@ a:hover {
   user-select: none;
 }
 
-.code-bit {
+/* Columns of code that scroll endlessly. Each holds its code twice, so moving up by half its
+   own height loops with no jump. */
+.code-streams {
   position: absolute;
-  left: var(--x);
-  top: var(--y);
-  margin: 0;
-  font-family: var(--font-mono);
-  font-size: 0.78rem;
-  line-height: 1.5;
-  white-space: pre;
-  color: color-mix(in srgb, var(--hero-muted) 32%, transparent);
-  animation: drift var(--d, 18s) ease-in-out var(--delay, 0s) infinite alternate;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  user-select: none;
 }
 
-@keyframes drift {
+.code-streams--page {
+  position: fixed;
+  z-index: -1;
+}
+
+.code-stream {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: var(--x);
+  width: 13rem;
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(to bottom, transparent, #000 14%, #000 86%, transparent);
+  mask-image: linear-gradient(to bottom, transparent, #000 14%, #000 86%, transparent);
+}
+
+.code-stream pre {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 0.74rem;
+  line-height: 1.6;
+  white-space: pre;
+  animation: stream var(--dur, 60s) linear infinite;
+  animation-direction: var(--dir, normal);
+}
+
+@keyframes stream {
   from {
     transform: translate3d(0, 0, 0);
   }
 
   to {
-    transform: translate3d(0, -18px, 0);
+    transform: translate3d(0, -50%, 0);
   }
 }
 
-/* Phones: keep only the fragments placed at the very top and bottom edges (see _CodeBackdrop.cshtml). */
-@media (max-width: 41.99rem) {
-  .code-bit:not(:nth-child(1), :nth-child(5), :nth-child(9)) {
+/* In the hero the code is clearly visible; across the page it is barely there. */
+.code-streams--hero .code-stream pre {
+  color: color-mix(in srgb, var(--hero-muted) 42%, transparent);
+}
+
+.code-streams--hero .code-stream:nth-child(even) pre {
+  color: color-mix(in srgb, var(--hero-gold) 32%, transparent);
+}
+
+.code-streams--page .code-stream pre {
+  color: color-mix(in srgb, var(--accent) 9%, transparent);
+}
+
+/* Floating technology tags, drawn only from technologies the rest of the page backs up. */
+.tech-float {
+  position: absolute;
+  left: var(--x);
+  top: var(--y, auto);
+  bottom: var(--b, auto);
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  padding: 0.2rem 0.75rem;
+  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--hero-gold) 50%, transparent);
+  background: color-mix(in srgb, #8b5cf6 22%, transparent);
+  color: var(--hero-gold);
+  white-space: nowrap;
+  animation: bob var(--d, 12s) ease-in-out var(--delay, 0s) infinite alternate;
+}
+
+@keyframes bob {
+  from {
+    transform: translate3d(0, 0, 0) rotate(-2deg);
+  }
+
+  to {
+    transform: translate3d(8px, -14px, 0) rotate(2deg);
+  }
+}
+
+/* Tablets: the left margin is too narrow to hold the first column without crossing the text. */
+@media (min-width: 42rem) and (max-width: 74.99rem) {
+  .code-streams--hero .code-stream:nth-child(1) {
     display: none;
   }
+}
+
+/* Phones: text spans the whole width, so keep only two columns and the edge tags. */
+@media (max-width: 41.99rem) {
+  .code-streams--hero .code-stream:not(:nth-child(1), :nth-child(5)) {
+    display: none;
+  }
+
+  .code-streams--hero .code-stream pre {
+    color: color-mix(in srgb, var(--hero-muted) 20%, transparent);
+  }
+
+  .code-streams--page .code-stream:not(:nth-child(1), :nth-child(5)) {
+    display: none;
+  }
+
+  .tech-float:not(.tech-float--edge) {
+    display: none;
+  }
+}
+
+/* Portrait beside the name */
+
+.hero-identity {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-5);
+}
+
+.avatar {
+  width: 10rem;
+  height: 10rem;
+  flex: none;
+  border-radius: 50%;
+  object-fit: cover;
+  object-position: 50% 20%;
+  border: 4px solid var(--hero-gold);
+  box-shadow: 0 0 0 7px color-mix(in srgb, var(--hero-gold) 18%, transparent), 0 24px 44px -14px rgb(0 0 0 / 0.65);
+  background: var(--hero-to);
+}
+
+@media (max-width: 41.99rem) {
+  .avatar {
+    width: 7.5rem;
+    height: 7.5rem;
+  }
+}
+
+.hero-identity-text {
+  min-width: 0;
 }
 
 /* The code card: the owner's profile written as a C# record */
