@@ -17,7 +17,7 @@ current.
 | Stats strip: 660+ commits across eight repositories on one client platform | Git history review of his authored commits, 4 August 2026 (666 commits, 8 of 19 repositories). Re-verify before changing the figure |
 | Hero code card: name, title, location, availability, signature stack (C#, ASP.NET Core, Umbraco, Vue.js, SQL Server) | Generated from the same profile data; each stack item appears in the experience and projects below |
 | Backdrop code columns | Generic idioms written for the site (no proprietary code; they mirror this site's own source and the stacks named in the projects and roles) |
-| Floating technology tags | Each tag must appear in a project stack, a role stack, or the skills (enforced by a test) |
+| Floating technology logos (C#, .NET, Umbraco, Vue.js, React, Blazor, Docker, Jenkins, MongoDB, MySQL, GitHub, Next.js) | Each technology must appear in a project stack, a role stack, or the skills, and have a logo (both enforced by tests). Logo artwork is from Simple Icons (CC0), except the C# mark, which is hand-drawn; see `docs/THIRD_PARTY_NOTICES.md` |
 | Portrait | The owner's own photo, supplied by him on 2026-09-25 for the site. It is his graduation portrait, cropped to a circle by the stylesheet; the file is not otherwise edited |
 
 ## Experience

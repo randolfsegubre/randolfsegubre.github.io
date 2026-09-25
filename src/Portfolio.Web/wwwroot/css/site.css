@@ -695,7 +695,9 @@ a:hover {
   }
 }
 
-/* Animated background: scrolling code plus floating technology tags (decorative, ADR-0008) */
+/* Animated background (decorative, ADR-0008): lanes of scrolling code plus floating technology logos.
+   One copy lives in the hero (stronger) and one is fixed behind the whole page (fainter), and both use the
+   same lanes, so the background reads as one continuous surface from the top of the page to the bottom. */
 
 .code-backdrop {
   position: absolute;
@@ -706,14 +708,16 @@ a:hover {
   user-select: none;
 }
 
-/* Columns of code that scroll endlessly. Each holds its code twice, so moving up by half its
-   own height loops with no jump. */
+/* Lanes are equal-width grid columns across the full width, so they can never overlap each other. */
 .code-streams {
+  --lanes: 8;
   position: absolute;
   inset: 0;
   overflow: hidden;
   pointer-events: none;
   user-select: none;
+  display: grid;
+  grid-template-columns: repeat(var(--lanes), minmax(0, 1fr));
 }
 
 .code-streams--page {
@@ -722,16 +726,14 @@ a:hover {
 }
 
 .code-stream {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: var(--x);
-  width: 13rem;
+  min-width: 0;
   overflow: hidden;
-  -webkit-mask-image: linear-gradient(to bottom, transparent, #000 14%, #000 86%, transparent);
-  mask-image: linear-gradient(to bottom, transparent, #000 14%, #000 86%, transparent);
+  padding-inline: 0.6rem;
+  -webkit-mask-image: linear-gradient(to bottom, transparent, #000 12%, #000 88%, transparent);
+  mask-image: linear-gradient(to bottom, transparent, #000 12%, #000 88%, transparent);
 }
 
+/* Each lane holds its code twice, so moving up by half its own height loops with no jump. */
 .code-stream pre {
   margin: 0;
   font-family: var(--font-mono);
@@ -752,71 +754,164 @@ a:hover {
   }
 }
 
-/* In the hero the code is clearly visible; across the page it is barely there. */
+/* In the hero the code is clearly visible; behind the rest of the page it is quieter but still moving. */
 .code-streams--hero .code-stream pre {
-  color: color-mix(in srgb, var(--hero-muted) 42%, transparent);
+  color: color-mix(in srgb, var(--hero-muted) 38%, transparent);
 }
 
 .code-streams--hero .code-stream:nth-child(even) pre {
-  color: color-mix(in srgb, var(--hero-gold) 32%, transparent);
+  color: color-mix(in srgb, var(--hero-gold) 30%, transparent);
 }
 
 .code-streams--page .code-stream pre {
-  color: color-mix(in srgb, var(--accent) 9%, transparent);
+  color: color-mix(in srgb, var(--accent) 15%, transparent);
 }
 
-/* Floating technology tags, drawn only from technologies the rest of the page backs up. */
-.tech-float {
+.code-streams--page .code-stream:nth-child(even) pre {
+  color: color-mix(in srgb, var(--gold-bright) 17%, transparent);
+}
+
+/* Floating technology logos. In the hero each sits in a light round badge so every brand color stays visible. */
+.tech-logos {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.tech-logos--page {
+  position: fixed;
+  z-index: -1;
+}
+
+.tech-logo {
   position: absolute;
   left: var(--x);
   top: var(--y, auto);
   bottom: var(--b, auto);
-  font-family: var(--font-mono);
-  font-size: 0.8rem;
-  padding: 0.2rem 0.75rem;
-  border-radius: 999px;
-  border: 1px solid color-mix(in srgb, var(--hero-gold) 50%, transparent);
-  background: color-mix(in srgb, #8b5cf6 22%, transparent);
-  color: var(--hero-gold);
-  white-space: nowrap;
+  width: 3.1rem;
+  height: 3.1rem;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: #f5f0ff;
+  box-shadow: 0 10px 26px -10px rgb(0 0 0 / 0.6), 0 0 0 3px color-mix(in srgb, var(--hero-gold) 40%, transparent);
   animation: bob var(--d, 12s) ease-in-out var(--delay, 0s) infinite alternate;
+}
+
+.tech-logo svg {
+  width: 58%;
+  height: 58%;
+  fill: var(--brand);
 }
 
 @keyframes bob {
   from {
-    transform: translate3d(0, 0, 0) rotate(-2deg);
+    transform: translate3d(0, 0, 0) rotate(-3deg);
   }
 
   to {
-    transform: translate3d(8px, -14px, 0) rotate(2deg);
+    transform: translate3d(8px, -14px, 0) rotate(3deg);
   }
 }
 
-/* Tablets: the left margin is too narrow to hold the first column without crossing the text. */
-@media (min-width: 42rem) and (max-width: 74.99rem) {
-  .code-streams--hero .code-stream:nth-child(1) {
+/* Behind the page's text, logos are quiet silhouettes in the theme color, so text never sits on a bright badge. */
+.tech-logos--page .tech-logo {
+  width: 2.6rem;
+  height: 2.6rem;
+  background: transparent;
+  box-shadow: none;
+  opacity: 0.22;
+}
+
+.tech-logos--page .tech-logo svg {
+  fill: var(--accent);
+}
+
+.tech-logos--page .tech-logo svg text {
+  fill: var(--bg);
+}
+
+/* Cards let a little of the moving background show through, blurred so their text stays crisp. */
+.card,
+.skill-group,
+.role,
+.stat,
+.contact-card {
+  background: color-mix(in srgb, var(--surface) 94%, transparent);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+}
+
+/* Tablets: fewer, wider lanes. */
+@media (max-width: 74.99rem) {
+  .code-streams {
+    --lanes: 5;
+  }
+
+  .code-stream:nth-child(n + 6) {
     display: none;
   }
 }
 
-/* Phones: text spans the whole width, so keep only two columns and the edge tags. */
+/* Phones: text spans the whole width, so use three lanes at lower opacity and keep only the edge logos. */
 @media (max-width: 41.99rem) {
-  .code-streams--hero .code-stream:not(:nth-child(1), :nth-child(5)) {
+  .code-streams {
+    --lanes: 3;
+  }
+
+  .code-stream:nth-child(n + 4) {
     display: none;
   }
 
   .code-streams--hero .code-stream pre {
-    color: color-mix(in srgb, var(--hero-muted) 20%, transparent);
+    color: color-mix(in srgb, var(--hero-muted) 22%, transparent);
   }
 
-  .code-streams--page .code-stream:not(:nth-child(1), :nth-child(5)) {
+  .code-streams--hero .code-stream:nth-child(even) pre {
+    color: color-mix(in srgb, var(--hero-gold) 18%, transparent);
+  }
+
+  .code-streams--page .code-stream pre {
+    color: color-mix(in srgb, var(--accent) 10%, transparent);
+  }
+
+  .tech-logo:not(.tech-logo--edge) {
     display: none;
   }
 
-  .tech-float:not(.tech-float--edge) {
-    display: none;
+  .tech-logo {
+    width: 2.6rem;
+    height: 2.6rem;
+  }
+
+  /* The hero is very tall on a phone, so a percentage from the top would land on the portrait:
+     pin the top logos into the hero's top padding instead. */
+  .tech-logos--hero .tech-logo--top {
+    top: 0.9rem;
   }
 }
+
+.footer-note {
+  margin-top: var(--space-2);
+  font-size: 0.8rem;
+}
+
+/* A soft dark halo behind the hero copy calms the moving code only where the text sits. */
+.hero-copy {
+  position: relative;
+}
+
+.hero-copy::before {
+  content: "";
+  position: absolute;
+  inset: -2rem -2.5rem;
+  z-index: -1;
+  border-radius: 3rem;
+  background: radial-gradient(ellipse at center, color-mix(in srgb, var(--hero-from) 82%, transparent) 45%, transparent 78%);
+  pointer-events: none;
+}
+
 
 /* Portrait beside the name */
 

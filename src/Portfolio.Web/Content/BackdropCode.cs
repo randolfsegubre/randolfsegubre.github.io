@@ -1,14 +1,16 @@
 namespace Portfolio.Web.Content;
 
 /// <summary>
-/// One column of scrolling code in the animated background.
+/// One lane of scrolling code in the animated background.
 /// </summary>
 /// <param name="Code">The code shown. Generic idioms from the owner's own stack, nothing proprietary.</param>
-/// <param name="HeroX">Left position in the hero, or null when the column is not used there.</param>
-/// <param name="PageX">Left position in the faint page-wide layer.</param>
 /// <param name="Seconds">How long one full scroll takes. Slow on purpose: ambient, not distracting.</param>
 /// <param name="Reverse">True to scroll downward instead of upward, for variety.</param>
-public sealed record CodeStream(string Code, string? HeroX, string PageX, int Seconds, bool Reverse);
+/// <remarks>
+/// Lanes have no positions of their own: the stylesheet lays them out as equal-width grid
+/// columns across the whole width, so two lanes can never overlap.
+/// </remarks>
+public sealed record CodeStream(string Code, int Seconds, bool Reverse);
 
 /// <summary>
 /// The code that scrolls in the animated background (ADR-0008).
@@ -17,8 +19,8 @@ public sealed record CodeStream(string Code, string? HeroX, string PageX, int Se
 /// The background is purely decorative and hidden from assistive technology, so this text
 /// is not prose and is not covered by the writing rules. It is chosen to show the owner's
 /// real stack: C# and ASP.NET Core MVC, EF Core with MediatR, Razor, Vue.js, T-SQL, xUnit
-/// and React, and Umbraco with a Content Security Policy nonce. Each column is rendered
-/// twice in a row so the scroll can loop without a visible jump.
+/// and React, Umbraco with a Content Security Policy nonce, and Docker with Jenkins. Each
+/// lane is rendered twice in a row so the scroll can loop without a visible jump.
 /// </remarks>
 public static class BackdropCode
 {
@@ -49,7 +51,7 @@ public static class BackdropCode
                     => View("NotFound", content.Profile);
             }
             """,
-            HeroX: "-4%", PageX: "1%", Seconds: 64, Reverse: false),
+            Seconds: 64, Reverse: false),
 
         new CodeStream(
             """
@@ -72,7 +74,7 @@ public static class BackdropCode
                 }
             }
             """,
-            HeroX: "58%", PageX: "15%", Seconds: 78, Reverse: true),
+            Seconds: 78, Reverse: true),
 
         new CodeStream(
             """
@@ -93,7 +95,7 @@ public static class BackdropCode
                 @Content.Profile.Name
             </footer>
             """,
-            HeroX: "68%", PageX: "29%", Seconds: 58, Reverse: false),
+            Seconds: 58, Reverse: false),
 
         new CodeStream(
             """
@@ -114,7 +116,7 @@ public static class BackdropCode
               </ul>
             </template>
             """,
-            HeroX: "79%", PageX: "43%", Seconds: 72, Reverse: true),
+            Seconds: 72, Reverse: true),
 
         new CodeStream(
             """
@@ -134,7 +136,7 @@ public static class BackdropCode
              WHERE RoomId = @RoomId
                AND Remaining > 0;
             """,
-            HeroX: "88%", PageX: "57%", Seconds: 66, Reverse: false),
+            Seconds: 66, Reverse: false),
 
         new CodeStream(
             """
@@ -157,7 +159,7 @@ public static class BackdropCode
               queryFn: fetchAccounts,
             })
             """,
-            HeroX: null, PageX: "71%", Seconds: 84, Reverse: true),
+            Seconds: 84, Reverse: true),
 
         new CodeStream(
             """
@@ -177,6 +179,29 @@ public static class BackdropCode
             const script = document.createElement('script')
             script.nonce = nonce
             """,
-            HeroX: null, PageX: "85%", Seconds: 70, Reverse: false),
+            Seconds: 70, Reverse: false),
+
+        new CodeStream(
+            """
+            FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
+            WORKDIR /src
+            COPY . .
+            RUN dotnet test Portfolio.slnx
+            RUN dotnet run --project src/Portfolio.Web \
+                -- --export /out
+
+            pipeline {
+              agent any
+              stages {
+                stage('Build') {
+                  steps { sh 'dotnet build' }
+                }
+                stage('Test') {
+                  steps { sh 'dotnet test' }
+                }
+              }
+            }
+            """,
+            Seconds: 76, Reverse: true),
     ];
 }

@@ -40,8 +40,9 @@
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
 </head>
 <body>
-    @* A very faint layer of scrolling code fixed behind the whole page, so the motion continues as the visitor scrolls (ADR-0008). *@
+    @* Animated background fixed behind the whole page (code lanes and floating logos), so the motion covers every section as the visitor scrolls (ADR-0008). *@
     <partial name="_CodeStreams" model="@("page")" />
+    <partial name="_TechLogos" model="@(new TechLogosModel(Content.Profile.BackdropTags, "page"))" />
     <div class="scroll-progress" aria-hidden="true"><span></span></div>
     <a class="skip-link" href="#main">Skip to main content</a>
     <partial name="_Header" />

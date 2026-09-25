@@ -34,8 +34,8 @@ public static class ProfileData
         ],
         BackdropTags:
         [
-            "C#", ".NET 10", "ASP.NET Core", "Umbraco", "Vue.js", "React",
-            "SQL Server", "EF Core", "MediatR", "Azure", "Docker", "xUnit",
+            "C#", ".NET 10", "Umbraco", "Vue.js", "React", "Blazor",
+            "Docker", "Jenkins", "MongoDB", "MySQL", "GitHub", "Next.js",
         ],
         PhotoUrl: "/images/randolf.webp",
         PhotoAlt: "Portrait of Randolf Segubre",

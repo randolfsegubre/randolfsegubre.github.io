@@ -19,7 +19,7 @@ public sealed record Stat(string Value, string Label);
 /// <param name="Availability">Short line about what he is looking for.</param>
 /// <param name="SignatureStack">The few product names shown in the hero's code card. Exempt from the abbreviation rule.</param>
 /// <param name="Stats">Facts for the stats strip. Replaces skill percentage bars, which cannot be verified.</param>
-/// <param name="BackdropTags">Technology names that float in the hero backdrop. Each must appear in the projects, roles or skills (ADR-0006).</param>
+/// <param name="BackdropTags">Technologies shown as floating logos. Each must appear in the projects, roles or skills (ADR-0006) and have a logo in <c>TechLogoData</c>.</param>
 /// <param name="PhotoUrl">Site-relative path to the portrait under wwwroot, or null for no photo.</param>
 /// <param name="PhotoAlt">Alternative text describing the portrait for screen reader users.</param>
 /// <param name="ResumeUrl">Relative path to a resume file under wwwroot. The button is hidden while this is null.</param>
@@ -99,6 +99,12 @@ public sealed record PortfolioViewModel(
     IReadOnlyList<Project> Projects,
     IReadOnlyList<Role> Experience,
     IReadOnlyList<SkillGroup> Skills);
+
+/// <summary>
+/// Input for the floating-logos partial: which technologies to show and which layer they float in.
+/// </summary>
+/// <param name="Variant">"hero" for the logos inside the hero, "page" for the fainter layer fixed behind the whole page.</param>
+public sealed record TechLogosModel(IReadOnlyList<string> Techs, string Variant);
 
 /// <summary>
 /// Input for the shared tag-list partial: the chips and the accessible name of the list.

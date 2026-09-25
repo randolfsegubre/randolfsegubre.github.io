@@ -41,6 +41,30 @@ Every motion is an enhancement: content is hidden for a reveal only when the
 `js` class is present, reduced-motion visitors see everything at once, and the
 whole page works with scripting off.
 
+**Second amendment, 2026-09-25 (three requests):**
+
+1. *Columns overlapped each other.* The first version positioned each column
+   with a percentage, so neighbours crossed. Lanes now have no positions: they
+   are equal-width columns of a CSS grid across the full width (8 on desktop, 5
+   on tablets, 3 on phones), so overlap is impossible by construction. A test
+   asserts the grid rule, and a browser measurement confirmed zero overlaps.
+2. *Cover all of the page.* The same lanes and logos now exist twice: a stronger
+   copy inside the hero and a quieter copy fixed behind the whole page, so the
+   moving background is present in every section. Cards let a little of it show
+   through, blurred so their text stays crisp. In the page-wide layer the logos
+   are quiet silhouettes in the theme color rather than bright badges, so text
+   never sits on a bright shape.
+3. *Logos instead of text tags.* Real technology logos replace the text pills.
+   They are embedded as inline vector markup from the Simple Icons set (CC0,
+   version 16.32.0) so the site still makes no third-party requests; see
+   `docs/THIRD_PARTY_NOTICES.md`. In the hero each logo sits in a light round
+   badge so every brand color stays visible on purple. Not every technology has a
+   logo in that set: there is none for C#, SQL Server, Azure or ASP.NET Core, so
+   the C# mark is a hand-drawn hexagon (flagged as an approximation) and the
+   others use the .NET logo or are omitted. Only technologies with a logo are
+   shown, and a test requires every one to appear in the projects, roles or
+   skills.
+
 Rules for the animated background: it is purely decorative (hidden from
 assistive technology, no pointer events); motion only uses `transform`, so it
 stays smooth; it stops for visitors who prefer reduced motion; every floating

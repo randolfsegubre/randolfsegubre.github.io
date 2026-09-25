@@ -160,10 +160,9 @@ public sealed class PageRenderTests(WebApplicationFactory<Program> factory) : IC
         Assert.NotNull(backdrop);
         Assert.Equal("true", backdrop.GetAttribute("aria-hidden"));
 
-        // Scrolling code columns, each holding its code twice so the loop has no visible jump.
-        var streams = backdrop.QuerySelectorAll(".code-stream").ToList();
-        Assert.True(streams.Count >= 4);
-        Assert.All(streams, stream => Assert.Equal("true", stream.ParentElement?.GetAttribute("aria-hidden") ?? backdrop.GetAttribute("aria-hidden")));
+        // Every lane of scrolling code is present, each holding its code twice so the loop has no visible jump.
+        var streams = backdrop.QuerySelectorAll(".code-streams--hero .code-stream").ToList();
+        Assert.Equal(BackdropCode.Streams.Count, streams.Count);
         Assert.All(streams, stream =>
         {
             var text = stream.QuerySelector("pre")!.TextContent;
@@ -171,10 +170,33 @@ public sealed class PageRenderTests(WebApplicationFactory<Program> factory) : IC
             Assert.Equal(text[..half].Trim(), text[half..].Trim());
         });
 
-        // Floating technology tags come from the profile data.
-        var tags = backdrop.QuerySelectorAll(".tech-float").Select(t => t.TextContent.Trim()).ToList();
-        Assert.Equal(Content.Profile.BackdropTags.Take(tags.Count), tags);
-        Assert.True(tags.Count >= 6);
+        // Floating logos come from the profile data, one inline vector image each.
+        var logos = backdrop.QuerySelectorAll(".tech-logos--hero .tech-logo").ToList();
+        Assert.Equal(Content.Profile.BackdropTags, logos.Select(l => l.GetAttribute("data-tech")));
+        Assert.All(logos, logo => Assert.NotNull(logo.QuerySelector("svg path")));
+    }
+
+    [Fact]
+    public async Task Logos_are_inline_vector_images_so_the_page_makes_no_image_requests_for_them()
+    {
+        var page = await GetPageAsync("/");
+
+        // Only the portrait is an external image file; every technology logo is inline markup.
+        var imageFiles = page.QuerySelectorAll("img").Select(i => i.GetAttribute("src")).ToList();
+        Assert.Equal([Content.Profile.PhotoUrl], imageFiles);
+    }
+
+    [Fact]
+    public async Task Background_lanes_are_grid_columns_so_they_cannot_overlap()
+    {
+        var webRoot = factory.Services.GetRequiredService<IWebHostEnvironment>().WebRootPath;
+        var css = await File.ReadAllTextAsync(Path.Combine(webRoot, "css", "site.css"));
+
+        // Lanes have no absolute positions of their own: the container lays them out as equal grid columns.
+        Assert.Contains("grid-template-columns: repeat(var(--lanes), minmax(0, 1fr))", css);
+        Assert.DoesNotContain("left: var(--x);\n  width: 13rem", css);
+        var page = await GetPageAsync("/");
+        Assert.All(page.QuerySelectorAll(".code-stream"), lane => Assert.DoesNotContain("--x", lane.GetAttribute("style") ?? string.Empty));
     }
 
     [Fact]
@@ -182,10 +204,18 @@ public sealed class PageRenderTests(WebApplicationFactory<Program> factory) : IC
     {
         var page = await GetPageAsync("/");
 
+        // The page-wide layer covers every section: the same lanes as the hero, plus logos, fixed behind the content.
         var layer = page.QuerySelector(".code-streams--page");
         Assert.NotNull(layer);
         Assert.Equal("true", layer.GetAttribute("aria-hidden"));
         Assert.Null(layer.Closest("main"));
+        Assert.Equal(BackdropCode.Streams.Count, layer.QuerySelectorAll(".code-stream").Length);
+
+        var logos = page.QuerySelector(".tech-logos--page");
+        Assert.NotNull(logos);
+        Assert.Equal("true", logos.GetAttribute("aria-hidden"));
+        Assert.Null(logos.Closest("main"));
+        Assert.NotEmpty(logos.QuerySelectorAll(".tech-logo"));
     }
 
     [Fact]

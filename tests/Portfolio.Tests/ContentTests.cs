@@ -167,16 +167,31 @@ public sealed partial class ContentTests
     }
 
     [Fact]
-    public void Backdrop_code_streams_each_have_code_and_a_valid_position()
+    public void Every_backdrop_tech_has_a_logo_with_a_valid_brand_color_and_shapes()
     {
-        Assert.NotEmpty(BackdropCode.Streams);
+        Assert.All(Content.Profile.BackdropTags, tech =>
+        {
+            var logo = TechLogoData.Find(tech);
+            Assert.True(logo is not null, $"No logo for '{tech}'");
+            Assert.Matches("^#[0-9A-Fa-f]{6}$", logo.Hex);
+            Assert.Contains("<path", logo.Markup);
+        });
+
+        // Logo keys are unique, and none is defined without being used (dead data would drift).
+        Assert.Equal(TechLogoData.Logos.Count, TechLogoData.Logos.Select(l => l.Key).Distinct().Count());
+        Assert.All(TechLogoData.Logos, logo => Assert.Contains(logo.Key, Content.Profile.BackdropTags));
+    }
+
+    [Fact]
+    public void Backdrop_code_lanes_each_have_code_and_a_sensible_speed()
+    {
+        // Eight lanes fill a wide screen edge to edge; the stylesheet shows fewer on tablets and phones.
+        Assert.Equal(8, BackdropCode.Streams.Count);
         Assert.All(BackdropCode.Streams, stream =>
         {
             Assert.False(string.IsNullOrWhiteSpace(stream.Code));
-            Assert.EndsWith("%", stream.PageX);
             Assert.InRange(stream.Seconds, 30, 180);
         });
-        Assert.True(BackdropCode.Streams.Count(s => s.HeroX is not null) >= 4);
     }
 
     [Fact]

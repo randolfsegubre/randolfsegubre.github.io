@@ -1,42 +1,16 @@
 @model Profile
 @*
-    The hero's animated background (ADR-0008): scrolling columns of C#, Razor, Vue.js and
-    T-SQL from the owner's own stack, plus floating technology tags. Purely decorative,
-    so it is hidden from assistive technology and never takes pointer events.
+    The hero's animated background (ADR-0008): lanes of scrolling code from the owner's own
+    stack, with floating technology logos over them. It is the stronger twin of the faint
+    layer fixed behind the whole page (see _Layout.cshtml), and both use the same lanes so
+    the background looks continuous. Purely decorative, so it is hidden from assistive
+    technology and never takes pointer events.
 
-    The tags come from Profile.BackdropTags, and a content test requires each one to appear
-    in the projects, roles or skills, so the background can never advertise a technology the
-    rest of the page does not back up (ADR-0006).
-
-    Placement rule: keep tags and columns to the edges and behind the opaque code card,
-    never behind the headline and pitch. Tags marked "edge" stay on phones because they sit
-    in the top and bottom padding; the rest are hidden there.
+    The logos come from Profile.BackdropTags, and a content test requires each one to appear
+    in the projects, roles or skills and to have a logo, so the background can never advertise
+    a technology the rest of the page does not back up (ADR-0006).
 *@
-@{
-    // x = left position; either y (from the top) or b (from the bottom); edge = keep on phones.
-    var slots = new (string X, string? Y, string? B, bool Edge, int Seconds, int Delay)[]
-    {
-        ("3%", "3%", null, true, 11, -2),
-        ("22%", "2%", null, true, 13, -6),
-        ("40%", "4%", null, false, 12, -4),
-        ("88%", "6%", null, false, 14, -9),
-        ("58%", "3%", null, false, 10, -1),
-        ("91%", "42%", null, false, 15, -7),
-        ("3%", null, "4%", true, 12, -3),
-        ("22%", null, "3%", true, 10, -8),
-        ("40%", null, "5%", false, 13, -5),
-        ("62%", null, "4%", false, 11, -10),
-        ("80%", null, "3%", true, 14, -2),
-        ("92%", "70%", null, false, 12, -6),
-    };
-    var count = Math.Min(Model.BackdropTags.Count, slots.Length);
-}
 <div class="code-backdrop" aria-hidden="true">
     <partial name="_CodeStreams" model="@("hero")" />
-    @for (var i = 0; i < count; i++)
-    {
-        var slot = slots[i];
-        var position = $"--x:{slot.X};" + (slot.Y is not null ? $"--y:{slot.Y};" : $"--b:{slot.B};") + $"--d:{slot.Seconds}s;--delay:{slot.Delay}s";
-        <span class="@(slot.Edge ? "tech-float tech-float--edge" : "tech-float")" style="@position">@Model.BackdropTags[i]</span>
-    }
+    <partial name="_TechLogos" model="@(new TechLogosModel(Model.BackdropTags, "hero"))" />
 </div>

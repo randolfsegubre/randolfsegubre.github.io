@@ -7,6 +7,43 @@ snapshot.
 
 ---
 
+## 2026-09-25 (night): Lanes that cannot overlap, page-wide background, real logos
+
+**Asked:** the animated code columns overlapped each other; make the background
+cover the whole page; replace the text technology tags (C#, ASP.NET and others)
+with logos.
+
+**What changed:**
+- **Overlap fixed at the root.** Columns were positioned by percentages and
+  crossed. They are now equal-width lanes of a CSS grid (8, 5 or 3 by screen
+  width), so overlap cannot happen. Added an eighth lane (Docker and Jenkins).
+- **Whole-page coverage.** The same lanes and logos exist in the hero
+  (stronger) and fixed behind the whole page (quieter), and cards let a little
+  through. A soft dark halo behind the hero copy keeps the paragraph readable.
+- **Logos.** 12 technology logos as inline vectors from Simple Icons 16.32.0
+  (CC0): .NET, Umbraco, Vue.js, React, Blazor, Docker, Jenkins, MongoDB, MySQL,
+  GitHub, Next.js, plus a hand-drawn C# hexagon. Hero logos sit in light round
+  badges; the page-wide ones are quiet silhouettes so text never sits on a bright
+  shape. `docs/THIRD_PARTY_NOTICES.md` and a footer note record the source and
+  the trademark position.
+- **Limits, stated plainly.** The open icon set has no C#, SQL Server, Azure or
+  ASP.NET Core logo (Microsoft asked for its logos to be removed). ASP.NET Core
+  is represented by the .NET logo; SQL Server and Azure are not shown as logos.
+  The C# mark is my own drawing, an approximation of the real one.
+
+**Verified:** 103 tests pass (new: every backdrop technology has a logo and is
+backed by the page; logos are inline vectors so the only image file is the
+portrait; lanes are grid columns). In a real browser at 1280 pixels: 8 lanes of
+158 pixels with 0 overlaps in both layers, 12 logos in each layer with 0
+overlaps, 0 failed or third-party requests. At 375 pixels: 3 lanes, 5 logos, no
+overlaps with the portrait or text, no horizontal overflow.
+
+**Caught along the way:** on phones the hero is very tall, so logos placed by
+percentage from the top landed on the portrait; top logos are now pinned into
+the hero's top padding there.
+
+---
+
 ## 2026-09-25 (evening): Portrait and a stronger animated code background
 
 **Asked:** Add his graduation photo, and make the background like the
