@@ -118,6 +118,16 @@ public sealed class PageRenderTests(WebApplicationFactory<Program> factory) : IC
     }
 
     [Fact]
+    public async Task Dark_is_the_default_so_the_toggle_offers_light()
+    {
+        var page = await GetPageAsync("/");
+
+        // No theme attribute is written by the server, and the toggle describes the action it will take.
+        Assert.False(page.DocumentElement.HasAttribute("data-theme"));
+        Assert.Equal("Switch to light theme", page.QuerySelector("#theme-toggle")?.GetAttribute("aria-label"));
+    }
+
+    [Fact]
     public async Task Not_found_page_renders_with_its_own_heading()
     {
         var page = await GetPageAsync("/not-found");

@@ -6,8 +6,17 @@
 *@
 <section id="top" class="hero" aria-labelledby="hero-heading">
     <div class="container">
+        @* Decorative crown: royal purple and gold is the site's identity. Hidden from assistive technology. *@
+        <svg class="crown" viewBox="0 0 64 44" aria-hidden="true" focusable="false">
+            <path d="M4 38 L1 10 L17 24 L32 4 L47 24 L63 10 L60 38 Z" fill="currentColor" />
+            <rect x="4" y="40" width="56" height="4" rx="2" fill="currentColor" />
+            <circle cx="1" cy="9" r="2.5" fill="currentColor" />
+            <circle cx="32" cy="3" r="2.5" fill="currentColor" />
+            <circle cx="63" cy="9" r="2.5" fill="currentColor" />
+        </svg>
         <p class="eyebrow">@Model.Title</p>
         <h1 id="hero-heading" class="hero-title">@Model.Name</h1>
+        <hr class="hero-rule" />
         <p class="hero-lead">@Model.Headline</p>
         <p class="hero-meta">
             <span>@Model.Location</span>

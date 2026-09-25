@@ -7,6 +7,45 @@ snapshot.
 
 ---
 
+## 2026-09-25 (later): Royal purple restyle, dark by default
+
+**Asked:** "make the website look better, with styles", in royal purple like
+King David's or King Solomon's color, then: "make it a dark theme", clarified
+as "dark theme by default".
+
+**What changed:**
+- New visual identity in `site.css`: deep Tyrian purple with gold accents, a
+  serif display face from the system font stack, a purple hero with a gold
+  glow, faint brocade pattern, inline crown mark and gold rule, cards with
+  depth and hover lift, a purple-to-gold stripe on featured projects, gold
+  list markers and status dots, a vertical experience timeline with gold
+  markers, pill chips, and a purple header and footer with gold hairlines.
+- **Dark is the default for every visitor**, even when their system is set
+  to light. The dark palette is the base `:root`; the light palette is an
+  optional override applied only through the toggle. The
+  `prefers-color-scheme` query was removed on purpose (ADR-0004 amended).
+  `theme.js` no longer reads the system setting, and the toggle now says
+  "Light" first.
+- Favicon and browser toolbar color changed to purple and gold.
+
+**Verified:**
+- 77 tests pass. New `DesignTokenTests` parse the real stylesheet and check
+  contrast for every text and background pair in both themes, that the light
+  block only overrides tokens defined in the dark base, and that no
+  system-setting media query exists. New render tests cover "dark by default".
+- In a real browser with the **system set to light**, the page still renders
+  dark purple (`rgb(18, 10, 36)`); a real click on the toggle switches to
+  light and back, each choice is stored, and a reload keeps it. No overflow at
+  375 pixels, no failed or third-party requests.
+
+**Caught along the way:** the new contrast test flagged the bright gold used
+for markers and underlines at 2.1 to 1 on the light background; the light
+theme now uses a deeper antique gold (`#b07d00`). I also wrote one over-clever
+test assertion and replaced it with a single clear one before it was ever
+committed.
+
+---
+
 ## 2026-09-25: Rebuilt in ASP.NET Core MVC on .NET 10 and published
 
 **Asked:** Randolf asked to publish the site so the link can go in an email to

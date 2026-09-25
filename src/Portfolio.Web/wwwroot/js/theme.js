@@ -16,14 +16,9 @@
     return;
   }
 
-  /** The theme currently showing: the explicit attribute, else the system setting. */
+  /** The theme currently showing. Dark royal purple is the default, so only an explicit "light" choice differs. */
   function currentTheme() {
-    var attribute = root.getAttribute("data-theme");
-    if (attribute === "light" || attribute === "dark") {
-      return attribute;
-    }
-    var prefersDark = typeof window.matchMedia === "function" && window.matchMedia("(prefers-color-scheme: dark)").matches;
-    return prefersDark ? "dark" : "light";
+    return root.getAttribute("data-theme") === "light" ? "light" : "dark";
   }
 
   /** Updates the button's label and pressed state to describe the action it will take. */
@@ -34,11 +29,11 @@
     button.firstElementChild.textContent = isDark ? "Light" : "Dark";
   }
 
-  // STEP 1 of 3: reveal the button and show the current state.
+  // STEP 1 of 2: reveal the button and show the current state.
   button.hidden = false;
   render(currentTheme());
 
-  // STEP 2 of 3: on click, flip the theme, apply it, and remember it (best effort, storage may be blocked).
+  // STEP 2 of 2: on click, flip the theme, apply it, and remember it (best effort, storage may be blocked).
   button.addEventListener("click", function () {
     var next = currentTheme() === "dark" ? "light" : "dark";
     root.setAttribute("data-theme", next);
@@ -50,12 +45,4 @@
     render(next);
   });
 
-  // STEP 3 of 3: with no manual choice, follow the system setting if it changes while the page is open.
-  if (typeof window.matchMedia === "function") {
-    window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", function () {
-      if (!root.getAttribute("data-theme")) {
-        render(currentTheme());
-      }
-    });
-  }
 })();

@@ -57,7 +57,8 @@ Architecture Decision Records (ADRs) instead of repeating their reasoning.
 
 11. GitHub Pages returns the saved `index.html`. The inline script applies a
     remembered theme before anything paints, and `site.css` reads its color
-    tokens (ADR-0004).
+    tokens (ADR-0004). Dark royal purple is the default for everyone; only an
+    explicit "light" choice changes it.
 12. **`theme.js`** reveals the theme button (rendered hidden) and wires it: it
     flips `data-theme` on `<html>`, remembers the choice, and updates the
     label.
