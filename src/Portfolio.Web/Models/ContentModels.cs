@@ -6,6 +6,16 @@ namespace Portfolio.Web.Models;
 public sealed record Link(string Label, string Href);
 
 /// <summary>
+/// One way to reach the owner by phone or a messaging app.
+/// </summary>
+/// <param name="Label">What the channel is, for example "Mobile and Viber".</param>
+/// <param name="Display">The number as a person reads it, for example "+63 917 1022 203".</param>
+/// <param name="Href">The main link: a <c>tel:</c> link, or an https link that opens a messaging app.</param>
+/// <param name="ActionLabel">Text of an optional second link, for example "Open in Viber".</param>
+/// <param name="ActionHref">Address of the optional second link. Its scheme may be an app link such as <c>viber:</c>.</param>
+public sealed record ContactChannel(string Label, string Display, string Href, string? ActionLabel, string? ActionHref);
+
+/// <summary>
 /// One fact shown in the stats strip under the hero, for example "9+" and "years of professional C# and .NET".
 /// </summary>
 /// <param name="Value">The short figure. Must be a checkable fact (ADR-0006).</param>
@@ -17,6 +27,7 @@ public sealed record Stat(string Value, string Label);
 /// </summary>
 /// <param name="Headline">One-paragraph pitch shown in the hero. Prose, so it follows the writing rules.</param>
 /// <param name="Availability">Short line about what he is looking for.</param>
+/// <param name="Phones">Phone and messaging-app numbers, exactly as the owner supplied them. Public on the site by his choice.</param>
 /// <param name="SignatureStack">The few product names shown in the hero's code card. Exempt from the abbreviation rule.</param>
 /// <param name="Stats">Facts for the stats strip. Replaces skill percentage bars, which cannot be verified.</param>
 /// <param name="BackdropTags">Technologies shown as floating logos. Each must appear in the projects, roles or skills (ADR-0006) and have a logo in <c>TechLogoData</c>.</param>
@@ -31,6 +42,7 @@ public sealed record Profile(
     string Availability,
     string Email,
     IReadOnlyList<Link> Links,
+    IReadOnlyList<ContactChannel> Phones,
     IReadOnlyList<string> SignatureStack,
     IReadOnlyList<Stat> Stats,
     IReadOnlyList<string> BackdropTags,

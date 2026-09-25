@@ -1,8 +1,9 @@
 @model Profile
 @*
-    How to reach the owner, as a row of large link cards: email first, then profiles.
-    Email is a plain mailto: link, not a form, because a form would need a third-party
-    service (ADR-0001).
+    How to reach the owner, as a row of large link cards: email, then phone and messaging
+    apps, then profiles. Email is a plain mailto: link, not a form, because a form would
+    need a third-party service (ADR-0001). The numbers are shown publicly at the owner's
+    request; each is a real tap-to-call or open-in-app link.
 *@
 <section id="contact" class="section section-contact" aria-labelledby="contact-heading">
     <div class="container">
@@ -13,6 +14,25 @@
                 <span class="contact-label">Email</span>
                 <a class="contact-link" href="@("mailto:" + Model.Email)">@Model.Email</a>
             </li>
+            @foreach (var phone in Model.Phones)
+            {
+                <li class="contact-card" data-reveal>
+                    <span class="contact-label">@phone.Label</span>
+                    @if (phone.Href.StartsWith("https://", StringComparison.Ordinal))
+                    {
+                        @* An https link that opens a messaging app goes through the shared outbound-link partial. *@
+                        <partial name="_ExternalLink" model="new Link(phone.Display, phone.Href)" view-data="@(new ViewDataDictionary(ViewData) { { "class", "contact-link" } })" />
+                    }
+                    else
+                    {
+                        <a class="contact-link" href="@phone.Href">@phone.Display</a>
+                    }
+                    @if (phone.ActionLabel is not null && phone.ActionHref is not null)
+                    {
+                        <a class="contact-action" href="@phone.ActionHref">@phone.ActionLabel</a>
+                    }
+                </li>
+            }
             @foreach (var link in Model.Links)
             {
                 var shownAddress = new Link(link.Href.Replace("https://", string.Empty), link.Href);

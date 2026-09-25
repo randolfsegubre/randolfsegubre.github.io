@@ -7,6 +7,32 @@ snapshot.
 
 ---
 
+## 2026-09-25 (after midnight): Phone numbers, and the correct Santa's Lapland address
+
+**Asked:** show his mobile and Viber number (+63 917 1022 203) and his WhatsApp
+number (+63 920 909 3036) in the portfolio; then, correcting an earlier mistake
+of his, the Santa's Lapland site is `santaslapland.com`, not `.co.uk`.
+
+**What changed:**
+- **Contact cards** for both numbers: "Mobile and Viber" is a tap-to-call link
+  plus an "Open in Viber" link, and "WhatsApp" opens the official WhatsApp chat
+  link in a new tab. Both are shown publicly at his request.
+- **Santa's Lapland corrected** to `https://www.santaslapland.com/`. It loads
+  (the `.co.uk` address did not from this machine), and its own public title and
+  description now back the card's summary. The earlier note in the entry below
+  that the site could not be loaded no longer applies. The allowed-domain test
+  now lists the corrected host.
+
+**Verified:** 111 tests pass, including that each number is a valid
+Philippine mobile number and that every link (call, WhatsApp, Viber) carries
+exactly the number shown.
+
+**Privacy note given to him:** phone numbers on a public page can be collected
+by automated scrapers and used for spam. He chose to publish them; they can be
+removed by deleting the `Phones` entry in `Content/ProfileData.cs`.
+
+---
+
 ## 2026-09-25 (late night): Deep royal gold and "Live sites I contributed to"
 
 **Asked:** (1) make the yellow text a deep gold, "the royal gold of old"; (2)

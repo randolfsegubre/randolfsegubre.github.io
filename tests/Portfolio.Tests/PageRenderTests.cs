@@ -156,6 +156,34 @@ public sealed class PageRenderTests(WebApplicationFactory<Program> factory) : IC
     }
 
     [Fact]
+    public async Task Contact_section_shows_every_phone_number_with_working_links()
+    {
+        var page = await GetPageAsync("/");
+
+        var contact = page.QuerySelector("section#contact");
+        Assert.NotNull(contact);
+
+        foreach (var phone in Content.Profile.Phones)
+        {
+            var card = contact.QuerySelectorAll("li.contact-card").Single(li => li.QuerySelector(".contact-label")?.TextContent.Trim() == phone.Label);
+            var main = card.QuerySelector($"a[href='{phone.Href}']");
+            Assert.NotNull(main);
+            Assert.Contains(phone.Display, main.TextContent);
+
+            if (phone.ActionHref is not null)
+            {
+                Assert.Equal(phone.ActionLabel, card.QuerySelector($"a[href='{phone.ActionHref}']")?.TextContent.Trim());
+            }
+        }
+
+        // The WhatsApp link leaves the site, so it must open safely in a new tab.
+        var whatsapp = contact.QuerySelector("a[href^='https://wa.me/']");
+        Assert.NotNull(whatsapp);
+        Assert.Equal("_blank", whatsapp.GetAttribute("target"));
+        Assert.Contains("noopener", whatsapp.GetAttribute("rel"));
+    }
+
+    [Fact]
     public async Task Whole_page_never_exposes_an_internal_hosting_address()
     {
         var page = await GetPageAsync("/");

@@ -13,6 +13,7 @@ current.
 | Metro Manila | His public profiles name different cities within it, so the metro area is used |
 | Open to senior full-stack .NET roles, remote preferred | The owner's stated job-search preference |
 | Email, GitHub, LinkedIn | The owner's own public profiles |
+| Mobile and Viber number +63 917 1022 203, and WhatsApp number +63 920 909 3036 | Supplied by the owner in writing on 2026-09-25, to be shown publicly. The mobile number matches the one on his job applications |
 | Stats strip: 9+ years, 3 industries (travel, healthcare, construction), 5 employers since 2017 | The employment history below: June 2017 to now, five employers (F. Gurrea Construction, BCS Technology International, Collabera, Accenture, Cloud Employee) |
 | Stats strip: 660+ commits across eight repositories on one client platform | Git history review of his authored commits, 4 August 2026 (666 commits, 8 of 19 repositories). Re-verify before changing the figure |
 | Hero code card: name, title, location, availability, signature stack (C#, ASP.NET Core, Umbraco, Vue.js, SQL Server) | Generated from the same profile data; each stack item appears in the experience and projects below |
@@ -46,7 +47,8 @@ internal or confidential.
 | Inghams: website address, and that it describes itself as the ski, walking and Lapland holiday experts, with Hotelplan UK | The public site's own title and description, read on 2026-09-25 |
 | Inghams: the saved-holiday wishlist and the resort and country pages exist | Visible on the public site on 2026-09-25 (a wishlist in the header, and country and resort pages under the ski holidays menu) |
 | Inghams: he contributed from August 2024 to August 2026, as one of a team | His authored commits in the client's repositories behind the site, reviewed locally on 2026-09-25 (hundreds of commits, first in August 2024, last in August 2026) |
-| Santa's Lapland: website address, and that he contributed from November 2025 to July 2026 on web security and standards work | His authored commits in the repositories behind the site (first November 2025, last July 2026). The site could not be loaded from the author's machine on 2026-09-25, so the card claims nothing about the site beyond its name and his role. Please open the link after publishing to confirm it works |
+| Santa's Lapland: website address santaslapland.com, and that it offers family Lapland holidays including flights, hotels and a private trip to see Santa | The public site's own title and description, read on 2026-09-25 (the owner corrected the address from .co.uk to .com that day) |
+| Santa's Lapland: he contributed from November 2025 to July 2026 on web security and standards work | His authored commits in the repositories behind the site (first November 2025, last July 2026) |
 | "One of a team" and the caveat that the sites have changed since he left | The sites are large team codebases (thousands of commits from many authors), and his engagement ended on 30 August 2026 |
 
 Never included on these cards, and blocked by a test: internal repository

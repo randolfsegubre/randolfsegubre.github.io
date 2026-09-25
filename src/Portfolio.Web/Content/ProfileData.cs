@@ -8,7 +8,8 @@ namespace Portfolio.Web.Content;
 /// <remarks>
 /// Sources for each claim are listed in <c>docs/CONTENT_SOURCES.md</c>. The
 /// location is deliberately the metro area, not a city, because his public
-/// profiles name different cities within it.
+/// profiles name different cities within it. The phone numbers were supplied by the owner
+/// on 2026-09-25 and are shown publicly at his request.
 /// </remarks>
 public static class ProfileData
 {
@@ -23,6 +24,21 @@ public static class ProfileData
         [
             new Link("GitHub", "https://github.com/randolfsegubre"),
             new Link("LinkedIn", "https://www.linkedin.com/in/rsegubre"),
+        ],
+        Phones:
+        [
+            new ContactChannel(
+                Label: "Mobile and Viber",
+                Display: "+63 917 1022 203",
+                Href: "tel:+639171022203",
+                ActionLabel: "Open in Viber",
+                ActionHref: "viber://chat?number=%2B639171022203"),
+            new ContactChannel(
+                Label: "WhatsApp",
+                Display: "+63 920 909 3036",
+                Href: "https://wa.me/639209093036",
+                ActionLabel: null,
+                ActionHref: null),
         ],
         SignatureStack: ["C#", "ASP.NET Core", "Umbraco", "Vue.js", "SQL Server"],
         Stats:

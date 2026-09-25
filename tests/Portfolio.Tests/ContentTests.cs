@@ -147,8 +147,35 @@ public sealed partial class ContentTests
         Assert.All(Content.Experience, role => Assert.NotEmpty(role.Highlights));
     }
 
+    [Fact]
+    public void Phone_numbers_are_valid_philippine_mobile_numbers_and_every_link_matches_the_number_shown()
+    {
+        Assert.Equal(2, Content.Profile.Phones.Count);
+
+        foreach (var phone in Content.Profile.Phones)
+        {
+            // The number as displayed, reduced to digits, must be +63 followed by ten digits starting with 9.
+            var digits = new string(phone.Display.Where(char.IsDigit).ToArray());
+            Assert.Matches(@"^63 9\d{9}$".Replace(" ", string.Empty), digits);
+            Assert.StartsWith("+63", phone.Display);
+
+            // Whatever link is used (call, WhatsApp, Viber) must carry exactly the same number.
+            foreach (var href in new[] { phone.Href, phone.ActionHref }.OfType<string>())
+            {
+                Assert.Contains(digits, new string(href.Where(char.IsDigit).ToArray()));
+            }
+        }
+
+        // Mobile and Viber: a tap-to-call link plus a Viber app link. WhatsApp: the official https link.
+        var mobile = Content.Profile.Phones.Single(p => p.Label == "Mobile and Viber");
+        Assert.StartsWith("tel:+63", mobile.Href);
+        Assert.StartsWith("viber://chat?number=%2B63", mobile.ActionHref);
+        var whatsapp = Content.Profile.Phones.Single(p => p.Label == "WhatsApp");
+        Assert.StartsWith("https://wa.me/63", whatsapp.Href);
+    }
+
     /// <summary>The only web addresses the live-sites cards may link to: the sites' own public domains.</summary>
-    private static readonly string[] AllowedLiveHosts = ["www.inghams.co.uk", "www.santaslapland.co.uk"];
+    private static readonly string[] AllowedLiveHosts = ["www.inghams.co.uk", "www.santaslapland.com"];
 
     [Fact]
     public void Live_site_cards_link_only_to_the_sites_own_public_domains()

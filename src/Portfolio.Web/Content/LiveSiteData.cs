@@ -10,9 +10,10 @@ namespace Portfolio.Web.Content;
 /// publicly available information is shown and nothing private, internal or confidential.
 /// So: names and public addresses only, plus his plain-language part. No repository names,
 /// ticket numbers, hosting addresses, screenshots of internal tools, or configuration detail.
-/// The Inghams features named here (the wishlist, the resort and country pages) were checked
-/// on the public site on 2026-09-25. The Santa's Lapland site could not be loaded from the
-/// author's machine, so its card claims nothing about the site beyond its name and his role.
+/// The Inghams features named here (the wishlist, the resort and country pages) and the
+/// Santa's Lapland description (family Lapland holidays with flights, hotels and a private trip
+/// to see Santa) were checked against each public site's own text on 2026-09-25. The owner
+/// corrected the Santa's Lapland address that day to santaslapland.com.
 /// </remarks>
 public static class LiveSiteData
 {
@@ -36,9 +37,9 @@ public static class LiveSiteData
         new LiveSite(
             Id: "santas-lapland",
             Name: "Santa's Lapland",
-            Address: "santaslapland.co.uk",
-            Href: "https://www.santaslapland.co.uk/",
-            Summary: "The Santa's Lapland website.",
+            Address: "santaslapland.com",
+            Href: "https://www.santaslapland.com/",
+            Summary: "The website of Santa's Lapland, which offers family Lapland holidays including flights, hotels and a private trip to see Santa.",
             Role: "One of the developers on this site, through Cloud Employee, from November 2025 to July 2026.",
             Highlights:
             [
