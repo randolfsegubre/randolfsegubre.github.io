@@ -13,6 +13,8 @@ public sealed class PortfolioContent : IPortfolioContent
 {
     public Profile Profile => ProfileData.Profile;
 
+    public IReadOnlyList<LiveSite> LiveSites => LiveSiteData.Sites;
+
     public IReadOnlyList<Project> Projects => ProjectData.Projects;
 
     public IReadOnlyList<Role> Experience => ExperienceData.Roles;

@@ -20,7 +20,7 @@ public sealed class HomeController(IPortfolioContent content) : Controller
     public IActionResult Index()
     {
         // STEP 1 of 2: gather every section's data from the content service.
-        var model = new PortfolioViewModel(content.Profile, content.Projects, content.Experience, content.Skills);
+        var model = new PortfolioViewModel(content.Profile, content.LiveSites, content.Projects, content.Experience, content.Skills);
 
         // STEP 2 of 2: hand the single model to Views/Home/Index.cshtml.
         return View(model);

@@ -27,7 +27,16 @@ public, so anything committed is published.
    card says so.
 6. **No secrets in the repository.** The site has no environment secrets by
    design; `.env` files are ignored.
-7. **Writing conventions:** first person, evidence-backed, no em dashes, and
+7. **Client work is shown only as public sites, with the owner's explicit
+   go-ahead.** Amended 2026-09-25: live public websites he contributed to may
+   be named and linked once he confirms, and only publicly available
+   information appears (the sites' names, public addresses, and his plain-language
+   part). Never internal repository names, ticket numbers, internal tool or
+   system names, hosting addresses, or configuration detail. A test blocks those
+   patterns and restricts links to the sites' own public domains. Wording stays
+   "contributed to", and each card states that the site has changed since he
+   left.
+8. **Writing conventions:** first person, evidence-backed, no em dashes, and
    abbreviations written out in full words on first use (the tag chips that
    list product names are exempt). The content test enforces the mechanical
    parts.

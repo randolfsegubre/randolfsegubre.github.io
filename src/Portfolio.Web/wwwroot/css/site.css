@@ -1,6 +1,9 @@
 /*
  * Site styles (ADR-0004): one stylesheet, design tokens as custom properties.
  *
+ * Gold is a deep, old "royal gold" (#c9a227), not a bright lemon yellow. Every gold
+ * token in the dark palette uses it, so the whole site shifts together.
+ *
  * Dark royal purple theme: deep Tyrian purple with gold accents, the colors of
  * royal robes and crowns. Dark is the DEFAULT for every visitor, whatever their
  * system setting. The header, hero and footer are deep purple in both themes so the
@@ -26,9 +29,9 @@
   --heading: #ffffff;
   --accent: #c4b0ff;
   --border: #38246b;
-  --focus: #f5d06a;
-  --gold: #f0c75e;
-  --gold-bright: #f0c75e;
+  --focus: #d9b24a;
+  --gold: #c9a227;
+  --gold-bright: #c9a227;
   --stripe: #8b5cf6;
   --shadow: 0 0 0;
 
@@ -36,13 +39,13 @@
   --chrome-bg: #1a0b3b;
   --chrome-text: #f5f0ff;
   --chrome-muted: #cdbff0;
-  --chrome-gold: #f2cd6b;
+  --chrome-gold: #c9a227;
   --hero-from: #1a0b3b;
   --hero-via: #3a1878;
   --hero-to: #2a1160;
   --hero-text: #f5f0ff;
   --hero-muted: #d3c7f2;
-  --hero-gold: #f2cd6b;
+  --hero-gold: #c9a227;
   --hero-button-text: #2a1160;
 
   /* Code card in the hero (the same in both themes) */
@@ -50,7 +53,7 @@
   --code-text: #e9e2ff;
   --code-keyword: #b794ff;
   --code-type: #e9b6ff;
-  --code-string: #f2cd6b;
+  --code-string: #c9a227;
   --code-comment: #9a8bc4;
   --code-operator: #c4b0ff;
 
@@ -889,6 +892,34 @@ a:hover {
      pin the top logos into the hero's top padding instead. */
   .tech-logos--hero .tech-logo--top {
     top: 0.9rem;
+  }
+}
+
+/* Live sites section */
+
+.grid-wide {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 24rem), 1fr));
+}
+
+.live-address {
+  font-family: var(--font-mono);
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.badge-live::before {
+  background: var(--gold-bright);
+  animation: live-pulse 2.4s ease-in-out infinite;
+}
+
+@keyframes live-pulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--gold-bright) 60%, transparent);
+  }
+
+  50% {
+    box-shadow: 0 0 0 5px transparent;
   }
 }
 

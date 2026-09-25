@@ -61,7 +61,7 @@ public sealed class PageRenderTests(WebApplicationFactory<Program> factory) : IC
         var page = await GetPageAsync("/");
 
         var expected = Content.Projects.Count(p => p.HonestNote is not null);
-        Assert.Equal(expected, page.QuerySelectorAll("p.honest-note").Length);
+        Assert.Equal(expected, page.QuerySelectorAll("#projects p.honest-note").Length);
     }
 
     [Fact]
@@ -127,6 +127,40 @@ public sealed class PageRenderTests(WebApplicationFactory<Program> factory) : IC
         // No theme attribute is written by the server, and the toggle describes the action it will take.
         Assert.False(page.DocumentElement.HasAttribute("data-theme"));
         Assert.Equal("Switch to light theme", page.QuerySelector("#theme-toggle")?.GetAttribute("aria-label"));
+    }
+
+    [Fact]
+    public async Task Live_sites_section_lists_every_site_with_a_safe_public_link()
+    {
+        var page = await GetPageAsync("/");
+
+        var section = page.QuerySelector("section#live-sites");
+        Assert.NotNull(section);
+        Assert.Equal("live-sites-heading", section.GetAttribute("aria-labelledby"));
+
+        foreach (var site in Content.LiveSites)
+        {
+            var card = section.QuerySelector($"article#{site.Id}");
+            Assert.NotNull(card);
+            Assert.Equal(site.Name, card.QuerySelector("h3")?.TextContent.Trim());
+
+            var link = card.QuerySelector($"a[href='{site.Href}']");
+            Assert.NotNull(link);
+            Assert.Equal("_blank", link.GetAttribute("target"));
+            Assert.Contains("noopener", link.GetAttribute("rel"));
+            Assert.NotNull(card.QuerySelector("p.honest-note"));
+        }
+
+        // The navigation reaches it.
+        Assert.NotNull(page.QuerySelector(".nav-list a[href='/#live-sites']"));
+    }
+
+    [Fact]
+    public async Task Whole_page_never_exposes_an_internal_hosting_address()
+    {
+        var page = await GetPageAsync("/");
+
+        Assert.DoesNotContain("azurewebsites", page.DocumentElement.OuterHtml, StringComparison.OrdinalIgnoreCase);
     }
 
     [Fact]

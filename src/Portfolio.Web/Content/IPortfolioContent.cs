@@ -14,6 +14,9 @@ public interface IPortfolioContent
 {
     Profile Profile { get; }
 
+    /// <summary>Live public websites the owner contributed to (client work).</summary>
+    IReadOnlyList<LiveSite> LiveSites { get; }
+
     /// <summary>Projects in display order: featured ones first.</summary>
     IReadOnlyList<Project> Projects { get; }
 

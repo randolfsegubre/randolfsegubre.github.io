@@ -1,0 +1,38 @@
+@model IReadOnlyList<LiveSite>
+@*
+    Live public websites the owner contributed to as a developer (client work). This is the
+    strongest proof on the page, because any visitor can open the sites. Only public
+    information is shown: names, public addresses and his plain-language part. No internal
+    repository names, ticket numbers or hosting details (ADR-0006).
+*@
+<section id="live-sites" class="section" aria-labelledby="live-sites-heading">
+    <div class="container">
+        <h2 id="live-sites-heading" class="section-title" data-reveal>Live sites I contributed to</h2>
+        <p class="section-intro" data-reveal>Public websites I worked on as a developer at Hotelplan UK, client work through Cloud Employee. Anyone can open them. I describe only what a visitor can see, never code or internal detail.</p>
+        <div class="grid grid-wide">
+            @foreach (var site in Model)
+            {
+                var headingId = $"{site.Id}-name";
+                var stackChips = new TagListModel(site.Stack, $"{site.Name} technologies");
+                var addressLink = new Link(site.Address, site.Href);
+                <article id="@site.Id" class="card card-featured" aria-labelledby="@headingId" data-reveal>
+                    <header class="card-header">
+                        <h3 id="@headingId" class="card-title">@site.Name</h3>
+                        <span class="badge badge-live">Live site</span>
+                    </header>
+                    <p class="live-address"><partial name="_ExternalLink" model="addressLink" /></p>
+                    <p>@site.Summary</p>
+                    <p class="card-role"><strong>My part:</strong> @site.Role</p>
+                    <ul class="highlights">
+                        @foreach (var highlight in site.Highlights)
+                        {
+                            <li>@highlight</li>
+                        }
+                    </ul>
+                    <p class="honest-note"><strong>Worth knowing:</strong> @site.HonestNote</p>
+                    <partial name="_TagList" model="stackChips" />
+                </article>
+            }
+        </div>
+    </div>
+</section>

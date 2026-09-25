@@ -7,6 +7,41 @@ snapshot.
 
 ---
 
+## 2026-09-25 (late night): Deep royal gold and "Live sites I contributed to"
+
+**Asked:** (1) make the yellow text a deep gold, "the royal gold of old"; (2)
+confirmed that Inghams.co.uk and SantasLapland.co.uk may be included as long as
+only publicly available information is used; (3) use a new photo as the
+portfolio image.
+
+**What changed:**
+- **Gold:** every gold token in the dark palette moved from a bright lemon
+  yellow (`#f2cd6b`, `#f0c75e`) to a deep old gold, `#c9a227`, which still
+  reads clearly on the purple (lowest contrast 5.5 to 1 on the hero). The
+  favicon matches. The contrast tests parse the stylesheet, so they checked
+  every pair automatically.
+- **Live sites section** between the stats strip and the projects, with a
+  "Live sites" navigation link: two cards, each with a "Live site" badge, the
+  public address, his plain-language part, a caveat, and technology chips.
+  Only public information: the Inghams features named (wishlist, resort and
+  country pages) were checked on the public site; Santa's Lapland could not be
+  loaded from this machine, so its card claims nothing beyond its name and
+  his role (the one response it gave redirected to an internal hosting
+  address, which appears nowhere on the site, and a test keeps it that way).
+- **Guard tests:** links only to the two public domains; no ticket numbers,
+  internal tool or system names, repository names, hosting addresses or
+  configuration terms; roles say "contributed", never "built" or "led"; every
+  technology chip is backed by the experience or skills.
+
+**Not done yet:** the new photo. It was shown in chat but never saved to disk,
+so I could not read it; I asked him to save it and give me the path.
+
+**Verified:** 109 tests pass; the exported page contains no hosting address;
+in a real browser at 375 pixels the section renders with no overflow, both
+links correct, and the new gold measured as `rgb(201, 162, 39)`.
+
+---
+
 ## 2026-09-25 (night): Lanes that cannot overlap, page-wide background, real logos
 
 **Asked:** the animated code columns overlapped each other; make the background

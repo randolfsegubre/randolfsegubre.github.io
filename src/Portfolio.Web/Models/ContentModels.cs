@@ -71,6 +71,29 @@ public sealed record Project(
     IReadOnlyList<Link> Links);
 
 /// <summary>
+/// A live, public website the owner contributed to as a developer (client work).
+/// </summary>
+/// <remarks>
+/// Only what any visitor can see is described here. No internal repository names, ticket
+/// numbers, hosting addresses or configuration detail, ever; a test enforces this
+/// (ADR-0006).
+/// </remarks>
+/// <param name="Address">The public web address shown on the card, for example "inghams.co.uk".</param>
+/// <param name="Href">The public https link, on the site's own public domain only.</param>
+/// <param name="Role">His real part, stated plainly ("contributed", never "built").</param>
+/// <param name="Stack">Product names shown as chips. Each must appear in a role stack or the skills.</param>
+public sealed record LiveSite(
+    string Id,
+    string Name,
+    string Address,
+    string Href,
+    string Summary,
+    string Role,
+    IReadOnlyList<string> Highlights,
+    string HonestNote,
+    IReadOnlyList<string> Stack);
+
+/// <summary>
 /// One employment role.
 /// </summary>
 /// <param name="Client">End client, when the work was done through a staffing or consulting firm.</param>
@@ -96,6 +119,7 @@ public sealed record SkillGroup(string Id, string Label, IReadOnlyList<string> I
 /// </summary>
 public sealed record PortfolioViewModel(
     Profile Profile,
+    IReadOnlyList<LiveSite> LiveSites,
     IReadOnlyList<Project> Projects,
     IReadOnlyList<Role> Experience,
     IReadOnlyList<SkillGroup> Skills);

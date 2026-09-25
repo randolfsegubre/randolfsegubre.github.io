@@ -53,6 +53,14 @@ public sealed partial class ContentTests
             prose.AddRange(role.Highlights.Select((text, i) => ($"{role.Id}.highlights[{i}]", text)));
         }
 
+        foreach (var site in Content.LiveSites)
+        {
+            prose.Add(($"{site.Id}.summary", site.Summary));
+            prose.Add(($"{site.Id}.role", site.Role));
+            prose.Add(($"{site.Id}.honestNote", site.HonestNote));
+            prose.AddRange(site.Highlights.Select((text, i) => ($"{site.Id}.highlights[{i}]", text)));
+        }
+
         return prose;
     }
 
@@ -101,7 +109,10 @@ public sealed partial class ContentTests
     [Fact]
     public void Uses_https_for_every_outbound_link()
     {
-        var links = Content.Profile.Links.Concat(Content.Projects.SelectMany(p => p.Links)).ToList();
+        var links = Content.Profile.Links
+            .Concat(Content.Projects.SelectMany(p => p.Links))
+            .Concat(Content.LiveSites.Select(s => new Portfolio.Web.Models.Link(s.Address, s.Href)))
+            .ToList();
 
         Assert.NotEmpty(links);
         Assert.All(links, link =>
@@ -115,6 +126,7 @@ public sealed partial class ContentTests
     public void Gives_every_project_role_and_skill_group_a_unique_id()
     {
         var ids = Content.Projects.Select(p => p.Id)
+            .Concat(Content.LiveSites.Select(s => s.Id))
             .Concat(Content.Experience.Select(r => r.Id))
             .Concat(Content.Skills.Select(g => g.Id))
             .ToList();
@@ -133,6 +145,71 @@ public sealed partial class ContentTests
         }
 
         Assert.All(Content.Experience, role => Assert.NotEmpty(role.Highlights));
+    }
+
+    /// <summary>The only web addresses the live-sites cards may link to: the sites' own public domains.</summary>
+    private static readonly string[] AllowedLiveHosts = ["www.inghams.co.uk", "www.santaslapland.co.uk"];
+
+    [Fact]
+    public void Live_site_cards_link_only_to_the_sites_own_public_domains()
+    {
+        Assert.NotEmpty(Content.LiveSites);
+        Assert.All(Content.LiveSites, site =>
+        {
+            var uri = new Uri(site.Href);
+            Assert.Equal("https", uri.Scheme);
+            Assert.Contains(uri.Host, AllowedLiveHosts);
+            Assert.Contains(site.Address, uri.Host);
+        });
+    }
+
+    [Fact]
+    public void Live_site_cards_contain_no_internal_names_ticket_numbers_or_hosting_addresses()
+    {
+        // The owner allowed these sites on the condition that only public information is shown (2026-09-25).
+        // These patterns are things that exist only inside the client's estate, never on the public site.
+        string[] forbidden =
+        [
+            @"\b[A-Z]{2,5}-\d{2,5}\b",              // ticket numbers such as HPL-1234
+            @"(?i)azurewebsites|\.azure\.|blob\.core", // hosting addresses
+            @"(?i)\b(jira|confluence|jenkins|sonar)\b", // internal tools
+            @"(?i)\b(pcms|ecms|pim)\b",              // internal systems
+            @"(?i)santa-web|santa-static|Hotelplan\.\w+|Inghams\.\w+V2|Prototype\.V2", // repository names
+            @"(?i)(password|secret|token|connection string|nonce)", // sensitive configuration terms
+        ];
+
+        var texts = Content.LiveSites.SelectMany(s => new[] { s.Name, s.Address, s.Href, s.Summary, s.Role, s.HonestNote }.Concat(s.Highlights).Concat(s.Stack)).ToList();
+
+        var hits = new List<string>();
+        foreach (var pattern in forbidden)
+        {
+            hits.AddRange(texts.Where(t => Regex.IsMatch(t, pattern)).Select(t => $"{pattern} matched: {t}"));
+        }
+
+        Assert.Empty(hits);
+    }
+
+    [Fact]
+    public void Live_site_cards_state_the_role_plainly_and_name_a_caveat()
+    {
+        Assert.All(Content.LiveSites, site =>
+        {
+            Assert.DoesNotMatch(@"(?i)\b(built|owned|created|architected|led)\b", site.Role + " " + string.Join(" ", site.Highlights));
+            Assert.False(string.IsNullOrWhiteSpace(site.HonestNote));
+            Assert.NotEmpty(site.Highlights);
+        });
+    }
+
+    [Fact]
+    public void Live_site_technologies_are_backed_by_the_roles_or_skills()
+    {
+        var evidenced = Content.Experience.SelectMany(r => r.Stack)
+            .Concat(Content.Skills.SelectMany(g => g.Items))
+            .ToHashSet(StringComparer.OrdinalIgnoreCase);
+
+        var unbacked = Content.LiveSites.SelectMany(s => s.Stack).Where(tech => !evidenced.Contains(tech)).ToList();
+
+        Assert.Empty(unbacked);
     }
 
     [Fact]

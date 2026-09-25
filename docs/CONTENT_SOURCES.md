@@ -35,6 +35,24 @@ current.
 | BCS and Scoot: SOAP integration, EF Core Code First on MySQL, 90 percent xUnit coverage | The owner's account, confirmed directly |
 | F. Gurrea: desktop certificate application with Dapper | The owner's account, confirmed directly |
 
+## Live sites I contributed to
+
+The owner confirmed on 2026-09-25 that naming these sites is fine, on the
+condition that only publicly available information is shown, nothing private,
+internal or confidential.
+
+| Claim | Source |
+|---|---|
+| Inghams: website address, and that it describes itself as the ski, walking and Lapland holiday experts, with Hotelplan UK | The public site's own title and description, read on 2026-09-25 |
+| Inghams: the saved-holiday wishlist and the resort and country pages exist | Visible on the public site on 2026-09-25 (a wishlist in the header, and country and resort pages under the ski holidays menu) |
+| Inghams: he contributed from August 2024 to August 2026, as one of a team | His authored commits in the client's repositories behind the site, reviewed locally on 2026-09-25 (hundreds of commits, first in August 2024, last in August 2026) |
+| Santa's Lapland: website address, and that he contributed from November 2025 to July 2026 on web security and standards work | His authored commits in the repositories behind the site (first November 2025, last July 2026). The site could not be loaded from the author's machine on 2026-09-25, so the card claims nothing about the site beyond its name and his role. Please open the link after publishing to confirm it works |
+| "One of a team" and the caveat that the sites have changed since he left | The sites are large team codebases (thousands of commits from many authors), and his engagement ended on 30 August 2026 |
+
+Never included on these cards, and blocked by a test: internal repository
+names, ticket numbers, internal system or tool names, hosting addresses,
+configuration terms, or screenshots of anything not public.
+
 ## Projects
 
 | Claim | Source |
