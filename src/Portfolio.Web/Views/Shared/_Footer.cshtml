@@ -1,0 +1,13 @@
+@inject Portfolio.Web.Content.IPortfolioContent Content
+@*
+    Page footer: copyright and a pointer to this site's own source, itself a small,
+    public example of the owner's work. The year is fixed at export time.
+*@
+<footer class="site-footer">
+    <div class="container">
+        <p>
+            &copy; @DateTime.UtcNow.Year @Content.Profile.Name. Built with ASP.NET Core MVC on .NET 10 and exported as a static site.
+            <partial name="_ExternalLink" model="@(new Link("Source of this site", "https://github.com/randolfsegubre/randolfsegubre.github.io"))" />
+        </p>
+    </div>
+</footer>

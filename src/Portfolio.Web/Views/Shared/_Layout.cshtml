@@ -1,0 +1,41 @@
+@*
+    The page shell shared by every view (ADR-0002).
+    It owns the document head, the skip link, the header and footer, and the single
+    <main> landmark that each view's content is rendered into.
+*@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>@ViewData["Title"]</title>
+    <meta name="description" content="Portfolio of Randolf Segubre, a senior full-stack .NET developer with 9+ years across travel, healthcare and construction. Selected projects, experience and contact." />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="@ViewData["Title"]" />
+    <meta property="og:description" content="Selected projects, experience and skills of a senior full-stack .NET developer based in Metro Manila, Philippines." />
+    <meta name="theme-color" content="#0b1020" media="(prefers-color-scheme: dark)" />
+    <meta name="theme-color" content="#f8fafc" media="(prefers-color-scheme: light)" />
+    <link rel="icon" type="image/svg+xml" href="~/favicon.svg" />
+    <script>
+        // Applies a remembered manual theme choice before first paint so the page
+        // never flashes the wrong theme. With no saved choice, the CSS media query
+        // follows the visitor's system setting.
+        try {
+            var saved = localStorage.getItem("theme");
+            if (saved === "light" || saved === "dark") {
+                document.documentElement.setAttribute("data-theme", saved);
+            }
+        } catch (e) { }
+    </script>
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+</head>
+<body>
+    <a class="skip-link" href="#main">Skip to main content</a>
+    <partial name="_Header" />
+    <main id="main">
+        @RenderBody()
+    </main>
+    <partial name="_Footer" />
+    <script src="~/js/theme.js" asp-append-version="true" defer></script>
+</body>
+</html>

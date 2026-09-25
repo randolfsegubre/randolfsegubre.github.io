@@ -1,7 +1,8 @@
 name: Deploy to GitHub Pages
 
 # Runs on every push to main. Tests gate the deploy: a failing test means
-# nothing is published (ADR-0005).
+# nothing is published (ADR-0005). The MVC app is exported to static files
+# because GitHub Pages cannot run a server (ADR-0001, ADR-0007).
 on:
   push:
     branches: [main]
@@ -21,13 +22,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-dotnet@v4
         with:
-          node-version: 24
-          cache: npm
-      - run: npm ci
-      - run: npm test
-      - run: npm run build
+          dotnet-version: 10.0.x
+      - name: Test
+        run: dotnet test Portfolio.slnx --configuration Release
+      - name: Export static site
+        run: dotnet run --project src/Portfolio.Web --configuration Release --no-launch-profile -- --export "$GITHUB_WORKSPACE/dist"
       - uses: actions/upload-pages-artifact@v3
         with:
           path: dist

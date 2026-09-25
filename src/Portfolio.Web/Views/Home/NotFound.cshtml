@@ -1,0 +1,14 @@
+@model Profile
+@*
+    The not-found page. The static export saves it as 404.html, which GitHub Pages
+    serves for any unknown address.
+*@
+@{
+    ViewData["Title"] = $"Page not found | {Model.Name}";
+}
+<section class="section" aria-labelledby="notfound-heading">
+    <div class="container">
+        <h1 id="notfound-heading" class="section-title">That page does not exist</h1>
+        <p class="section-intro">This site is a single page. <a href="/">Go to the portfolio</a>.</p>
+    </div>
+</section>

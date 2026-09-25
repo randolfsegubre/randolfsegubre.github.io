@@ -1,0 +1,40 @@
+@model IReadOnlyList<Role>
+@*
+    Employment history, newest first, as a list of articles. Roles done through a
+    staffing or consulting firm show the firm as the employer and the end client on
+    the same line, which matches how the work was actually organised. The client is
+    omitted when there is none.
+*@
+<section id="experience" class="section" aria-labelledby="experience-heading">
+    <div class="container">
+        <h2 id="experience-heading" class="section-title">Experience</h2>
+        <p class="section-intro">Nine-plus years of professional C# and .NET, newest first.</p>
+        <ol class="timeline">
+            @foreach (var role in Model)
+            {
+                var techChips = new TagListModel(role.Stack, $"{role.Company} technologies");
+                <li>
+                    <article class="role" aria-labelledby="@(role.Id + "-title")">
+                        <header>
+                            <h3 id="@(role.Id + "-title")" class="role-title">@role.Title</h3>
+                            <p class="role-company">
+                                <span>@role.Company</span>@if (role.Client is not null)
+                                {
+                                    <span class="role-client">, client @role.Client</span>
+                                }
+                            </p>
+                            <p class="role-period">@role.Period@(role.Location is not null ? " · " + role.Location : "")</p>
+                        </header>
+                        <ul class="highlights">
+                            @foreach (var highlight in role.Highlights)
+                            {
+                                <li>@highlight</li>
+                            }
+                        </ul>
+                        <partial name="_TagList" model="techChips" />
+                    </article>
+                </li>
+            }
+        </ol>
+    </div>
+</section>

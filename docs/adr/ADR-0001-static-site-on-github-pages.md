@@ -34,6 +34,9 @@ is a `mailto:` link and social links, not a form.
 - **Azure Static Web Apps or Vercel:** also free, but add an account and a
   second dashboard to maintain, and the GitHub-native option already covers
   the need.
-- **A .NET backend (Blazor Server or Minimal Application Programming
-  Interface (API)):** would show the primary stack, but a portfolio must
-  load instantly and cost nothing to host, and both fail that bar.
+- **A live .NET server (Blazor Server, Minimal Application Programming
+  Interface (API), or MVC running at request time):** would show the primary
+  stack, but a portfolio must load instantly and cost nothing to host, and a
+  free server tier cold-starts. The site is still written in ASP.NET Core MVC
+  and exported to static files at build time, see
+  [ADR-0007](ADR-0007-aspnet-core-mvc-with-static-export.md).

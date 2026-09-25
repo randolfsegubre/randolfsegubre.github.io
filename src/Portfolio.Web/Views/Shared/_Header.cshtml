@@ -1,0 +1,23 @@
+@inject Portfolio.Web.Content.IPortfolioContent Content
+@*
+    Sticky site header: the owner's name, in-page anchor navigation and the theme toggle.
+    Anchors start with "/" so they also work from the not-found page. The toggle is
+    rendered hidden and revealed by theme.js, so it never shows as a dead button
+    when scripting is unavailable.
+*@
+<header class="site-header">
+    <div class="container header-inner">
+        <a class="brand" href="/#top">@Content.Profile.Name</a>
+        <nav aria-label="Primary">
+            <ul class="nav-list">
+                <li><a href="/#projects">Projects</a></li>
+                <li><a href="/#experience">Experience</a></li>
+                <li><a href="/#skills">Skills</a></li>
+                <li><a href="/#contact">Contact</a></li>
+            </ul>
+        </nav>
+        <button type="button" id="theme-toggle" class="theme-toggle" aria-pressed="false" aria-label="Switch to dark theme" hidden>
+            <span aria-hidden="true">Dark</span>
+        </button>
+    </div>
+</header>

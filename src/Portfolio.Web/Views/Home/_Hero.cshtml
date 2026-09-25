@@ -1,0 +1,30 @@
+@model Profile
+@*
+    The first screen: name, title, the pitch, availability and the main calls to
+    action. It holds the page's only <h1>. The resume button renders only when
+    ResumeUrl is set, so the site never shows a dead download link.
+*@
+<section id="top" class="hero" aria-labelledby="hero-heading">
+    <div class="container">
+        <p class="eyebrow">@Model.Title</p>
+        <h1 id="hero-heading" class="hero-title">@Model.Name</h1>
+        <p class="hero-lead">@Model.Headline</p>
+        <p class="hero-meta">
+            <span>@Model.Location</span>
+            <span aria-hidden="true"> &middot; </span>
+            <span>@Model.Availability</span>
+        </p>
+        <div class="hero-actions">
+            <a class="button button-primary" href="#projects">See selected projects</a>
+            <a class="button" href="@("mailto:" + Model.Email)">Email me</a>
+            @if (Model.ResumeUrl is not null)
+            {
+                <a class="button" href="@Model.ResumeUrl" download>Download resume</a>
+            }
+            @foreach (var link in Model.Links)
+            {
+                <partial name="_ExternalLink" model="link" view-data="@(new ViewDataDictionary(ViewData) { { "class", "button" } })" />
+            }
+        </div>
+    </div>
+</section>

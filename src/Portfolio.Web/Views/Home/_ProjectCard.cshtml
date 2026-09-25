@@ -1,0 +1,51 @@
+@model Project
+@*
+    One project, rendered as an <article>.
+    Featured projects show the full set of highlights; the compact ones show only the
+    first two so the page stays scannable. The "Known gap" line is rendered only when
+    the data names one, which is the mechanism behind the site's honesty policy: gaps
+    are data, not something a template can forget (ADR-0006).
+*@
+@{
+    // STEP 1 of 3: decide how many highlights this card earns.
+    var highlights = Model.Featured ? Model.Highlights : Model.Highlights.Take(2).ToList();
+
+    // STEP 2 of 3: pick the status wording and the matching style hook.
+    var (statusLabel, statusClass) = Model.Status switch
+    {
+        ProjectStatus.InDevelopment => ("In development", "badge-in-development"),
+        _ => ("Working reference", "badge-reference"),
+    };
+    var headingId = $"{Model.Id}-name";
+    var stackChips = new TagListModel(Model.Stack, $"{Model.Name} stack");
+}
+@* STEP 3 of 3: render the card; the heading id ties the article to its accessible name. *@
+<article id="@Model.Id" class="@(Model.Featured ? "card card-featured" : "card")" aria-labelledby="@headingId">
+    <header class="card-header">
+        <h3 id="@headingId" class="card-title">@Model.Name</h3>
+        <span class="badge @statusClass">@statusLabel</span>
+    </header>
+    <p class="card-tagline">@Model.Tagline</p>
+    <p>@Model.Summary</p>
+    <p class="card-role"><strong>My role:</strong> @Model.Role</p>
+    <ul class="highlights">
+        @foreach (var highlight in highlights)
+        {
+            <li>@highlight</li>
+        }
+    </ul>
+    @if (Model.HonestNote is not null)
+    {
+        <p class="honest-note"><strong>Known gap:</strong> @Model.HonestNote</p>
+    }
+    <partial name="_TagList" model="stackChips" />
+    @if (Model.Links.Count > 0)
+    {
+        <p class="card-links">
+            @foreach (var link in Model.Links)
+            {
+                <partial name="_ExternalLink" model="link" />
+            }
+        </p>
+    }
+</article>

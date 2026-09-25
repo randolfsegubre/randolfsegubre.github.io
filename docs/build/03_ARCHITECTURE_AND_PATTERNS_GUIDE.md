@@ -7,51 +7,59 @@ the reasoning. Each pattern states its rejected alternative.
 ## Shape of the system
 
 ```
-index.html  ->  src/main.tsx  ->  <App />
-                                   |- Header (nav + ThemeToggle)
-                                   |- Hero            <- content/profile
-                                   |- ProjectsSection <- content/projects
-                                   |- ExperienceSection <- content/experience
-                                   |- SkillsSection   <- content/skills
-                                   |- ContactSection  <- content/profile
-                                   '- Footer
+Build time (CI or your machine)                 Run time (visitor)
+--------------------------------                ------------------
+dotnet run -- --export dist                     GitHub Pages serves dist/
+   |                                               index.html, 404.html,
+   |  starts the MVC app on a free port            css/site.css, js/theme.js
+   v
+Program.cs -> Kestrel -> MVC pipeline
+   GET /           -> HomeController.Index        -> Views/Home/Index.cshtml
+   GET /not-found  -> HomeController.NotFoundPage -> Views/Home/NotFound.cshtml
+   |
+   v
+StaticExporter writes each response as a file, copies wwwroot/
 ```
 
-Data flows one way: content modules, then props, then markup. Nothing in the
-page writes back to the data.
+Data flows one way: `Content/*.cs` records, through `IPortfolioContent`, into
+a view model, into Razor markup. Nothing in the page writes back to the data.
 
 ## Pattern catalog
 
 | Pattern | Where | Why | Rejected alternative |
 |---|---|---|---|
-| **Data-driven presentation** (content separated from view) | `src/content/*`, all sections | Content changes often, layout rarely; the type checker guards the data (ADR-0003) | Text inside JSX: every edit is a code edit and duplicates hide |
-| **Composition over configuration** | `Section` wraps every section; `ExternalLink` wraps every outbound link | One place enforces the heading structure, spacing and link safety (`rel`, new-tab hint) | Repeating raw `<a target="_blank">` tags and forgetting `rel="noopener noreferrer"` |
-| **Custom hook for a cross-cutting concern** | `useTheme` | Theme logic (storage, system preference, DOM attribute) is stateful and must not leak into components | Inline effects in the toggle component, which would tangle rendering with storage |
-| **Progressive enhancement** | inline theme script in `index.html`, plus CSS `prefers-color-scheme` | The right theme paints before React loads; the page still reads without JavaScript in the head script | Applying the theme only in a React effect, which flashes the wrong theme |
-| **Design tokens** | `:root` custom properties in `src/styles.css` | One block controls color, spacing and type in both themes (ADR-0004) | Hard-coded colors scattered through rules |
-| **Content lint as a test** | `content.test.ts` | Turns the writing rules (ADR-0006) into a failing build instead of a memory | Relying on review to notice a bare abbreviation or a stray em dash |
+| **Model-View-Controller (MVC)** | `HomeController`, `Views/`, `Models/` | The owner's home stack, and it separates HTTP handling, data shape and markup (ADR-0007) | Minimal API returning string HTML: no view separation, no partials |
+| **Dependency injection and Dependency Inversion** | `IPortfolioContent` injected into the controller and into two partials with `@inject` | The controller depends on an interface, so the content source could change (Markdown, JSON) without touching it, and tests can substitute it | `static` access from the controller: simpler, but couples it to one data source |
+| **Data-driven presentation** (content separated from view) | `Content/*.cs`, all partials | Content changes often, layout rarely; the compiler guards the data (ADR-0003) | Text inside Razor: every edit is a markup edit and duplicates hide |
+| **Immutable records** | `Models/ContentModels.cs` | Content never changes after startup, so a shared singleton is safe for every request and for the export | Mutable classes: invites accidental changes |
+| **Partial views as small components** | `_ProjectCard`, `_TagList`, `_ExternalLink`, one per section | One place enforces heading structure, link safety and chip markup | Repeating raw `<a target="_blank">` and forgetting `rel="noopener noreferrer"` |
+| **Build-time static export** (a form of pre-rendering) | `StaticExporter`, the `--export` mode in `Program.cs` | GitHub Pages cannot run a server; the export gives free hosting and an instant first load (ADR-0001, ADR-0007) | A live server on a free tier: cold starts on a recruiter's first click |
+| **Progressive enhancement** | inline theme script in `_Layout.cshtml`, hidden toggle revealed by `theme.js` | The right theme paints before scripts load; the toggle never shows as a dead button without scripting | Rendering the toggle always: a useless control when scripting is off |
+| **Design tokens** | `:root` custom properties in `site.css` | One block controls color, spacing and type in both themes (ADR-0004) | Hard-coded colors scattered through rules |
+| **Content lint as a test** | `ContentTests.cs` | Turns the writing rules (ADR-0006) into a failing build instead of a memory | Relying on review to notice a bare abbreviation or a stray em dash |
+| **Fail loudly** | `StaticExporter` throws on any non-200 page; `Program.cs` rejects relative export paths | A broken or misplaced export must never be published silently | Writing whatever came back |
 
-## Object-oriented and SOLID notes for a functional front end
+## SOLID notes
 
-React function components map onto the same principles:
-
-- **Single Responsibility:** each component shows one thing; `useTheme` only
-  manages the theme.
-- **Open/Closed:** adding a project or a role means adding data, not editing
-  a component.
-- **Dependency Inversion:** components depend on the typed shapes in
-  `src/types.ts`, not on where the data comes from, so the source could move
-  to Markdown or a file loader without touching them.
-- **Interface Segregation:** each section receives only the slice it needs.
+- **Single Responsibility:** the controller shapes a response, the content
+  service supplies data, the exporter writes files, each partial shows one
+  thing.
+- **Open/Closed:** adding a project or role means adding a record, not
+  editing a view or controller.
+- **Liskov:** any `IPortfolioContent` can replace the default one.
+- **Interface Segregation:** partials receive only the slice of the model
+  they render (a `Profile`, a list of `Project`), not the whole view model.
+- **Dependency Inversion:** see the injection row above.
 
 ## Accessibility architecture
 
-Landmarks (`header`, `main`, `footer`, `nav`) and one `h1`; a skip link to
-`#main`; every section labelled by its heading; focus styles never removed;
-external links announce that they open a new tab; motion is disabled under
-`prefers-reduced-motion`.
+Landmarks (`header`, `main`, `footer`, `nav`) and one `h1` per page; a skip
+link to `#main`; every section labelled by its heading; focus styles never
+removed; external links announce that they open a new tab; motion is disabled
+under `prefers-reduced-motion`.
 
 ## What is deliberately absent
 
-No router, no state library, no CSS framework, no analytics, no web fonts, no
-runtime network requests. Each would add weight for no visitor benefit.
+No database, no authentication, no front-end framework, no CSS framework, no
+analytics, no web fonts, no runtime network requests, and no server at request
+time. Each would add weight or cost for no visitor benefit.

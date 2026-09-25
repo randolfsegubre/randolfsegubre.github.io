@@ -7,7 +7,59 @@ snapshot.
 
 ---
 
+## 2026-09-25: Rebuilt in ASP.NET Core MVC on .NET 10 and published
+
+**Asked:** Randolf asked to publish the site so the link can go in an email to
+Ben. Mid-publish he asked which stack it used and whether it could use his
+main stack. He chose "C#, ASP.NET MVC, with the latest .NET and C# version".
+Nothing had been pushed yet, so the switch cost no public history.
+
+**What changed:**
+- Replaced the React and TypeScript front end with an **ASP.NET Core MVC**
+  application on **.NET 10 (C# 14)**: `HomeController`, Razor layout, page and
+  partial views, C# record content behind `IPortfolioContent`, dependency
+  injection, an xUnit test project. New decision record ADR-0007 supersedes
+  ADR-0002; ADR-0001, 0003, 0004 and 0005 were updated to match.
+- GitHub Pages cannot run a server, so the app exports itself at build time:
+  `dotnet run -- --export "$PWD/dist"` starts Kestrel on a free port, saves
+  `/` as `index.html` and `/not-found` as `404.html`, copies `wwwroot`, and
+  exits (`StaticExporter`). The deployed site is that static output. I did
+  not silently narrow "MVC" to "static": the source is real MVC and the live
+  site is its export, stated in ADR-0007 with the rejected alternatives.
+- Kept the content, wording, styles, and documentation standard unchanged;
+  the writing-rule test was ported to xUnit and extended with rendered-HTML
+  and exporter tests.
+- Rewrote the deploy workflow for .NET (setup, test, export, upload, deploy).
+- Created the public repository and set Pages to the "GitHub Actions" source
+  before the first push, so the first workflow run could deploy.
+
+**Verified:**
+- `dotnet build` (warnings as errors) and `dotnet test`: 18 tests pass
+  (content rules, rendered HTML through the real MVC pipeline, exporter).
+- The export produces `index.html` (about 30 KB), `404.html`, stylesheet,
+  script, favicon, `robots.txt` and `.nojekyll`; a relative export path is
+  rejected with a clear message.
+- Served the exported files like Pages would and checked in a real browser at
+  375 pixels wide: all five sections, 12 cards and roles, no failed or
+  third-party requests, no horizontal overflow, and a real click on the theme
+  toggle switches the theme, stores the choice, and updates the label.
+
+**Caught along the way:** Razor rejects nested quotes inside tag-helper
+attributes (moved those expressions into code blocks); `dotnet run` starts in
+the project folder so a relative export path landed in the wrong place (now
+rejected, absolute path used in CI); my throwaway test server compared
+forward-slash and backslash paths and served the 404 page for everything
+(fixed the script, not the site).
+
+**Next:** push, confirm the workflow and the live address, then the owner
+reviews wording. See `docs/build/04_TASKS.md`.
+
+---
+
 ## 2026-09-24: Architectural Design Phase, scaffold and Phase 1 built locally
+
+*(First build, in React and TypeScript, replaced on 2026-09-25 by ADR-0007.
+Kept as history.)*
 
 **Asked:** Randolf asked whether a GitHub Pages portfolio needs payment (it
 does not), then to scaffold the website portfolio and "do our standard

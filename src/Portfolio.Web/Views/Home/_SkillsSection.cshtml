@@ -1,0 +1,19 @@
+@model IReadOnlyList<SkillGroup>
+@*
+    Skills, grouped. Every group is a labelled list of product and technique names
+    that the projects and roles above back up (ADR-0006).
+*@
+<section id="skills" class="section" aria-labelledby="skills-heading">
+    <div class="container">
+        <h2 id="skills-heading" class="section-title">Skills</h2>
+        <div class="grid">
+            @foreach (var group in Model)
+            {
+                <div class="skill-group">
+                    <h3 class="skill-title">@group.Label</h3>
+                    <partial name="_TagList" model="new TagListModel(group.Items, group.Label)" />
+                </div>
+            }
+        </div>
+    </div>
+</section>

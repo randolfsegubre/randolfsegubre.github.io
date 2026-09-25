@@ -1,0 +1,23 @@
+@model Profile
+@*
+    How to reach the owner: email first, then profiles. Email is a plain mailto: link,
+    not a form, because a form would need a third-party service (ADR-0001).
+*@
+<section id="contact" class="section" aria-labelledby="contact-heading">
+    <div class="container">
+        <h2 id="contact-heading" class="section-title">Contact</h2>
+        <p class="section-intro">@Model.Availability</p>
+        <ul class="contact-list">
+            <li><span class="contact-label">Email</span> <a href="@("mailto:" + Model.Email)">@Model.Email</a></li>
+            @foreach (var link in Model.Links)
+            {
+                var shownAddress = new Link(link.Href.Replace("https://", string.Empty), link.Href);
+                <li>
+                    <span class="contact-label">@link.Label</span>
+                    <partial name="_ExternalLink" model="shownAddress" />
+                </li>
+            }
+            <li><span class="contact-label">Location</span> @Model.Location</li>
+        </ul>
+    </div>
+</section>

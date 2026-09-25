@@ -8,7 +8,7 @@ criteria must hold before the next starts.
 | 0 | Architectural Design Phase and scaffold | whole repo | ADRs, operating manual, this plan, patterns guide, tasks, devlog, handbook |
 | 1 | Content model and page sections | `src/` | `CONTENT_SOURCES.md`, `WALKTHROUGH.md` |
 | 2 | Publish | GitHub repo, Pages settings | devlog entry with the live address |
-| 3 | Proof and polish | `src/content`, `public/` | updated sources, devlog |
+| 3 | Proof and polish | `Content/`, `wwwroot/` | updated sources, devlog |
 | 4 | Maintenance | content | devlog per change |
 
 ## Phase 0: Architectural Design Phase and scaffold
@@ -16,8 +16,8 @@ criteria must hold before the next starts.
 - **Entry:** owner approves building the site.
 - **Work:** the six artifacts (ADRs, operating manual, patterns guide, tasks
   and devlog, handbook, plus this plan); `git init`; empty-but-buildable
-  Vite project.
-- **Exit:** docs exist and agree with each other; `npm run build` succeeds.
+  project (ASP.NET Core MVC after ADR-0007).
+- **Exit:** docs exist and agree with each other; `dotnet build` succeeds.
 
 ## Phase 1: Content model and page sections
 
@@ -26,7 +26,7 @@ criteria must hold before the next starts.
   sections Hero, Projects, Experience, Skills, Contact; theme toggle; the
   content integrity test and a render test; `WALKTHROUGH.md`;
   `CONTENT_SOURCES.md`.
-- **Exit:** `npm test` and `npm run build` pass; checked in a real browser
+- **Exit:** `dotnet test` and the static export pass; checked in a real browser
   at desktop and phone width in light and dark; no console errors; keyboard
   navigation works.
 

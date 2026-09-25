@@ -12,18 +12,23 @@ edit becomes a code edit and it is easy to miss a duplicate.
 
 ## Decision
 
-All copy lives in `src/content/*.ts` as plain typed objects (`Profile`,
-`Project`, `Role`, `SkillGroup`, declared in `src/types.ts`). Components only
-receive data and render it; they contain no hard-coded claims.
+All copy lives in `src/Portfolio.Web/Content/*.cs` as immutable C# records
+(`Profile`, `Project`, `Role`, `SkillGroup`, declared in
+`Models/ContentModels.cs`) behind the `IPortfolioContent` interface. The
+controller and Razor views only receive data and render it; they contain no
+hard-coded claims.
 
-An automated test (`src/content/content.test.ts`) enforces the writing
-rules on that data: no em dashes, no bare abbreviations in prose, https-only
-links, unique identifiers, no empty fields.
+An automated xUnit test (`tests/Portfolio.Tests/ContentTests.cs`) enforces the
+writing rules on that data: no em dashes, no bare abbreviations in prose,
+https-only links, unique identifiers, no empty fields.
+
+*(The first build, ADR-0002, held the same data as TypeScript objects. The
+rule is unchanged; only the language moved to C# with ADR-0007.)*
 
 ## Consequences
 
 - Updating the site after a new project or job means editing one data file.
-- The type checker catches a project card missing a field.
+- The compiler catches a project card missing a field.
 - The writing rules are enforced by a test instead of relying on memory.
 - Slightly more indirection than inline text. Accepted.
 

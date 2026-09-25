@@ -11,15 +11,18 @@ accessible. Fonts and styles must not require third-party requests.
 
 ## Decision
 
-- One hand-written stylesheet (`src/styles.css`) using Cascading Style Sheets
-  custom properties as design tokens (colors, spacing, type scale).
+- One hand-written stylesheet (`src/Portfolio.Web/wwwroot/css/site.css`)
+  using Cascading Style Sheets custom properties as design tokens (colors,
+  spacing, type scale).
 - The light palette is defined on `:root`. Dark values are redefined under
   `prefers-color-scheme: dark` (unless the visitor chose light) and again
   under `:root[data-theme="dark"]`, so the manual toggle wins in both
   directions.
 - The visitor's manual choice is remembered in `localStorage` inside a
-  try/catch, and an inline script in `index.html` applies it before first
-  paint to avoid a flash of the wrong theme.
+  try/catch. An inline script in `Views/Shared/_Layout.cshtml` applies it
+  before first paint to avoid a flash of the wrong theme, and a small
+  `wwwroot/js/theme.js` wires the toggle button (rendered hidden and revealed
+  by the script, so it never shows as dead without scripting).
 - System font stack only. No web fonts, no icon libraries, no external
   requests.
 

@@ -1,0 +1,89 @@
+namespace Portfolio.Web.Models;
+
+/// <summary>
+/// A labelled outbound link. The href must be https (enforced by a content test).
+/// </summary>
+public sealed record Link(string Label, string Href);
+
+/// <summary>
+/// Top-level facts about the owner, used by the hero, header and contact section.
+/// </summary>
+/// <param name="Headline">One-paragraph pitch shown in the hero. Prose, so it follows the writing rules.</param>
+/// <param name="Availability">Short line about what he is looking for.</param>
+/// <param name="ResumeUrl">Relative path to a resume file under wwwroot. The button is hidden while this is null.</param>
+public sealed record Profile(
+    string Name,
+    string Title,
+    string Location,
+    string Headline,
+    string Availability,
+    string Email,
+    IReadOnlyList<Link> Links,
+    string? ResumeUrl);
+
+/// <summary>
+/// Where a project stands. Shown on its card so nothing is oversold.
+/// </summary>
+public enum ProjectStatus
+{
+    InDevelopment,
+    Reference,
+}
+
+/// <summary>
+/// One portfolio project card.
+/// </summary>
+/// <param name="Id">Stable unique identifier, also used as the element id.</param>
+/// <param name="Role">His actual role on it, stated plainly.</param>
+/// <param name="Featured">Featured projects render larger and first.</param>
+/// <param name="Highlights">Specific, checkable points. Prose, so they follow the writing rules.</param>
+/// <param name="HonestNote">A known gap stated plainly, or null when there is none worth naming.</param>
+/// <param name="Stack">Product names shown as chips. Exempt from the abbreviation rule.</param>
+/// <param name="Links">Public links only. Empty for a private repository.</param>
+public sealed record Project(
+    string Id,
+    string Name,
+    string Tagline,
+    string Summary,
+    string Role,
+    ProjectStatus Status,
+    bool Featured,
+    IReadOnlyList<string> Highlights,
+    string? HonestNote,
+    IReadOnlyList<string> Stack,
+    IReadOnlyList<Link> Links);
+
+/// <summary>
+/// One employment role.
+/// </summary>
+/// <param name="Client">End client, when the work was done through a staffing or consulting firm.</param>
+/// <param name="Period">Human-readable period, for example "June 2024 to August 2026".</param>
+/// <param name="Stack">Product names shown as chips. Exempt from the abbreviation rule.</param>
+public sealed record Role(
+    string Id,
+    string Company,
+    string? Client,
+    string Title,
+    string Period,
+    string? Location,
+    IReadOnlyList<string> Highlights,
+    IReadOnlyList<string> Stack);
+
+/// <summary>
+/// A named group of skills. Items are product or technique names.
+/// </summary>
+public sealed record SkillGroup(string Id, string Label, IReadOnlyList<string> Items);
+
+/// <summary>
+/// Everything the home page needs, passed from the controller to the view as one model.
+/// </summary>
+public sealed record PortfolioViewModel(
+    Profile Profile,
+    IReadOnlyList<Project> Projects,
+    IReadOnlyList<Role> Experience,
+    IReadOnlyList<SkillGroup> Skills);
+
+/// <summary>
+/// Input for the shared tag-list partial: the chips and the accessible name of the list.
+/// </summary>
+public sealed record TagListModel(IReadOnlyList<string> Items, string Label);

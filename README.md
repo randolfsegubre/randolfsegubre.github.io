@@ -1,8 +1,11 @@
 # randolfsegubre.github.io
 
-Randolf Segubre's portfolio website: a single static page with selected
-projects, experience, skills and contact details. Built with Vite, React and
-TypeScript, and hosted free on GitHub Pages.
+Randolf Segubre's portfolio website: a single page with selected projects,
+experience, skills and contact details. Written as an **ASP.NET Core MVC**
+application on **.NET 10 (C# 14)** and exported to static files at build time,
+so it is hosted free on GitHub Pages and loads instantly.
+
+Live at <https://randolfsegubre.github.io>.
 
 - **Working on the code?** Read [`CLAUDE.md`](./CLAUDE.md) first, then
   [`docs/build/01_CLAUDE.md`](./docs/build/01_CLAUDE.md).
@@ -12,30 +15,31 @@ TypeScript, and hosted free on GitHub Pages.
 ## Run it
 
 ```bash
-npm ci
-npm run dev
+dotnet run --project src/Portfolio.Web
+dotnet test Portfolio.slnx
 ```
-
-Other commands: `npm test`, `npm run build`, `npm run preview`.
 
 ## What is in the repository
 
 | Path | What it holds |
 |---|---|
-| `src/content/` | All the site's words as typed data: profile, projects, experience, skills |
-| `src/components/` | Small components that render that data |
-| `src/hooks/useTheme.ts` | The light and dark theme logic |
-| `src/styles.css` | One stylesheet with design tokens |
+| `src/Portfolio.Web/Content/` | All the site's words as C# records: profile, projects, experience, skills |
+| `src/Portfolio.Web/Controllers/` | The single MVC controller |
+| `src/Portfolio.Web/Views/` | Razor layout, page and partial views |
+| `src/Portfolio.Web/Export/` | The static exporter that produces the deployable files |
+| `src/Portfolio.Web/wwwroot/` | Stylesheet, theme script, favicon, robots.txt |
+| `tests/Portfolio.Tests/` | xUnit tests: content rules, rendered HTML, exporter |
 | `docs/adr/` | Architecture Decision Records: why it is built this way |
 | `docs/build/` | Build plan, operating manual, patterns guide, tasks, devlog |
 | `docs/CONTENT_SOURCES.md` | Where each claim on the site comes from |
-| `.github/workflows/deploy.yml` | Test, build and publish to GitHub Pages on every push to `main` |
+| `.github/workflows/deploy.yml` | Test, export and publish to GitHub Pages on every push to `main` |
 
 ## Design rules in one paragraph
 
-Static site, no backend and no third-party requests (ADR-0001, ADR-0004).
-Content lives in typed data and a test enforces the writing rules (ADR-0003).
-Every claim has a checkable source and gaps are stated plainly (ADR-0006).
+ASP.NET Core MVC exported to a static site, with no live server and no
+third-party requests (ADR-0001, ADR-0007). Content lives in C# records and a
+test enforces the writing rules (ADR-0003). Every claim has a checkable source
+and gaps are stated plainly (ADR-0006).
 
 ## Status
 

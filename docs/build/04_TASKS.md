@@ -5,37 +5,42 @@ prior session; update it at the end of every session or phase boundary.
 
 ## Current phase
 
-**Phase 1 (content model and page sections)** built and verified locally.
-**Phase 2 (publish)** is waiting for the owner's approval.
+**Phase 2 (publish)** in progress, approved by the owner on 2026-09-25 so the
+link can go in an email to Ben. See `docs/build/05_DEVLOG.md` for the result.
 
 ## Done
 
-- [x] Phase 0: Architectural Design Phase artifacts (ADR-0001 to ADR-0006,
+- [x] Phase 0: Architectural Design Phase artifacts (ADR-0001 to ADR-0007,
       operating manual, build plan, patterns guide, this file, devlog,
-      developer handbook) and the Vite scaffold.
-- [x] Phase 1: typed content, five sections, theme toggle, content integrity
-      test, render test, `WALKTHROUGH.md`, `CONTENT_SOURCES.md`.
+      developer handbook).
+- [x] Phase 1: content, five sections, theme toggle, tests, walkthrough,
+      content sources. First built in React and TypeScript (2026-09-24), then
+      rebuilt in ASP.NET Core MVC on .NET 10 with a static export
+      (2026-09-25, ADR-0007) at the owner's request.
+- [x] Public repository `randolfsegubre/randolfsegubre.github.io` created and
+      Pages source set to "GitHub Actions" (2026-09-25).
 
 ## Next up (in order)
 
-- [ ] Owner reviews the content in `src/content/` (wording, project choice,
-      contact details, availability line).
-- [ ] Phase 2: create the public repository `randolfsegubre.github.io`, set
-      Pages source to "GitHub Actions", push `main`, confirm the deploy.
-- [ ] Add a link to the live site in the GitHub profile README.
+- [ ] Push `main`, confirm the workflow succeeds and
+      `https://randolfsegubre.github.io` loads (check the devlog for status).
+- [ ] Owner reviews the wording in `src/Portfolio.Web/Content/`.
+- [ ] Add a link to the live site in the GitHub profile README (a separate
+      repository; its stale claims also need fixing, see the devlog).
 - [ ] Phase 3: project screenshots, live demo links, resume download, a
       Lighthouse pass.
 
 ## Explicitly deferred (tracked so they are never silently forgotten)
 
 - **Resume download button.** Hidden until the owner confirms the final
-  resume file; set `resumeUrl` in `src/content/profile.ts` and add the file
-  under `public/`.
+  resume file; set `ResumeUrl` in `Content/ProfileData.cs` and add the file
+  under `wwwroot/`.
 - **Custom domain.** Optional; costs money; not needed to launch.
-- **Per-project detail pages.** Cards are enough for now (ADR-0003 notes when
-  to revisit).
+- **Per-project detail pages.** Cards are enough for now.
 - **Galaxy Survivor link.** Its repository is private, so the card carries no
   link by design.
+- **A live MVC server.** Not needed; the app runs unchanged with `dotnet run`
+  if ever wanted (ADR-0007).
 
 ## Open questions
 

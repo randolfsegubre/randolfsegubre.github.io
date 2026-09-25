@@ -1,0 +1,14 @@
+@model PortfolioViewModel
+@*
+    The whole page, top to bottom. This view only decides the order of sections; each
+    partial receives just the slice of the model it needs, and none holds a claim or
+    a piece of copy (ADR-0003).
+*@
+@{
+    ViewData["Title"] = $"{Model.Profile.Name} | {Model.Profile.Title}";
+}
+<partial name="_Hero" model="Model.Profile" />
+<partial name="_ProjectsSection" model="Model.Projects" />
+<partial name="_ExperienceSection" model="Model.Experience" />
+<partial name="_SkillsSection" model="Model.Skills" />
+<partial name="_ContactSection" model="Model.Profile" />

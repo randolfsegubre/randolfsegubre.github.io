@@ -6,13 +6,13 @@ The root `CLAUDE.md` auto-loads and points here.
 
 ## What this project is
 
-Randolf Segubre's personal portfolio website: a single static page (hero,
-selected projects, experience, skills, contact) built with Vite, React and
-TypeScript, hosted free on GitHub Pages at
-`https://randolfsegubre.github.io`. Its job is to give a recruiter or hiring
-manager, within sixty seconds, an honest picture of what he has built and
-what he can do. It supports his job search but is not a substitute for the
-resume.
+Randolf Segubre's personal portfolio website: a single page (hero, selected
+projects, experience, skills, contact), written as an **ASP.NET Core MVC**
+application on **.NET 10 with C# 14** and exported at build time to static
+files, hosted free on GitHub Pages at `https://randolfsegubre.github.io`. Its
+job is to give a recruiter or hiring manager, within sixty seconds, an honest
+picture of what he has built and what he can do. It supports his job search
+but is not a substitute for the resume.
 
 The sentence that overrides every design temptation: **the site says only
 what can be checked** (ADR-0006). A modest true claim beats an impressive
@@ -31,27 +31,28 @@ doubtful one, every time.
    structure.
 8. `docs/CONTENT_SOURCES.md`: where each claim on the site comes from.
 9. `docs/DEVELOPER_HANDBOOK.md`: setup and everyday commands.
-10. `WALKTHROUGH.md`: how a page load flows through the code.
+10. `WALKTHROUGH.md`: how a page request flows through the code.
 
 ## First-session checklist
 
 - [ ] Read this file, `04_TASKS.md`, and the last two `05_DEVLOG.md` entries.
 - [ ] Run `git status` and `git log --oneline -10`; confirm the tree matches
       what the docs claim before trusting either.
-- [ ] Run `npm ci`, `npm test`, `npm run build`; all must pass before you
-      change anything.
+- [ ] Run `dotnet test Portfolio.slnx`; it must pass before you change
+      anything.
 - [ ] Check `docs/adr/` before any structural decision.
 
 ## Load-bearing decisions (pointers, not repeats)
 
 | Decision | ADR |
 |---|---|
-| Static site on GitHub Pages, no backend | [ADR-0001](../adr/ADR-0001-static-site-on-github-pages.md) |
-| Vite, React, TypeScript (strict) | [ADR-0002](../adr/ADR-0002-vite-react-typescript.md) |
-| Content in typed data modules, enforced by a test | [ADR-0003](../adr/ADR-0003-typed-content-modules.md) |
+| Static site on GitHub Pages, no live server | [ADR-0001](../adr/ADR-0001-static-site-on-github-pages.md) |
+| ~~Vite, React, TypeScript~~ (superseded) | [ADR-0002](../adr/ADR-0002-vite-react-typescript.md) |
+| Content as C# records behind an interface, enforced by a test | [ADR-0003](../adr/ADR-0003-typed-content-modules.md) |
 | Plain CSS design tokens, light and dark | [ADR-0004](../adr/ADR-0004-plain-css-design-tokens.md) |
 | Deploy with the official GitHub Actions Pages workflow | [ADR-0005](../adr/ADR-0005-deploy-with-github-actions.md) |
 | Content honesty and safety policy | [ADR-0006](../adr/ADR-0006-content-honesty-and-safety-policy.md) |
+| ASP.NET Core MVC on .NET 10, exported to static files | [ADR-0007](../adr/ADR-0007-aspnet-core-mvc-with-static-export.md) |
 
 A new significant decision (a new dependency, a reversal) gets a new
 `ADR-000N` the moment it is made, and a row in this table.
@@ -71,33 +72,37 @@ A new significant decision (a new dependency, a reversal) gets a new
 - **Writing style.** First person where the site speaks as him, no em
   dashes, and Full Word Format (FWF): abbreviations are written out in full
   words on first use, for example Content Security Policy. The tag chips that
-  list product names are exempt. `content.test.ts` enforces this on the
+  list product names are exempt. `ContentTests.cs` enforces this on the
   content.
-- **Do not publish without approval.** Creating the public repository,
-  pushing, and turning on Pages are outward-facing steps that need the
-  owner's explicit yes each time.
+- **Do not publish without approval.** Creating or changing what is live on
+  the public repository and Pages is outward-facing and needs the owner's
+  explicit yes. (Publishing the first version was approved on 2026-09-25.)
+- **The deployed site is static.** Nothing may need a server at request
+  time. Every page must be reachable through `StaticExporter.Pages`.
 - **Accessibility is a requirement, not polish.** Semantic landmarks, a skip
   link, visible focus, sufficient contrast in both themes, keyboard
   operability, and `prefers-reduced-motion` respected.
 
 ## Engineering conventions
 
-- **TypeScript strict mode.** No `any`.
+- **C# 14 on .NET 10, nullable reference types on, warnings are errors.**
 - **In-code documentation is required.** This is the owner's standing
   preference for all his personal projects and deliberately overrides the
   general "no comments" default:
-  1. A TSDoc `/** ... */` summary block above every component, hook and
-     non-trivial function: what it is, the role or pattern it plays, and
-     why it exists.
-  2. Numbered `// STEP N of M: ...` comments inside any multi-step function
+  1. An XML `<summary>` block above every class, record, interface and
+     non-trivial method: what it is, the role or pattern it plays (for
+     example "this is the controller in MVC..."), and why it exists. In Razor
+     views and partials, a `@* ... *@` comment at the top plays the same role.
+  2. Numbered `// STEP N of M: ...` comments inside any multi-step method
      body, in the order the steps execute.
-  3. `WALKTHROUGH.md` at the repo root, kept current whenever the page-load
+  3. `WALKTHROUGH.md` at the repo root, kept current whenever the request
      flow changes.
-  Trivial one-line helpers do not need a block.
-- **Components render, data lives in `src/content`.** No claim text in JSX.
-- **Small components, one job each**, named for what they show.
-- **Tests match the phase.** Content integrity and render tests exist now.
-  Do not add heavy infrastructure ahead of need.
+  Trivial one-line members do not need a block.
+- **Views render, content lives in `Content/`.** No claim text in Razor.
+- **Controllers stay thin.** They ask `IPortfolioContent` for data and return
+  a view model. Logic that is not about HTTP goes elsewhere.
+- **Tests match the phase.** xUnit tests cover the content rules, the rendered
+  HTML and the exporter. Do not add heavy infrastructure ahead of need.
 
 ## Working with Randolf on this project
 

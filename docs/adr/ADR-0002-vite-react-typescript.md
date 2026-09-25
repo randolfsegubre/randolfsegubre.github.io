@@ -1,6 +1,6 @@
 # ADR-0002: Vite, React and TypeScript for the front end
 
-- **Status:** Accepted
+- **Status:** Superseded by [ADR-0007](ADR-0007-aspnet-core-mvc-with-static-export.md) on 2026-09-25. Kept for the record: this was the first build (React and TypeScript), replaced before publishing because the owner wanted the site in his main stack, C# and ASP.NET MVC.
 - **Date:** 2026-09-24
 
 ## Context
