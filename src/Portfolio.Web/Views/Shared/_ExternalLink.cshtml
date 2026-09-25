@@ -1,11 +1,18 @@
 @model Link
+@using Portfolio.Web.Content
 @*
     A link that leaves the site. Every outbound link goes through this partial so the
     safety and accessibility details are written once: rel="noopener noreferrer" stops
     the new tab controlling this one, and the visually hidden text tells screen reader
     users the link opens a new tab. Pass ViewData["class"] to style it as a button.
+    Pass ViewData["icon"] = true to show the profile icon (GitHub or LinkedIn) before the
+    label when SocialIconData has one; the icon is decorative and the label names the link.
 *@
 @{
     var cssClass = ViewData["class"] as string;
+    var showIcon = ViewData["icon"] is true;
+    // ViewData["iconFor"] names the profile (for example "GitHub") when the shown text is an address instead.
+    var iconKey = ViewData["iconFor"] as string ?? Model.Label;
+    var iconMarkup = showIcon ? SocialIconData.Find(iconKey) : null;
 }
-<a href="@Model.Href" target="_blank" rel="noopener noreferrer" class="@cssClass">@Model.Label<span class="visually-hidden"> (opens in a new tab)</span></a>
+<a href="@Model.Href" target="_blank" rel="noopener noreferrer" class="@cssClass">@if (iconMarkup is not null){<svg class="link-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">@Html.Raw(iconMarkup)</svg>}@Model.Label<span class="visually-hidden"> (opens in a new tab)</span></a>

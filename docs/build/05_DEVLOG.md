@@ -7,6 +7,32 @@ snapshot.
 
 ---
 
+## 2026-09-26: New portrait, and GitHub and LinkedIn icons
+
+**Asked:** change the portfolio image to the new photo (blue shirt, glasses),
+and include the GitHub profile and LinkedIn.
+
+**What changed:**
+- **Portrait replaced.** The first photo he sent (the graduation portrait) was
+  removed from the site. The new photo arrived saved on disk this time
+  (1474 by 1069), so I cropped a 520 by 520 square centered on the face (head,
+  glasses, hand and shoulders), resized it to 640 by 640 and saved it as a 50 KB
+  JPEG, `wwwroot/images/randolf.jpg`. Nothing else in the image was altered.
+  The link-preview image (email, LinkedIn, chat apps) uses the same file.
+- **GitHub and LinkedIn** were already linked in the hero and the contact
+  section; they now carry recognisable icons in both places. The GitHub icon is
+  the public-domain Simple Icons shape; LinkedIn is not in that set, so its mark
+  is a hand-drawn "in" square, flagged as an approximation in the notices file.
+  The icons are decorative and follow the button colors and hover state.
+
+**Verified:** 112 tests pass (new: both profiles are linked with icons in the
+hero and the contact section, with safe new-tab links). In a real browser at 375
+pixels the new portrait loads (640 by 640, shown at 120 pixels), the icons render
+at 18 pixels in the button color, and there is no horizontal overflow. The
+published output contains only the new photo file.
+
+---
+
 ## 2026-09-25 (after midnight): Phone numbers, and the correct Santa's Lapland address
 
 **Asked:** show his mobile and Viber number (+63 917 1022 203) and his WhatsApp

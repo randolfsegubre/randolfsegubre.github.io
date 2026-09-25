@@ -24,7 +24,20 @@ third-party material is embedded in the source, listed here.
   name to `Profile.BackdropTags` (it must also appear in a project or role stack)
   and add an entry to `TechLogoData`.
 
+## Profile link icons
+
+- **GitHub** uses the same public-domain Simple Icons shape as the technology
+  logos above.
+- **LinkedIn** is not in that icon set, so its mark in
+  `src/Portfolio.Web/Content/SocialIconData.cs` is a rounded square with the
+  letters "in" cut out, drawn for this site. It is a hand-drawn approximation,
+  not the official artwork, and can be replaced by editing that one entry.
+- Both icons are drawn in the surrounding text color and are decorative; the
+  link text names the destination. Trademarks belong to their owners.
+
 ## Portrait
 
-The portrait `src/Portfolio.Web/wwwroot/images/randolf.webp` is the site
-owner's own photograph, supplied by him.
+The portrait `src/Portfolio.Web/wwwroot/images/randolf.jpg` is the site
+owner's own photograph, supplied by him. It is a square crop (head and
+shoulders) of the photo he supplied on 2026-09-26, resized to 640 by 640
+pixels; the image content is otherwise unedited.

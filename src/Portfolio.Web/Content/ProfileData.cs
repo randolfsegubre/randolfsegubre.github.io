@@ -53,7 +53,7 @@ public static class ProfileData
             "C#", ".NET 10", "Umbraco", "Vue.js", "React", "Blazor",
             "Docker", "Jenkins", "MongoDB", "MySQL", "GitHub", "Next.js",
         ],
-        PhotoUrl: "/images/randolf.webp",
+        PhotoUrl: "/images/randolf.jpg",
         PhotoAlt: "Portrait of Randolf Segubre",
         ResumeUrl: null);
 }

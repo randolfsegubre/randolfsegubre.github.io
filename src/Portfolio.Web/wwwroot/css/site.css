@@ -661,6 +661,15 @@ a:hover {
   font-weight: 700;
 }
 
+/* Profile icons (GitHub, LinkedIn) inside links: drawn in the link's own color. */
+.link-icon {
+  width: 1.1em;
+  height: 1.1em;
+  margin-right: 0.45em;
+  vertical-align: -0.18em;
+  fill: currentColor;
+}
+
 .contact-action {
   font-size: 0.9rem;
   font-weight: 600;

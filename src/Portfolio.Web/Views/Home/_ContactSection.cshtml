@@ -35,10 +35,11 @@
             }
             @foreach (var link in Model.Links)
             {
+                // The icon lookup uses the profile's label (GitHub, LinkedIn); the shown text is the address.
                 var shownAddress = new Link(link.Href.Replace("https://", string.Empty), link.Href);
                 <li class="contact-card" data-reveal>
                     <span class="contact-label">@link.Label</span>
-                    <partial name="_ExternalLink" model="shownAddress" view-data="@(new ViewDataDictionary(ViewData) { { "class", "contact-link" } })" />
+                    <partial name="_ExternalLink" model="shownAddress" view-data="@(new ViewDataDictionary(ViewData) { { "class", "contact-link" }, { "icon", true }, { "iconFor", link.Label } })" />
                 </li>
             }
             <li class="contact-card" data-reveal>

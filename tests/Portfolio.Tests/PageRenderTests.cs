@@ -184,6 +184,31 @@ public sealed class PageRenderTests(WebApplicationFactory<Program> factory) : IC
     }
 
     [Fact]
+    public async Task GitHub_and_LinkedIn_profiles_are_linked_with_icons_in_the_hero_and_the_contact_section()
+    {
+        var page = await GetPageAsync("/");
+
+        Assert.All(Content.Profile.Links, link =>
+        {
+            // Hero button: the label with its icon.
+            var heroLink = page.QuerySelector($".hero a[href='{link.Href}']");
+            Assert.NotNull(heroLink);
+            Assert.Contains(link.Label, heroLink.TextContent);
+            Assert.NotNull(heroLink.QuerySelector("svg.link-icon path"));
+            Assert.Equal("true", heroLink.QuerySelector("svg.link-icon")!.GetAttribute("aria-hidden"));
+            Assert.Contains("noopener", heroLink.GetAttribute("rel"));
+
+            // Contact card: the address with its icon.
+            var contactLink = page.QuerySelector($"#contact a[href='{link.Href}']");
+            Assert.NotNull(contactLink);
+            Assert.NotNull(contactLink.QuerySelector("svg.link-icon path"));
+        });
+
+        Assert.Contains(Content.Profile.Links, l => l.Label == "GitHub" && l.Href.StartsWith("https://github.com/"));
+        Assert.Contains(Content.Profile.Links, l => l.Label == "LinkedIn" && l.Href.StartsWith("https://www.linkedin.com/in/"));
+    }
+
+    [Fact]
     public async Task Whole_page_never_exposes_an_internal_hosting_address()
     {
         var page = await GetPageAsync("/");

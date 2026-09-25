@@ -45,7 +45,7 @@
                 }
                 @foreach (var link in Model.Links)
                 {
-                    <partial name="_ExternalLink" model="link" view-data="@(new ViewDataDictionary(ViewData) { { "class", "button" } })" />
+                    <partial name="_ExternalLink" model="link" view-data="@(new ViewDataDictionary(ViewData) { { "class", "button" }, { "icon", true } })" />
                 }
             </div>
         </div>

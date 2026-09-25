@@ -19,7 +19,7 @@ current.
 | Hero code card: name, title, location, availability, signature stack (C#, ASP.NET Core, Umbraco, Vue.js, SQL Server) | Generated from the same profile data; each stack item appears in the experience and projects below |
 | Backdrop code columns | Generic idioms written for the site (no proprietary code; they mirror this site's own source and the stacks named in the projects and roles) |
 | Floating technology logos (C#, .NET, Umbraco, Vue.js, React, Blazor, Docker, Jenkins, MongoDB, MySQL, GitHub, Next.js) | Each technology must appear in a project stack, a role stack, or the skills, and have a logo (both enforced by tests). Logo artwork is from Simple Icons (CC0), except the C# mark, which is hand-drawn; see `docs/THIRD_PARTY_NOTICES.md` |
-| Portrait | The owner's own photo, supplied by him on 2026-09-25 for the site. It is his graduation portrait, cropped to a circle by the stylesheet; the file is not otherwise edited |
+| Portrait | The owner's own photo, supplied by him on 2026-09-26 (replacing the graduation portrait he supplied on 2026-09-25). The file is a square head-and-shoulders crop, resized to 640 by 640 pixels and shown in a circle by the stylesheet; the image content is not otherwise edited |
 
 ## Experience
 
