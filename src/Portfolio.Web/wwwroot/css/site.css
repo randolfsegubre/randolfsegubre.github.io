@@ -45,6 +45,15 @@
   --hero-gold: #f2cd6b;
   --hero-button-text: #2a1160;
 
+  /* Code card in the hero (the same in both themes) */
+  --code-bg: #0e0620;
+  --code-text: #e9e2ff;
+  --code-keyword: #b794ff;
+  --code-type: #e9b6ff;
+  --code-string: #f2cd6b;
+  --code-comment: #9a8bc4;
+  --code-operator: #c4b0ff;
+
   --font: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   --font-display: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif;
   --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
@@ -247,7 +256,8 @@ a:hover {
   border-bottom: 2px solid transparent;
 }
 
-.nav-list a:hover {
+.nav-list a:hover,
+.nav-list a[aria-current="true"] {
   color: var(--chrome-text);
   border-bottom-color: var(--chrome-gold);
 }
@@ -278,6 +288,7 @@ a:hover {
 
 .hero {
   position: relative;
+  overflow: hidden;
   color: var(--hero-text);
   padding-block: var(--space-7) calc(var(--space-7) + var(--space-3));
   background:
@@ -429,7 +440,8 @@ a:hover {
   border-radius: var(--radius);
   padding: var(--space-5);
   box-shadow: 0 1px 2px rgb(var(--shadow) / 0.06), 0 12px 28px -16px rgb(var(--shadow) / 0.35);
-  transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
+  /* opacity and transform also carry the scroll-reveal, so they are listed here. */
+  transition: opacity 0.6s ease, transform 0.3s ease, border-color 0.2s, box-shadow 0.2s;
 }
 
 .card:hover,
@@ -614,16 +626,41 @@ a:hover {
 .contact-list {
   list-style: none;
   padding: 0;
-  margin: var(--space-4) 0 0;
+  margin: var(--space-5) 0 0;
   display: grid;
-  gap: var(--space-3);
+  gap: var(--space-4);
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr));
+}
+
+.contact-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: var(--space-4) var(--space-5);
+  box-shadow: 0 1px 2px rgb(var(--shadow) / 0.06), 0 12px 28px -16px rgb(var(--shadow) / 0.35);
+  overflow-wrap: anywhere;
 }
 
 .contact-label {
-  display: inline-block;
-  min-width: 6rem;
   color: var(--text-muted);
+  font-size: 0.8rem;
   font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.contact-link {
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+.contact-value {
+  font-family: var(--font-display);
+  font-size: 1.1rem;
 }
 
 .site-footer {
@@ -642,6 +679,209 @@ a:hover {
   color: var(--chrome-gold);
 }
 
+/* Hero layout: copy beside the code card on wide screens, stacked on phones */
+
+.hero-grid {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  gap: var(--space-6);
+  align-items: center;
+}
+
+@media (min-width: 60rem) {
+  .hero-grid {
+    grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+  }
+}
+
+/* Backdrop of drifting C# fragments (decorative, ADR-0008) */
+
+.code-backdrop {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+  user-select: none;
+}
+
+.code-bit {
+  position: absolute;
+  left: var(--x);
+  top: var(--y);
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  line-height: 1.5;
+  white-space: pre;
+  color: color-mix(in srgb, var(--hero-muted) 32%, transparent);
+  animation: drift var(--d, 18s) ease-in-out var(--delay, 0s) infinite alternate;
+}
+
+@keyframes drift {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+
+  to {
+    transform: translate3d(0, -18px, 0);
+  }
+}
+
+/* Phones: keep only the fragments placed at the very top and bottom edges (see _CodeBackdrop.cshtml). */
+@media (max-width: 41.99rem) {
+  .code-bit:not(:nth-child(1), :nth-child(5), :nth-child(9)) {
+    display: none;
+  }
+}
+
+/* The code card: the owner's profile written as a C# record */
+
+.code-card {
+  background: var(--code-bg);
+  border: 1px solid color-mix(in srgb, var(--hero-gold) 35%, transparent);
+  border-radius: var(--radius);
+  box-shadow: 0 24px 60px -24px rgb(0 0 0 / 0.65), 0 0 0 6px color-mix(in srgb, var(--hero-gold) 6%, transparent);
+  overflow: hidden;
+}
+
+.code-card-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.6rem 0.9rem;
+  background: color-mix(in srgb, var(--code-bg) 70%, #3a1878);
+  border-bottom: 1px solid color-mix(in srgb, var(--hero-gold) 20%, transparent);
+}
+
+.code-dot {
+  width: 0.65rem;
+  height: 0.65rem;
+  border-radius: 50%;
+}
+
+.code-dot-gold {
+  background: var(--code-string);
+}
+
+.code-dot-orchid {
+  background: var(--code-type);
+}
+
+.code-dot-violet {
+  background: var(--code-keyword);
+}
+
+.code-card-file {
+  margin-left: 0.6rem;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  color: var(--code-comment);
+}
+
+.code-card-body {
+  margin: 0;
+  padding: var(--space-4) var(--space-5);
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  line-height: 1.7;
+  color: var(--code-text);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.tok-k {
+  color: var(--code-keyword);
+}
+
+.tok-t {
+  color: var(--code-type);
+}
+
+.tok-s {
+  color: var(--code-string);
+}
+
+.tok-c {
+  color: var(--code-comment);
+}
+
+.tok-o {
+  color: var(--code-operator);
+}
+
+/* Stats strip: a few checkable facts, overlapping the hero's bottom edge */
+
+.stats-wrap {
+  position: relative;
+  z-index: 2;
+  margin-top: -2.5rem;
+}
+
+.stats {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: var(--space-4);
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 12rem), 1fr));
+}
+
+.stat {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-top: 3px solid var(--gold-bright);
+  border-radius: var(--radius);
+  padding: var(--space-4) var(--space-5);
+  box-shadow: 0 1px 2px rgb(var(--shadow) / 0.06), 0 16px 32px -18px rgb(var(--shadow) / 0.5);
+}
+
+.stat-value {
+  display: block;
+  font-family: var(--font-display);
+  font-size: 2.1rem;
+  line-height: 1.1;
+  color: var(--gold);
+}
+
+.stat-label {
+  display: block;
+  margin-top: var(--space-1);
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+
+/* Scroll reveal: content is hidden only when the script that reveals it is running (the "js" class). */
+
+/* :where() keeps this at zero specificity so cards keep their own richer hover transitions. */
+:where([data-reveal]) {
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
+.js [data-reveal]:not(.is-visible) {
+  opacity: 0;
+  transform: translateY(18px);
+}
+
+/* Scroll progress bar: gold on purple, fixed to the top edge */
+
+.scroll-progress {
+  position: fixed;
+  inset: 0 0 auto 0;
+  z-index: 30;
+  height: 3px;
+  pointer-events: none;
+}
+
+.scroll-progress span {
+  display: block;
+  height: 100%;
+  transform-origin: 0 50%;
+  transform: scaleX(var(--progress, 0));
+  background: linear-gradient(90deg, #8b5cf6, var(--chrome-gold));
+}
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
@@ -650,6 +890,11 @@ a:hover {
   * {
     transition: none !important;
     animation: none !important;
+  }
+
+  .js [data-reveal]:not(.is-visible) {
+    opacity: 1;
+    transform: none;
   }
 
   .card:hover,

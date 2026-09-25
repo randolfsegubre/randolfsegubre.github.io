@@ -20,7 +20,7 @@
     var stackChips = new TagListModel(Model.Stack, $"{Model.Name} stack");
 }
 @* STEP 3 of 3: render the card; the heading id ties the article to its accessible name. *@
-<article id="@Model.Id" class="@(Model.Featured ? "card card-featured" : "card")" aria-labelledby="@headingId">
+<article id="@Model.Id" class="@(Model.Featured ? "card card-featured" : "card")" aria-labelledby="@headingId" data-reveal>
     <header class="card-header">
         <h3 id="@headingId" class="card-title">@Model.Name</h3>
         <span class="badge @statusClass">@statusLabel</span>

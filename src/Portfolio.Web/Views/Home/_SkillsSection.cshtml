@@ -5,11 +5,11 @@
 *@
 <section id="skills" class="section" aria-labelledby="skills-heading">
     <div class="container">
-        <h2 id="skills-heading" class="section-title">Skills</h2>
+        <h2 id="skills-heading" class="section-title" data-reveal>Skills</h2>
         <div class="grid">
             @foreach (var group in Model)
             {
-                <div class="skill-group">
+                <div class="skill-group" data-reveal>
                     <h3 class="skill-title">@group.Label</h3>
                     <partial name="_TagList" model="new TagListModel(group.Items, group.Label)" />
                 </div>

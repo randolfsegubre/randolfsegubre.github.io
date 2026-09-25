@@ -7,13 +7,13 @@
 *@
 <section id="experience" class="section" aria-labelledby="experience-heading">
     <div class="container">
-        <h2 id="experience-heading" class="section-title">Experience</h2>
-        <p class="section-intro">Nine-plus years of professional C# and .NET, newest first.</p>
+        <h2 id="experience-heading" class="section-title" data-reveal>Experience</h2>
+        <p class="section-intro" data-reveal>Nine-plus years of professional C# and .NET, newest first.</p>
         <ol class="timeline">
             @foreach (var role in Model)
             {
                 var techChips = new TagListModel(role.Stack, $"{role.Company} technologies");
-                <li>
+                <li data-reveal>
                     <article class="role" aria-labelledby="@(role.Id + "-title")">
                         <header>
                             <h3 id="@(role.Id + "-title")" class="role-title">@role.Title</h3>

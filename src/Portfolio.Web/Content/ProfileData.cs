@@ -24,5 +24,13 @@ public static class ProfileData
             new Link("GitHub", "https://github.com/randolfsegubre"),
             new Link("LinkedIn", "https://www.linkedin.com/in/rsegubre"),
         ],
+        SignatureStack: ["C#", "ASP.NET Core", "Umbraco", "Vue.js", "SQL Server"],
+        Stats:
+        [
+            new Stat("9+", "years of professional C# and .NET"),
+            new Stat("3", "industries: travel, healthcare and construction"),
+            new Stat("5", "employers since 2017"),
+            new Stat("660+", "commits across eight repositories on one client platform"),
+        ],
         ResumeUrl: null);
 }

@@ -128,6 +128,52 @@ public sealed class PageRenderTests(WebApplicationFactory<Program> factory) : IC
     }
 
     [Fact]
+    public async Task Stats_strip_shows_every_stat_from_the_data()
+    {
+        var page = await GetPageAsync("/");
+
+        var rendered = page.QuerySelectorAll("li.stat").Select(li => li.QuerySelector(".stat-value")?.TextContent.Trim()).ToList();
+        Assert.Equal(Content.Profile.Stats.Select(s => s.Value), rendered);
+    }
+
+    [Fact]
+    public async Task Hero_code_card_is_rendered_from_the_profile_and_hidden_from_assistive_technology()
+    {
+        var page = await GetPageAsync("/");
+
+        var card = page.QuerySelector(".code-card");
+        Assert.NotNull(card);
+        Assert.Equal("true", card.GetAttribute("aria-hidden"));
+        Assert.Contains(Content.Profile.Name, card.TextContent);
+        Assert.Contains(Content.Profile.Title, card.TextContent);
+        Assert.All(Content.Profile.SignatureStack, item => Assert.Contains(item, card.TextContent));
+    }
+
+    [Fact]
+    public async Task Code_backdrop_is_purely_decorative()
+    {
+        var page = await GetPageAsync("/");
+
+        var backdrop = page.QuerySelector(".code-backdrop");
+        Assert.NotNull(backdrop);
+        Assert.Equal("true", backdrop.GetAttribute("aria-hidden"));
+        Assert.True(backdrop.QuerySelectorAll(".code-bit").Length >= 6);
+    }
+
+    [Fact]
+    public async Task Page_wires_reveals_progress_bar_and_script_as_enhancements()
+    {
+        var page = await GetPageAsync("/");
+
+        Assert.True(page.QuerySelectorAll("[data-reveal]").Length > 10);
+        Assert.Equal("true", page.QuerySelector(".scroll-progress")?.GetAttribute("aria-hidden"));
+        Assert.NotNull(page.QuerySelector("script[src^='/js/site.js']"));
+
+        // The hero must never wait for a reveal: it is the first thing every visitor sees.
+        Assert.Empty(page.QuerySelectorAll(".hero [data-reveal]"));
+    }
+
+    [Fact]
     public async Task Not_found_page_renders_with_its_own_heading()
     {
         var page = await GetPageAsync("/not-found");

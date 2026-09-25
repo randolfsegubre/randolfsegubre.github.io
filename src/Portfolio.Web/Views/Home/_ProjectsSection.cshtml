@@ -6,15 +6,15 @@
 *@
 <section id="projects" class="section" aria-labelledby="projects-heading">
     <div class="container">
-        <h2 id="projects-heading" class="section-title">Selected projects</h2>
-        <p class="section-intro">Public work I can show. Each card says what it is, what my part was, and what is not finished.</p>
+        <h2 id="projects-heading" class="section-title" data-reveal>Selected projects</h2>
+        <p class="section-intro" data-reveal>Public work I can show. Each card says what it is, what my part was, and what is not finished.</p>
         <div class="stack">
             @foreach (var project in Model.Where(p => p.Featured))
             {
                 <partial name="_ProjectCard" model="project" />
             }
         </div>
-        <h3 class="subheading">More projects</h3>
+        <h3 class="subheading" data-reveal>More projects</h3>
         <div class="grid">
             @foreach (var project in Model.Where(p => !p.Featured))
             {

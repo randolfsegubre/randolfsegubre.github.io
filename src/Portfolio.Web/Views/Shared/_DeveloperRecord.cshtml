@@ -1,0 +1,25 @@
+@model Profile
+@*
+    The hero's signature piece: the owner's profile written as a C# record, rendered from
+    the same Profile data as the rest of the page so it can never disagree with it
+    (ADR-0003, ADR-0008). It repeats information already in the hero, so it is hidden from
+    assistive technology to avoid reading everything twice.
+*@
+<div class="code-card" aria-hidden="true">
+    <div class="code-card-bar">
+        <span class="code-dot code-dot-gold"></span>
+        <span class="code-dot code-dot-orchid"></span>
+        <span class="code-dot code-dot-violet"></span>
+        <span class="code-card-file">Developer.cs</span>
+    </div>
+<pre class="code-card-body"><code><span class="tok-k">public sealed record</span> <span class="tok-t">Developer</span>
+{
+    <span class="tok-k">public string</span> Name  <span class="tok-o">=&gt;</span> <span class="tok-s">"@Model.Name"</span>;
+    <span class="tok-k">public string</span> Title <span class="tok-o">=&gt;</span> <span class="tok-s">"@Model.Title"</span>;
+    <span class="tok-k">public string</span> Based <span class="tok-o">=&gt;</span> <span class="tok-s">"@Model.Location"</span>;
+
+    <span class="tok-k">public string</span>[] Stack <span class="tok-o">=&gt;</span> [@foreach (var item in Model.SignatureStack.Select((s, i) => (s, i))) {<span class="tok-s">"@item.s"</span>@(item.i < Model.SignatureStack.Count - 1 ? ", " : "")}];
+
+    <span class="tok-c">// @Model.Availability</span>
+}</code></pre>
+</div>

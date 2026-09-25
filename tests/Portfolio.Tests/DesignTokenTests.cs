@@ -107,6 +107,12 @@ public sealed partial class DesignTokenTests(WebApplicationFactory<Program> fact
         { "hero-gold", "hero-to", TextMinimum },
         { "hero-button-text", "hero-gold", TextMinimum },
         { "chrome-gold", "hero-via", TextMinimum },
+        { "code-text", "code-bg", TextMinimum },
+        { "code-keyword", "code-bg", TextMinimum },
+        { "code-type", "code-bg", TextMinimum },
+        { "code-string", "code-bg", TextMinimum },
+        { "code-comment", "code-bg", TextMinimum },
+        { "code-operator", "code-bg", TextMinimum },
     };
 
     [Theory]

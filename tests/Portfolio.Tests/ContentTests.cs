@@ -33,6 +33,8 @@ public sealed partial class ContentTests
             ("profile.availability", Content.Profile.Availability),
         };
 
+        prose.AddRange(Content.Profile.Stats.Select((stat, i) => ($"profile.stats[{i}].label", stat.Label)));
+
         foreach (var project in Content.Projects)
         {
             prose.Add(($"{project.Id}.tagline", project.Tagline));
@@ -58,6 +60,8 @@ public sealed partial class ContentTests
     private static IEnumerable<string> AllStrings() =>
         ProseStrings().Select(p => p.Text)
             .Concat([Content.Profile.Name, Content.Profile.Title, Content.Profile.Location, Content.Profile.Email])
+            .Concat(Content.Profile.SignatureStack)
+            .Concat(Content.Profile.Stats.Select(s => s.Value))
             .Concat(Content.Projects.SelectMany(p => p.Stack.Prepend(p.Name)))
             .Concat(Content.Experience.SelectMany(r => r.Stack.Concat([r.Company, r.Title, r.Period]).Concat(r.Client is null ? [] : [r.Client])))
             .Concat(Content.Skills.SelectMany(g => g.Items.Prepend(g.Label)));
@@ -129,6 +133,21 @@ public sealed partial class ContentTests
         }
 
         Assert.All(Content.Experience, role => Assert.NotEmpty(role.Highlights));
+    }
+
+    [Fact]
+    public void Stats_are_present_and_complete_and_never_percentages()
+    {
+        Assert.NotEmpty(Content.Profile.Stats);
+        Assert.All(Content.Profile.Stats, stat =>
+        {
+            Assert.False(string.IsNullOrWhiteSpace(stat.Value));
+            Assert.False(string.IsNullOrWhiteSpace(stat.Label));
+
+            // Skill percentages cannot be verified, so the site never shows them (ADR-0006, ADR-0008).
+            Assert.DoesNotContain('%', stat.Value);
+        });
+        Assert.NotEmpty(Content.Profile.SignatureStack);
     }
 
     [Fact]

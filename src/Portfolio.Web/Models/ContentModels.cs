@@ -6,10 +6,19 @@ namespace Portfolio.Web.Models;
 public sealed record Link(string Label, string Href);
 
 /// <summary>
+/// One fact shown in the stats strip under the hero, for example "9+" and "years of professional C# and .NET".
+/// </summary>
+/// <param name="Value">The short figure. Must be a checkable fact (ADR-0006).</param>
+/// <param name="Label">What the figure counts. Prose, so it follows the writing rules.</param>
+public sealed record Stat(string Value, string Label);
+
+/// <summary>
 /// Top-level facts about the owner, used by the hero, header and contact section.
 /// </summary>
 /// <param name="Headline">One-paragraph pitch shown in the hero. Prose, so it follows the writing rules.</param>
 /// <param name="Availability">Short line about what he is looking for.</param>
+/// <param name="SignatureStack">The few product names shown in the hero's code card. Exempt from the abbreviation rule.</param>
+/// <param name="Stats">Facts for the stats strip. Replaces skill percentage bars, which cannot be verified.</param>
 /// <param name="ResumeUrl">Relative path to a resume file under wwwroot. The button is hidden while this is null.</param>
 public sealed record Profile(
     string Name,
@@ -19,6 +28,8 @@ public sealed record Profile(
     string Availability,
     string Email,
     IReadOnlyList<Link> Links,
+    IReadOnlyList<string> SignatureStack,
+    IReadOnlyList<Stat> Stats,
     string? ResumeUrl);
 
 /// <summary>

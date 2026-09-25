@@ -62,6 +62,18 @@ Architecture Decision Records (ADRs) instead of repeating their reasoning.
 12. **`theme.js`** reveals the theme button (rendered hidden) and wires it: it
     flips `data-theme` on `<html>`, remembers the choice, and updates the
     label.
+13. **`site.js`** adds three enhancements (ADR-0008): elements marked
+    `data-reveal` fade in as they scroll into view; the navigation link of the
+    section in view gets `aria-current`, which the stylesheet turns into a gold
+    underline; and a gold bar at the top tracks scroll progress. With scripting
+    off, or reduced motion on, everything is simply visible.
+
+**What the hero is made of (ADR-0008):** `_Hero.cshtml` lays out the copy beside
+`_DeveloperRecord.cshtml`, a code card that renders the same `Profile` as a C#
+record (so it cannot disagree with the page), over `_CodeBackdrop.cshtml`, a
+decorative layer of drifting C# fragments hidden from assistive technology.
+`_StatsStrip.cshtml` then shows checkable facts under the hero, instead of
+unverifiable skill percentage bars.
 
 ## Following one claim end to end
 

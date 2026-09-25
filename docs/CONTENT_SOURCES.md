@@ -13,6 +13,10 @@ current.
 | Metro Manila | His public profiles name different cities within it, so the metro area is used |
 | Open to senior full-stack .NET roles, remote preferred | The owner's stated job-search preference |
 | Email, GitHub, LinkedIn | The owner's own public profiles |
+| Stats strip: 9+ years, 3 industries (travel, healthcare, construction), 5 employers since 2017 | The employment history below: June 2017 to now, five employers (F. Gurrea Construction, BCS Technology International, Collabera, Accenture, Cloud Employee) |
+| Stats strip: 660+ commits across eight repositories on one client platform | Git history review of his authored commits, 4 August 2026 (666 commits, 8 of 19 repositories). Re-verify before changing the figure |
+| Hero code card: name, title, location, availability, signature stack (C#, ASP.NET Core, Umbraco, Vue.js, SQL Server) | Generated from the same profile data; each stack item appears in the experience and projects below |
+| Backdrop code fragments | Generic idioms written for the site (no proprietary code; they mirror this site's own source) |
 
 ## Experience
 

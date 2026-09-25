@@ -7,6 +7,46 @@ snapshot.
 
 ---
 
+## 2026-09-25 (later still): "Developer identity" concept, inspired by a reference and made original
+
+**Asked:** "Make the concept like RujeAlfon but not a copy. It should be unique
+but use RujeAlfon's portfolio as a reference."
+
+**How I used the reference:** I read the live page's structure and text (a
+full-screen hero with faint code snippets, GSAP scroll animations, a photo and
+animated skill percentage bars, project cards with role and date, a timeline,
+a "Let's Work Together" contact section, navy and green). I took the *idea*
+(a developer's identity expressed through code and motion) and nothing else:
+none of its text, code, colors, photo, snippets or animation library.
+ADR-0008 records what was borrowed as a concept and what is original.
+
+**What changed:**
+- **Hero:** two columns. The copy sits beside a `Developer.cs` card that
+  renders the owner's profile as a C# record from the same data, over a faint
+  backdrop of drifting C# and Razor fragments kept to the edges so the headline
+  stays readable.
+- **Stats strip** (9+ years, 3 industries, 5 employers, 660+ commits) replaces
+  the reference's skill percentage bars, which cannot be verified.
+- **Vanilla script, no library:** scroll reveals, an active-section highlight in
+  the navigation, and a gold scroll-progress bar. Everything is an enhancement
+  and is disabled by reduced motion.
+- Contact became "Let's talk" with large link cards.
+
+**Verified:** 94 tests pass, including new ones for the stats, the code card
+(rendered from the profile, hidden from assistive technology), the decorative
+backdrop, the reveal wiring, and contrast for the new code colors. In a real
+browser: two-column hero at 1280 wide, single column at 375 with no overflow,
+the progress bar scales 0 to 1, the right nav link is marked at each section,
+and cards reveal as they scroll into view.
+
+**Caught along the way:** a few backdrop fragments drifted behind the
+headline and hurt readability, so they were moved to the edges and behind the
+opaque card, and thinned to three on phones; a new reveal transition would
+have overridden the cards' hover transitions, fixed with a zero-specificity
+`:where()` selector.
+
+---
+
 ## 2026-09-25 (later): Royal purple restyle, dark by default
 
 **Asked:** "make the website look better, with styles", in royal purple like

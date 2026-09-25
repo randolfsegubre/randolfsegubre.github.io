@@ -1,0 +1,32 @@
+@*
+    Decorative backdrop for the hero: faint C# and Razor fragments drifting slowly, like
+    code scribbled on the walls of a workshop. Purely ambient, so it is hidden from
+    assistive technology and never takes pointer events. The snippets are generic
+    idioms from the owner's own stack (nothing proprietary), positioned with CSS
+    custom properties so motion is one shared keyframe animation (ADR-0008).
+
+    Placement rule: keep fragments to the edges and behind the opaque code card, never
+    behind the headline and pitch, so the text stays easy to read. On phones the
+    stylesheet keeps only the first, fifth and ninth fragments, which sit at the very top
+    and bottom edges and do not overlap each other, so keep those positions near the edges.
+*@
+@{
+    var bits = new (string Text, string Position)[]
+    {
+        ("public sealed class HomeController(\n    IPortfolioContent content) : Controller", "--x:0%;--y:1%;--d:17s;--delay:-2s"),
+        ("builder.Services.AddSingleton<\n    IPortfolioContent, PortfolioContent>();", "--x:36%;--y:2%;--d:21s;--delay:-9s"),
+        ("var featured = projects\n    .Where(p => p.Featured)\n    .ToList();", "--x:74%;--y:8%;--d:19s;--delay:-5s"),
+        ("public sealed record Link(\n    string Label, string Href);", "--x:88%;--y:30%;--d:23s;--delay:-12s"),
+        ("[Fact]\npublic void Contains_no_em_dashes()\n    => Assert.Empty(offenders);", "--x:0%;--y:91%;--d:18s;--delay:-7s"),
+        ("await db.Accounts\n    .Where(a => a.UserId == userId)\n    .ToListAsync(ct);", "--x:60%;--y:70%;--d:22s;--delay:-3s"),
+        ("@foreach (var project in Model)\n{\n    <partial name=\"_ProjectCard\" />\n}", "--x:84%;--y:60%;--d:20s;--delay:-14s"),
+        ("public async Task<Result> Handle(\n    Command request, CancellationToken ct)", "--x:28%;--y:93%;--d:24s;--delay:-6s"),
+        ("app.UseStaticFiles();\napp.MapControllers();", "--x:62%;--y:90%;--d:16s;--delay:-10s"),
+    };
+}
+<div class="code-backdrop" aria-hidden="true">
+    @foreach (var bit in bits)
+    {
+        <pre class="code-bit" style="@bit.Position">@bit.Text</pre>
+    }
+</div>

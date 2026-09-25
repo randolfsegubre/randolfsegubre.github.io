@@ -53,6 +53,7 @@ doubtful one, every time.
 | Deploy with the official GitHub Actions Pages workflow | [ADR-0005](../adr/ADR-0005-deploy-with-github-actions.md) |
 | Content honesty and safety policy | [ADR-0006](../adr/ADR-0006-content-honesty-and-safety-policy.md) |
 | ASP.NET Core MVC on .NET 10, exported to static files | [ADR-0007](../adr/ADR-0007-aspnet-core-mvc-with-static-export.md) |
+| "Developer identity" design concept (code card, stats, vanilla motion), original not copied | [ADR-0008](../adr/ADR-0008-developer-identity-design-concept.md) |
 
 A new significant decision (a new dependency, a reversal) gets a new
 `ADR-000N` the moment it is made, and a row in this table.
@@ -77,6 +78,10 @@ A new significant decision (a new dependency, a reversal) gets a new
 - **Do not publish without approval.** Creating or changing what is live on
   the public repository and Pages is outward-facing and needs the owner's
   explicit yes. (Publishing the first version was approved on 2026-09-25.)
+- **Original, not copied (ADR-0008).** Other developers' portfolios may inspire
+  a concept, never the text, code, colors, images or animation code. No
+  skill percentage bars: they cannot be verified. No third-party animation or
+  script libraries.
 - **The deployed site is static.** Nothing may need a server at request
   time. Every page must be reachable through `StaticExporter.Pages`.
 - **Accessibility is a requirement, not polish.** Semantic landmarks, a skip
