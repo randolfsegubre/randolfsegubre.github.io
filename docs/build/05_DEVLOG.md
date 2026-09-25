@@ -51,8 +51,14 @@ rejected, absolute path used in CI); my throwaway test server compared
 forward-slash and backslash paths and served the 404 page for everything
 (fixed the script, not the site).
 
-**Next:** push, confirm the workflow and the live address, then the owner
-reviews wording. See `docs/build/04_TASKS.md`.
+**Published:** pushed `main`; the GitHub Actions run passed (test, export,
+deploy) and `https://randolfsegubre.github.io` returned 200 for the page and
+every asset, with a real 404 page for unknown addresses. Checked in a browser
+against the live address: five sections, 12 cards and roles, theme toggle
+revealed, no failed or third-party requests.
+
+**Next:** the owner reviews wording; then link the site from the GitHub
+profile README. See `docs/build/04_TASKS.md`.
 
 ---
 

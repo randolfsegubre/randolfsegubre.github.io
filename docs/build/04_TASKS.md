@@ -5,8 +5,9 @@ prior session; update it at the end of every session or phase boundary.
 
 ## Current phase
 
-**Phase 2 (publish)** in progress, approved by the owner on 2026-09-25 so the
-link can go in an email to Ben. See `docs/build/05_DEVLOG.md` for the result.
+**Phase 2 (publish)** done on 2026-09-25: the site is live at
+`https://randolfsegubre.github.io` (approved by the owner so the link can go in
+an email to Ben). Next is his content review, then Phase 3.
 
 ## Done
 
@@ -22,8 +23,8 @@ link can go in an email to Ben. See `docs/build/05_DEVLOG.md` for the result.
 
 ## Next up (in order)
 
-- [ ] Push `main`, confirm the workflow succeeds and
-      `https://randolfsegubre.github.io` loads (check the devlog for status).
+- [x] Pushed `main`; the workflow succeeded and the live address loads
+      (checked over HTTPS and in a real browser, 2026-09-25).
 - [ ] Owner reviews the wording in `src/Portfolio.Web/Content/`.
 - [ ] Add a link to the live site in the GitHub profile README (a separate
       repository; its stale claims also need fixing, see the devlog).
