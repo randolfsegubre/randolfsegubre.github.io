@@ -27,10 +27,10 @@ current.
 |---|---|
 | Employers, clients, titles, dates | The owner's resume and LinkedIn experience section, which match |
 | More than 660 commits across eight repositories (Hotelplan UK) | Git history review of his authored commits, 4 August 2026 (666 commits, 8 of 19 repositories) |
-| Content Security Policy hardening (unsafe-inline and unsafe-eval removal, nonces, Trusted Types) | Commit and pull request history on the customer-facing sites |
+| Content Security Policy hardening (unsafe-inline and unsafe-eval removal, nonces, Trusted Types) | Commit and pull request history on the customer-facing sites. Worded "took the initiative on", not "led": the owner confirmed on 2026-10-09 it was his own initiative, not a formal lead role |
 | Layered Azure hosting diagnosis | Ticket and pull request history on the same sites |
 | Umbraco backoffice property editors in AngularJS | Git history: 25 commits in one content platform, 10 in the other, December 2024 to July 2026 |
-| Model Context Protocol servers configured, shared instruction files | The owner's workspace configuration; he configured existing servers and did not author an MCP server, so the site says "configured" |
+| Model Context Protocol servers set up, shared instruction files | The owner's workspace configuration; he configured existing servers and did not author an MCP server. Worded as his own workflow, never team-wide: the owner corrected this on 2026-10-09, it is a personal setup |
 | Accenture: code review, code-scanning remediation, pagination and consistency work, ASP.NET Core 2.x to 6 upgrade | The owner's account, confirmed directly; not checkable from a local repository |
 | Centene: 834 processing, 500,000 record migration, .NET Framework 4.6 to 4.8, Windows Presentation Foundation maintenance, ServiceNow triage | The owner's account, confirmed directly; a teammate's public LinkedIn recommendation names the Member Additional Detail project across 19 health plans and his lead role |
 | BCS and Scoot: SOAP integration, EF Core Code First on MySQL, 90 percent xUnit coverage | The owner's account, confirmed directly |

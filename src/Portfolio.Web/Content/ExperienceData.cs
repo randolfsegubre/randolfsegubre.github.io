@@ -24,10 +24,10 @@ public static class ExperienceData
             Highlights:
             [
                 "Contributed full-stack development to a live, high-traffic Umbraco booking platform and its sister sites, with more than 660 commits across eight actively worked repositories.",
-                "Led a Content Security Policy hardening effort across two customer-facing production sites: removed unsafe-inline and unsafe-eval, added per-request nonces, and adopted Trusted Types.",
+                "Took the initiative on a Content Security Policy hardening effort across two customer-facing production sites: removed unsafe-inline and unsafe-eval, added per-request nonces, and adopted Trusted Types.",
                 "Diagnosed a layered Azure hosting stack (gateway with its web application firewall, content delivery rules, blob storage and app service configuration) to find which layer produced a given response header.",
                 "Built custom Umbraco backoffice property editors in AngularJS for editors across two content platforms.",
-                "Configured Model Context Protocol server integrations and shared instruction files so GitHub Copilot and Claude Code follow one set of team conventions.",
+                "Set up Model Context Protocol server integrations and shared instruction files for my own workflow, so GitHub Copilot and Claude Code follow one set of conventions.",
             ],
             Stack: ["C#", "ASP.NET Core", "Umbraco", "Vue.js", "AngularJS", "SCSS", "Azure", "Docker", "Jenkins"]),
 
