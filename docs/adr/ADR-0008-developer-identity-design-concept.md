@@ -65,6 +65,34 @@ whole page works with scripting off.
    shown, and a test requires every one to appear in the projects, roles or
    skills.
 
+**Third amendment, 2026-11-02 (responsive pass):** a measured audit at 17 exact
+screen widths (320 to 3440 pixels, including phones in landscape and the
+owner's ultrawide monitor) found that the scattered floating hero logos
+collided with the portrait, text or code card at almost every size, because
+absolutely positioned decorations cannot stay clear of content whose height
+changes at every breakpoint. Decision:
+
+- **Hero logos became a scrolling logo rail** (`_LogoRail.cshtml`): one seamless
+  strip in a band the hero reserves for it (extra top padding), so it cannot
+  overlap content at any width. The track holds the set six times and moves by
+  exactly one sixth of its width, which also fills a 3440 pixel screen. A test
+  keeps the markup's `6` and the stylesheet's `/ 6` in step.
+- **Logos are drawn once** in a hidden sprite (`_LogoSprite.cshtml`) and referenced
+  with `<use>`, so repeating them costs almost nothing. The C# mark's lettering
+  uses a `--cutout` color variable so it works in both layers.
+- The faint page layer keeps its scattered positions, which is safe because it
+  sits behind the content at about 22 percent opacity, and its left edge is
+  clamped so no logo is cut off by the screen edge.
+- **Scale:** the content column grows from 60 rem to an 80 rem cap on large
+  screens; background code scales up above 120 rem; phones use 3 lanes, no card
+  blur (cost), and smaller logos.
+- **Touch:** phones get a two-row header with a swipeable single-row navigation
+  that keeps the current section's link in view; targets are 44 pixels on phones
+  and on any touch device; anchor jumps are offset by the taller header.
+- **Home-page navigation uses pure `#anchor` links.** Links written `/#anchor`
+  dropped any query string and reloaded the page, which would happen to anyone
+  who arrives from an email link carrying tracking parameters.
+
 Rules for the animated background: it is purely decorative (hidden from
 assistive technology, no pointer events); motion only uses `transform`, so it
 stays smooth; it stops for visitors who prefer reduced motion; every floating

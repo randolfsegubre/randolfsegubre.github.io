@@ -75,6 +75,16 @@ decorative layer of drifting C# fragments hidden from assistive technology.
 `_StatsStrip.cshtml` then shows checkable facts under the hero, instead of
 unverifiable skill percentage bars.
 
+**The technology logos (ADR-0008):** `_LogoSprite.cshtml` draws each logo once as
+an SVG `<symbol>` in a hidden sprite at the top of `<body>`. `_LogoRail.cshtml`
+(inside the hero's backdrop) repeats the list six times in a track that
+scrolls sideways by one sixth of its width, so it loops with no jump, inside a
+band the hero reserves at its top so it never touches content. `_TechLogos.cshtml`
+places a few faint copies behind the whole page. Both reference the sprite with
+`<use href="#logo-...">`. Navigation links on the home page are pure `#anchors`
+(a link written `/#projects` would drop a query string such as
+`?utm_source=email` and reload the page).
+
 ## Following one claim end to end
 
 Take the BudgetPH "Known gap" sentence:

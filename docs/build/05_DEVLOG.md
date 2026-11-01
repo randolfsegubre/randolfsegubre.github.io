@@ -7,6 +7,54 @@ snapshot.
 
 ---
 
+## 2026-11-02: Responsive pass, including the animated background
+
+**Asked:** make sure the portfolio is responsive, including the background, and
+looks right at every size.
+
+**How I checked:** the in-app browser resets its emulated size whenever the pane
+changes, so I tested each size inside an iframe of exactly that width (plus 15
+pixels for the scrollbar) and measured instead of eyeballing. A script checked,
+at 17 sizes from 320 to 3440 pixels (phones, phones in landscape, tablets,
+laptops, desktop, ultrawide): page-level horizontal scroll, any element past
+the screen edge, code card overflow, header height and wrapping, grid column
+counts, tap target sizes, and whether any hero logo overlapped the portrait,
+the text, the code card, another logo, or the screen edge.
+
+**What the audit found (before):**
+- The scattered floating logos collided with content at nearly every size,
+  including the owner's own desktop: at 1280 pixels the .NET logo sat on the
+  portrait and MySQL and GitHub on the text; on tablets five logos sat on the
+  code card; on phones two overlapped the card and one was cut off.
+- Nav links were 24 pixels tall (the touch guideline is about 44), and the phone
+  header took 128 pixels in three rows.
+- On a 3440 pixel ultrawide the content stayed a 60 rem column and the
+  background code looked tiny.
+- A latent bug: nav links were `/#anchor`, which drops a query string and
+  reloads the page for anyone arriving from a tracked email link.
+
+**What changed:** see ADR-0008, third amendment. In short: a scrolling logo
+rail in a reserved band replaced the scattered hero logos; logos are drawn once
+in a hidden sprite; a swipeable two-row phone header with 44 pixel targets and
+corrected anchor offsets; wider content and larger code on big screens; no card
+blur on phones; pure `#anchor` navigation on the home page.
+
+**Verified:** 126 tests pass, including new guards for the responsive rules.
+Re-running the same audit after the changes: **17 of 17 sizes with no
+horizontal scroll, no overflow, no collisions and no code card overflow**; 0 small
+tap targets at every phone width. On a phone address carrying
+`?utm_source=email`, all four nav jumps stayed on the page and kept the query
+string, each section heading landed 60 pixels below the header, and the nav row
+slid to keep the current link fully in view. Tablet, phone and ultrawide
+renders checked by eye.
+
+**Known and accepted:** at 667 pixels and wider the compact mouse-sized nav
+links measure 27 pixels in a desktop browser; on a touch device the
+`pointer: coarse` rule raises them to 44 pixels, which a desktop browser cannot
+show. I could not test on physical phones.
+
+---
+
 ## 2026-09-26: New portrait, and GitHub and LinkedIn icons
 
 **Asked:** change the portfolio image to the new photo (blue shirt, glasses),
