@@ -1,36 +1,18 @@
-@model TechLogosModel
+@model IReadOnlyList<string>
 @using Portfolio.Web.Content
 @*
-    Floating technology logos: real logos of the technologies the owner has used, each in
-    a light round badge so every brand color stays visible on the purple background
-    (ADR-0008). The logos are inline vector markup (no image requests, no third-party
-    code). A technology with no logo in TechLogoData is skipped.
+    The faint page layer of technology logos (ADR-0008): quiet silhouettes in the theme color,
+    fixed behind the whole page at low opacity so the technology theme continues in every
+    section. The bright, readable logos live in the hero's logo rail (_LogoRail.cshtml); these
+    are only ambience, so they sit behind the content and never carry meaning.
 
-    Purely decorative, so the whole layer is hidden from assistive technology; the same
-    technologies are listed as text in the projects, experience and skills sections.
-
-    Placement: the "hero" slots keep to the edges and behind the opaque code card, never
-    behind the headline. Slots marked "edge" stay on phones. The "page" slots are spread
-    over the viewport behind the content.
+    Each logo is a reference to the shared sprite (_LogoSprite.cshtml). A technology with no
+    logo in TechLogoData is skipped. Purely decorative, so the whole layer is hidden from
+    assistive technology. Slots marked "edge" stay on phones, where only a few are shown.
 *@
 @{
     // x = left; either y (from the top) or b (from the bottom); edge = keep on phones.
-    var heroSlots = new (string X, string? Y, string? B, bool Edge, int Seconds, int Delay)[]
-    {
-        ("4%", "4%", null, true, 11, -2),
-        ("20%", "3%", null, true, 13, -6),
-        ("38%", "5%", null, false, 12, -4),
-        ("56%", "3%", null, false, 10, -1),
-        ("74%", "4%", null, false, 14, -9),
-        ("92%", "8%", null, true, 15, -7),
-        ("93%", "44%", null, false, 12, -3),
-        ("93%", "72%", null, false, 13, -5),
-        ("4%", null, "4%", true, 12, -3),
-        ("24%", null, "3%", true, 10, -8),
-        ("48%", null, "4%", false, 13, -5),
-        ("72%", null, "3%", false, 11, -10),
-    };
-    var pageSlots = new (string X, string? Y, string? B, bool Edge, int Seconds, int Delay)[]
+    var slots = new (string X, string? Y, string? B, bool Edge, int Seconds, int Delay)[]
     {
         ("6%", "14%", null, true, 16, -2),
         ("90%", "10%", null, true, 18, -6),
@@ -45,11 +27,10 @@
         ("22%", "72%", null, false, 16, -6),
         ("78%", "84%", null, false, 18, -4),
     };
-    var slots = Model.Variant == "hero" ? heroSlots : pageSlots;
     var placed = 0;
 }
-<div class="tech-logos tech-logos--@Model.Variant" aria-hidden="true">
-    @foreach (var tech in Model.Techs)
+<div class="tech-logos tech-logos--page" aria-hidden="true">
+    @foreach (var tech in Model)
     {
         var logo = TechLogoData.Find(tech);
         if (logo is null || placed >= slots.Length)
@@ -59,7 +40,7 @@
 
         var slot = slots[placed++];
         var position = $"--x:{slot.X};" + (slot.Y is not null ? $"--y:{slot.Y};" : $"--b:{slot.B};") + $"--d:{slot.Seconds}s;--delay:{slot.Delay}s;--brand:{logo.Hex}";
-        var cssClass = "tech-logo" + (slot.Edge ? " tech-logo--edge" : string.Empty) + (slot.Y is not null ? " tech-logo--top" : string.Empty);
-        <span class="@cssClass" style="@position" data-tech="@logo.Key"><svg viewBox="0 0 24 24" focusable="false">@Html.Raw(logo.Markup)</svg></span>
+        var cssClass = "tech-logo" + (slot.Edge ? " tech-logo--edge" : string.Empty);
+        <span class="@cssClass" style="@position" data-tech="@logo.Key"><svg viewBox="0 0 24 24" focusable="false"><use href="#@logo.SymbolId" /></svg></span>
     }
 </div>

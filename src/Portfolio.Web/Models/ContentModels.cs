@@ -137,12 +137,6 @@ public sealed record PortfolioViewModel(
     IReadOnlyList<SkillGroup> Skills);
 
 /// <summary>
-/// Input for the floating-logos partial: which technologies to show and which layer they float in.
-/// </summary>
-/// <param name="Variant">"hero" for the logos inside the hero, "page" for the fainter layer fixed behind the whole page.</param>
-public sealed record TechLogosModel(IReadOnlyList<string> Techs, string Variant);
-
-/// <summary>
 /// Input for the shared tag-list partial: the chips and the accessible name of the list.
 /// </summary>
 public sealed record TagListModel(IReadOnlyList<string> Items, string Label);

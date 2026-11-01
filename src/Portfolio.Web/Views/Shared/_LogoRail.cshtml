@@ -1,0 +1,38 @@
+@model IReadOnlyList<string>
+@using Portfolio.Web.Content
+@*
+    The hero's logo rail (ADR-0008): a seamless strip of technology logos scrolling slowly
+    sideways along the top of the hero, inside a band the hero reserves for it. Because it has
+    its own band, it can never overlap the portrait, the text or the code card, whatever the
+    screen size: this replaced scattered logos that collided with content as layouts changed.
+
+    The track holds the same set six times and the stylesheet moves it by exactly one sixth of
+    its width, so the loop has no visible jump. Six sets are enough to fill ultrawide screens
+    (a content test keeps the count and the stylesheet's "/ 6" in step). Only the first set is
+    the real list; the rest are repeats for the loop.
+
+    Purely decorative: hidden from assistive technology and never takes pointer events. The same
+    technologies are listed as text in the experience and skills sections.
+*@
+@{
+    const int Sets = 6;
+}
+<div class="logo-rail" aria-hidden="true">
+    <div class="logo-track" data-sets="@Sets">
+        @for (var set = 0; set < Sets; set++)
+        {
+            <div class="logo-set">
+                @foreach (var tech in Model)
+                {
+                    var logo = TechLogoData.Find(tech);
+                    if (logo is null)
+                    {
+                        continue;
+                    }
+
+                    <span class="tech-logo" style="--brand:@logo.Hex" data-tech="@logo.Key"><svg viewBox="0 0 24 24" focusable="false"><use href="#@logo.SymbolId" /></svg></span>
+                }
+            </div>
+        }
+    </div>
+</div>

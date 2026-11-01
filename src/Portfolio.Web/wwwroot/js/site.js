@@ -43,6 +43,20 @@
     })
     .filter(Boolean);
 
+  var navList = document.querySelector(".nav-list");
+
+  /**
+   * On phones the navigation is one swipeable row, so keep the current link centered in it. This scrolls
+   * only the row itself (never the page), and only when the row actually overflows.
+   */
+  function centerInNav(link) {
+    if (!navList || navList.scrollWidth <= navList.clientWidth + 1) {
+      return;
+    }
+    var left = link.offsetLeft - (navList.clientWidth - link.offsetWidth) / 2;
+    navList.scrollTo({ left: left, behavior: reducedMotion ? "auto" : "smooth" });
+  }
+
   if ("IntersectionObserver" in window && sections.length > 0) {
     var spy = new IntersectionObserver(
       function (entries) {
@@ -54,6 +68,7 @@
             var isCurrent = link.getAttribute("href").split("#")[1] === entry.target.id;
             if (isCurrent) {
               link.setAttribute("aria-current", "true");
+              centerInNav(link);
             } else {
               link.removeAttribute("aria-current");
             }

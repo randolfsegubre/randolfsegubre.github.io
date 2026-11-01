@@ -152,7 +152,28 @@ public sealed class PageRenderTests(WebApplicationFactory<Program> factory) : IC
         }
 
         // The navigation reaches it.
-        Assert.NotNull(page.QuerySelector(".nav-list a[href='/#live-sites']"));
+        Assert.NotNull(page.QuerySelector(".nav-list a[href='#live-sites']"));
+    }
+
+    [Fact]
+    public async Task Home_page_navigation_uses_pure_in_page_anchors_so_a_query_string_never_forces_a_reload()
+    {
+        var page = await GetPageAsync("/");
+
+        // "/#projects" would drop a query string such as ?utm_source=email and reload the page; "#projects" only scrolls.
+        var hrefs = page.QuerySelectorAll(".site-header a").Select(a => a.GetAttribute("href")).ToList();
+        Assert.NotEmpty(hrefs);
+        Assert.All(hrefs, href => Assert.StartsWith("#", href));
+    }
+
+    [Fact]
+    public async Task Not_found_page_navigation_links_back_to_the_home_page_sections()
+    {
+        var page = await GetPageAsync("/not-found");
+
+        var hrefs = page.QuerySelectorAll(".nav-list a").Select(a => a.GetAttribute("href")).ToList();
+        Assert.NotEmpty(hrefs);
+        Assert.All(hrefs, href => Assert.StartsWith("/#", href));
     }
 
     [Fact]
@@ -257,10 +278,37 @@ public sealed class PageRenderTests(WebApplicationFactory<Program> factory) : IC
             Assert.Equal(text[..half].Trim(), text[half..].Trim());
         });
 
-        // Floating logos come from the profile data, one inline vector image each.
-        var logos = backdrop.QuerySelectorAll(".tech-logos--hero .tech-logo").ToList();
-        Assert.Equal(Content.Profile.BackdropTags, logos.Select(l => l.GetAttribute("data-tech")));
-        Assert.All(logos, logo => Assert.NotNull(logo.QuerySelector("svg path")));
+        // The hero's logo rail holds the same set of logos six times (the loop needs repeats), and the first
+        // set is exactly the profile's list. Each logo is a reference to a drawing in the shared sprite.
+        var sets = backdrop.QuerySelectorAll(".logo-rail .logo-set").ToList();
+        Assert.Equal(6, sets.Count);
+        Assert.Equal("6", backdrop.QuerySelector(".logo-track")?.GetAttribute("data-sets"));
+        Assert.All(sets, set => Assert.Equal(Content.Profile.BackdropTags, set.QuerySelectorAll(".tech-logo").Select(l => l.GetAttribute("data-tech"))));
+        Assert.All(backdrop.QuerySelectorAll(".logo-rail .tech-logo"), logo => Assert.NotNull(logo.QuerySelector("svg use")));
+    }
+
+    [Fact]
+    public async Task Every_logo_reference_points_at_a_drawing_in_the_shared_sprite()
+    {
+        var page = await GetPageAsync("/");
+
+        var symbolIds = page.QuerySelectorAll("svg symbol").Select(s => s.GetAttribute("id")).ToHashSet();
+        Assert.Equal(TechLogoData.Logos.Count, symbolIds.Count);
+
+        var references = page.QuerySelectorAll("svg use").Select(u => u.GetAttribute("href")!.TrimStart('#')).ToList();
+        Assert.NotEmpty(references);
+        Assert.All(references, id => Assert.Contains(id, symbolIds));
+    }
+
+    [Fact]
+    public async Task Logo_rail_and_sprite_are_hidden_from_assistive_technology()
+    {
+        var page = await GetPageAsync("/");
+
+        Assert.Equal("true", page.QuerySelector(".logo-rail")?.GetAttribute("aria-hidden"));
+        var sprite = page.QuerySelector("svg:has(symbol)");
+        Assert.NotNull(sprite);
+        Assert.Equal("true", sprite.GetAttribute("aria-hidden"));
     }
 
     [Fact]

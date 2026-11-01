@@ -281,6 +281,10 @@ public sealed partial class ContentTests
             Assert.Contains("<path", logo.Markup);
         });
 
+        // Each logo's sprite id must be unique and a valid HTML id, since pages reference it with <use>.
+        Assert.Equal(TechLogoData.Logos.Count, TechLogoData.Logos.Select(l => l.SymbolId).Distinct().Count());
+        Assert.All(TechLogoData.Logos, logo => Assert.Matches("^logo-[a-z0-9-]+$", logo.SymbolId));
+
         // Logo keys are unique, and none is defined without being used (dead data would drift).
         Assert.Equal(TechLogoData.Logos.Count, TechLogoData.Logos.Select(l => l.Key).Distinct().Count());
         Assert.All(TechLogoData.Logos, logo => Assert.Contains(logo.Key, Content.Profile.BackdropTags));

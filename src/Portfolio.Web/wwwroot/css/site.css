@@ -69,7 +69,8 @@
   --space-6: 2.5rem;
   --space-7: 4rem;
   --radius: 1rem;
-  --content-width: 60rem;
+  /* 60rem up to about 1850 pixels wide, then it grows with the screen to a 80rem cap (ultrawide). */
+  --content-width: clamp(60rem, 52vw, 80rem);
 }
 
 :root[data-theme="light"] {
@@ -293,7 +294,8 @@ a:hover {
   position: relative;
   overflow: hidden;
   color: var(--hero-text);
-  padding-block: var(--space-7) calc(var(--space-7) + var(--space-3));
+  /* The top padding includes a reserved band (about 6rem) for the logo rail, so logos never meet the content. */
+  padding-block: calc(var(--space-7) + 2rem) calc(var(--space-7) + var(--space-3));
   background:
     radial-gradient(60rem 28rem at 88% -10%, color-mix(in srgb, var(--hero-gold) 22%, transparent), transparent 60%),
     radial-gradient(50rem 30rem at -10% 110%, color-mix(in srgb, #8b5cf6 35%, transparent), transparent 60%),
@@ -710,6 +712,11 @@ a:hover {
   .hero-grid {
     grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
   }
+
+  /* Side by side the card fills its column; stacked (below this width) it is capped so it does not stretch. */
+  .code-card {
+    max-width: none;
+  }
 }
 
 /* Animated background (decorative, ADR-0008): lanes of scrolling code plus floating technology logos.
@@ -757,6 +764,7 @@ a:hover {
   font-size: 0.74rem;
   line-height: 1.6;
   white-space: pre;
+  will-change: transform;
   animation: stream var(--dur, 60s) linear infinite;
   animation-direction: var(--dir, normal);
 }
@@ -788,7 +796,68 @@ a:hover {
   color: color-mix(in srgb, var(--gold-bright) 17%, transparent);
 }
 
-/* Floating technology logos. In the hero each sits in a light round badge so every brand color stays visible. */
+/* Technology logos (decorative, ADR-0008). They appear in two places, both hidden from assistive technology:
+   1. The logo rail: a seamless strip scrolling slowly sideways along the top of the hero, inside a band the hero
+      reserves for it, so it can never overlap the portrait, the text or the code card at any screen size.
+   2. The page layer: a few faint silhouettes fixed behind the whole page. */
+
+.tech-logo {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 3rem;
+  height: 3rem;
+  border-radius: 50%;
+  background: #f5f0ff;
+  box-shadow: 0 8px 20px -8px rgb(0 0 0 / 0.6), 0 0 0 3px color-mix(in srgb, var(--hero-gold) 40%, transparent);
+}
+
+/* Each logo is a reference to the shared sprite: fill comes from --brand, and --cutout is the color of any
+   lettering cut into a mark (the C# hexagon). */
+.tech-logo svg {
+  width: 58%;
+  height: 58%;
+  fill: var(--brand);
+  --cutout: #fff;
+}
+
+.logo-rail {
+  position: absolute;
+  inset: 1rem 0 auto 0;
+  z-index: 1;
+  overflow: hidden;
+  padding-block: 6px;
+  pointer-events: none;
+  -webkit-mask-image: linear-gradient(to right, transparent, #000 10%, #000 90%, transparent);
+  mask-image: linear-gradient(to right, transparent, #000 10%, #000 90%, transparent);
+}
+
+.logo-track {
+  display: flex;
+  width: max-content;
+  animation: rail 45s linear infinite;
+  will-change: transform;
+}
+
+.logo-set {
+  display: flex;
+  flex: none;
+  gap: 1rem;
+  padding-right: 1rem;
+}
+
+/* The track holds six identical sets, so moving by exactly one sixth of its width loops with no jump.
+   The "6" must match the number of sets in _LogoRail.cshtml; a test checks it. */
+@keyframes rail {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+
+  to {
+    transform: translate3d(calc(-100% / 6), 0, 0);
+  }
+}
+
 .tech-logos {
   position: absolute;
   inset: 0;
@@ -801,25 +870,24 @@ a:hover {
   z-index: -1;
 }
 
-.tech-logo {
+/* Behind the page's text, logos are quiet silhouettes in the theme color, so text never sits on a bright badge.
+   The left edge is clamped so a logo is never cut off by the right edge of any screen. */
+.tech-logos--page .tech-logo {
   position: absolute;
-  left: var(--x);
+  left: min(var(--x), calc(100% - 3.4rem));
   top: var(--y, auto);
   bottom: var(--b, auto);
-  width: 3.1rem;
-  height: 3.1rem;
-  display: grid;
-  place-items: center;
-  border-radius: 50%;
-  background: #f5f0ff;
-  box-shadow: 0 10px 26px -10px rgb(0 0 0 / 0.6), 0 0 0 3px color-mix(in srgb, var(--hero-gold) 40%, transparent);
+  width: 2.6rem;
+  height: 2.6rem;
+  background: transparent;
+  box-shadow: none;
+  opacity: 0.22;
   animation: bob var(--d, 12s) ease-in-out var(--delay, 0s) infinite alternate;
 }
 
-.tech-logo svg {
-  width: 58%;
-  height: 58%;
-  fill: var(--brand);
+.tech-logos--page .tech-logo svg {
+  fill: var(--accent);
+  --cutout: var(--bg);
 }
 
 @keyframes bob {
@@ -830,23 +898,6 @@ a:hover {
   to {
     transform: translate3d(8px, -14px, 0) rotate(3deg);
   }
-}
-
-/* Behind the page's text, logos are quiet silhouettes in the theme color, so text never sits on a bright badge. */
-.tech-logos--page .tech-logo {
-  width: 2.6rem;
-  height: 2.6rem;
-  background: transparent;
-  box-shadow: none;
-  opacity: 0.22;
-}
-
-.tech-logos--page .tech-logo svg {
-  fill: var(--accent);
-}
-
-.tech-logos--page .tech-logo svg text {
-  fill: var(--bg);
 }
 
 /* Cards let a little of the moving background show through, blurred so their text stays crisp. */
@@ -860,7 +911,13 @@ a:hover {
   backdrop-filter: blur(6px);
 }
 
-/* Tablets: fewer, wider lanes. */
+/* Responsive scale (see docs/build/05_DEVLOG.md, 2026-11-02): lanes and content grow on large screens and
+   shrink on small ones.
+     under 42rem (phones)   3 lanes, 2.6rem logos, touch-sized header
+     under 75rem (tablets)  5 lanes
+     75rem and up           8 lanes
+     over 120rem (ultrawide) larger background code and a wider content column */
+
 @media (max-width: 74.99rem) {
   .code-streams {
     --lanes: 5;
@@ -871,7 +928,6 @@ a:hover {
   }
 }
 
-/* Phones: text spans the whole width, so use three lanes at lower opacity and keep only the edge logos. */
 @media (max-width: 41.99rem) {
   .code-streams {
     --lanes: 3;
@@ -893,19 +949,127 @@ a:hover {
     color: color-mix(in srgb, var(--accent) 10%, transparent);
   }
 
-  .tech-logo:not(.tech-logo--edge) {
-    display: none;
-  }
-
-  .tech-logo {
+  .logo-rail .tech-logo {
     width: 2.6rem;
     height: 2.6rem;
   }
 
-  /* The hero is very tall on a phone, so a percentage from the top would land on the portrait:
-     pin the top logos into the hero's top padding instead. */
-  .tech-logos--hero .tech-logo--top {
-    top: 0.9rem;
+  .tech-logos--page .tech-logo:not(.tech-logo--edge) {
+    display: none;
+  }
+
+  /* Blurring many cards over animated layers is costly on phones, and the cards are already 94 percent opaque. */
+  .card,
+  .skill-group,
+  .role,
+  .stat,
+  .contact-card {
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+}
+
+/* Large and ultrawide screens: the code scales up so it does not look tiny, and the content column widens. */
+@media (min-width: 120rem) {
+  .code-stream pre {
+    font-size: clamp(0.74rem, 0.35vw + 0.3rem, 1.05rem);
+  }
+
+  .logo-rail .tech-logo {
+    width: 3.5rem;
+    height: 3.5rem;
+  }
+}
+
+.site-footer a {
+  display: inline-block;
+  padding-block: 0.6rem;
+}
+
+/* Touch-friendly header and links (WCAG: targets of about 44 pixels). Phones get a two-row header: name and theme
+   button on row 1, and a single swipeable row of navigation links on row 2 (theme.js and site.js keep the current
+   section's link scrolled into view). Anchors are offset by the taller header so headings are never hidden. */
+
+.contact-link,
+.contact-action,
+.live-address a,
+.card-links a {
+  display: inline-block;
+  padding-block: 0.6rem;
+}
+
+@media (max-width: 41.99rem) {
+  html {
+    scroll-padding-top: 7rem;
+  }
+
+  .header-inner {
+    gap: 0 var(--space-4);
+    padding-block: var(--space-2) 0;
+  }
+
+  .brand {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.5rem;
+  }
+
+  .theme-toggle {
+    min-height: 2.5rem;
+  }
+
+  /* Full-bleed row: it runs to both screen edges and fades out at them, hinting that it swipes. */
+  .header-inner > nav {
+    width: calc(100% + 2 * var(--space-5));
+    margin-inline: calc(-1 * var(--space-5));
+  }
+
+  .nav-list {
+    position: relative;
+    flex-wrap: nowrap;
+    gap: 0;
+    padding-inline: var(--space-3);
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scrollbar-width: none;
+    -webkit-mask-image: linear-gradient(to right, transparent, #000 0.75rem, #000 calc(100% - 1.5rem), transparent);
+    mask-image: linear-gradient(to right, transparent, #000 0.75rem, #000 calc(100% - 1.5rem), transparent);
+  }
+
+  .nav-list::-webkit-scrollbar {
+    display: none;
+  }
+
+  .nav-list li {
+    flex: none;
+  }
+
+  .nav-list a {
+    display: flex;
+    align-items: center;
+    min-height: 2.75rem;
+    padding-inline: 0.85rem;
+    white-space: nowrap;
+    border-bottom-width: 3px;
+  }
+}
+
+/* Touch screens at any width: larger targets for the header controls. */
+@media (pointer: coarse) {
+  .theme-toggle {
+    min-height: 2.75rem;
+  }
+
+  .nav-list a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.75rem;
+  }
+
+  .brand {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.75rem;
   }
 }
 
@@ -993,6 +1157,8 @@ a:hover {
 /* The code card: the owner's profile written as a C# record */
 
 .code-card {
+  width: 100%;
+  max-width: 38rem;
   background: var(--code-bg);
   border: 1px solid color-mix(in srgb, var(--hero-gold) 35%, transparent);
   border-radius: var(--radius);

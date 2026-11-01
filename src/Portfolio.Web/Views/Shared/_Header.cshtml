@@ -1,20 +1,30 @@
 @inject Portfolio.Web.Content.IPortfolioContent Content
 @*
     Sticky site header: the owner's name, in-page anchor navigation and the theme toggle.
-    Anchors start with "/" so they also work from the not-found page. The toggle is
-    rendered hidden and revealed by theme.js, so it never shows as a dead button
+
+    Anchor links: on the home page they are pure in-page anchors ("#projects"), so tapping one only
+    scrolls and works even when the page was opened with a query string, such as the tracking
+    parameters email tools add to links. A link starting with "/#" would drop that query string and
+    reload the whole page. On the not-found page the sections are not present, so the links go to
+    the home page ("/#projects") instead.
+
+    The toggle is rendered hidden and revealed by theme.js, so it never shows as a dead button
     when scripting is unavailable.
 *@
+@{
+    var onHomePage = string.Equals(ViewContext.RouteData.Values["action"]?.ToString(), "Index", StringComparison.OrdinalIgnoreCase);
+    var prefix = onHomePage ? string.Empty : "/";
+}
 <header class="site-header">
     <div class="container header-inner">
-        <a class="brand" href="/#top">@Content.Profile.Name</a>
+        <a class="brand" href="@(prefix + "#top")">@Content.Profile.Name</a>
         <nav aria-label="Primary">
             <ul class="nav-list">
-                <li><a href="/#live-sites">Live sites</a></li>
-                <li><a href="/#projects">Projects</a></li>
-                <li><a href="/#experience">Experience</a></li>
-                <li><a href="/#skills">Skills</a></li>
-                <li><a href="/#contact">Contact</a></li>
+                <li><a href="@(prefix + "#live-sites")">Live sites</a></li>
+                <li><a href="@(prefix + "#projects")">Projects</a></li>
+                <li><a href="@(prefix + "#experience")">Experience</a></li>
+                <li><a href="@(prefix + "#skills")">Skills</a></li>
+                <li><a href="@(prefix + "#contact")">Contact</a></li>
             </ul>
         </nav>
         <button type="button" id="theme-toggle" class="theme-toggle" aria-pressed="true" aria-label="Switch to light theme" hidden>
