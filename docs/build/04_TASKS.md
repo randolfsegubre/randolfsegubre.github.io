@@ -33,9 +33,10 @@ an email to Ben). Next is his content review, then Phase 3.
 
 ## Explicitly deferred (tracked so they are never silently forgotten)
 
-- **Resume download button.** Hidden until the owner confirms the final
-  resume file; set `ResumeUrl` in `Content/ProfileData.cs` and add the file
-  under `wwwroot/`.
+- **Resume file refresh.** The download (hero button and contact card) serves
+  `wwwroot/files/Randolf_Segubre_Resume.pdf`, a copy of his Final résumé from
+  2026-10-11. When he corrects the résumé (two lines are flagged in the devlog,
+  2026-11-02), replace that one file and push; no code change is needed.
 - **Custom domain.** Optional; costs money; not needed to launch.
 - **Per-project detail pages.** Cards are enough for now.
 - **Galaxy Survivor link.** Its repository is private, so the card carries no

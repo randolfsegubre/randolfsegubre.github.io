@@ -74,9 +74,8 @@ changes at every breakpoint. Decision:
 
 - **Hero logos became a scrolling logo rail** (`_LogoRail.cshtml`): one seamless
   strip in a band the hero reserves for it (extra top padding), so it cannot
-  overlap content at any width. The track holds the set six times and moves by
-  exactly one sixth of its width, which also fills a 3440 pixel screen. A test
-  keeps the markup's `6` and the stylesheet's `/ 6` in step.
+  overlap content at any width. **Superseded the same day, see the fourth
+  amendment:** the owner found the strip redundant and distracting.
 - **Logos are drawn once** in a hidden sprite (`_LogoSprite.cshtml`) and referenced
   with `<use>`, so repeating them costs almost nothing. The C# mark's lettering
   uses a `--cutout` color variable so it works in both layers.
@@ -92,6 +91,28 @@ changes at every breakpoint. Decision:
 - **Home-page navigation uses pure `#anchor` links.** Links written `/#anchor`
   dropped any query string and reloaded the page, which would happen to anyone
   who arrives from an email link carrying tracking parameters.
+
+**Fourth amendment, 2026-11-02 (calmer background, no crown, resume):** the owner
+found the logo strip "redundant and too distracting" (the same twelve logos
+repeated six times, moving) and asked for logos only as scattered background,
+and for the crown above his job title to go. Decision:
+
+- **Removed** the scrolling logo rail, its extra hero padding, and the crown
+  mark above the title. (The favicon keeps its small crown.)
+- **Logos are quiet and scattered**, drawn once each: faint silhouettes (about
+  13 to 20 percent opacity, no badges) with a very slow drift. They are split
+  between two layers: the first `TechLogoData.HeroLogoCount` (three) sit in the
+  hero's top padding, and the rest are fixed behind every other section. Tests
+  require each technology to appear exactly once and every logo opacity to stay
+  at or below 0.25.
+- **Why the hero logos sit in its top padding:** an audit at 17 widths showed
+  that percentage positions inside the hero landed on the portrait or text at
+  some size, because the hero's height changes at every breakpoint. The fixed
+  top padding never holds content, so those logos cannot collide at any width.
+- **Résumé download:** a "Download resume (PDF)" button in the hero's actions
+  and a Resume card in the contact section, serving
+  `wwwroot/files/Randolf_Segubre_Resume.pdf`, an unedited copy of the owner's
+  current final résumé. A test requires the file to exist and be a real PDF.
 
 Rules for the animated background: it is purely decorative (hidden from
 assistive technology, no pointer events); motion only uses `transform`, so it

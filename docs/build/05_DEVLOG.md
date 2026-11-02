@@ -7,6 +7,40 @@ snapshot.
 
 ---
 
+## 2026-11-02 (later): Calmer logos, no crown, résumé download
+
+**Asked:** the logos "look redundant and too distracting; they should just be
+scattered in the background"; remove the crown above the position; "don't
+forget to consider responsive"; add a link to download a copy of his résumé.
+
+**What changed:** see the fourth amendment in ADR-0008. The scrolling logo strip,
+its extra hero padding and the crown are gone. Logos are faint, each shown once,
+three in the hero's top padding and the rest behind the other sections. A
+"Download resume (PDF)" button joined the hero actions and a Resume card joined
+the contact section.
+
+**Résumé:** published the unedited `Corrected Resume/Final/Randolf_Segubre_Resume.pdf`
+(`resume_facts.md` and my notes name it as the current one). I read all of it
+first. Two lines I flagged to him, not edited: the summary's "9+ years" next to
+"full-stack" (his 2026-10-29 rule is about 5 years full-stack, 9 for C# and .NET
+only) and the Collabera entry's React.js and Redux claim (the React work was the
+2020 bench project, not Centene). The file also describes internal work
+(a document-merge tool, internal write-ups) in more detail than the site's cards,
+and uses stronger verbs ("Led", "Independently built") than the site.
+
+**Responsive re-check (same 17 exact widths, 320 to 3440):** no horizontal
+scroll, no overflow, no code card overflow, no crown or strip, no logo touching
+the portrait or any text, none clipped, the résumé button 225 by 44 pixels at
+every size, and no tap target under 40 pixels at phone widths. Checked by eye on
+a phone and a laptop render. An earlier version of this change put hero logos at
+percentage positions; the audit caught them on the portrait and on words at
+several sizes, which is why they now sit in the fixed top padding.
+
+**Tests:** 130 pass (new: each logo appears once, no crown or strip, logo opacity
+cap, the résumé is a real PDF offered in the hero and the contact section).
+
+---
+
 ## 2026-11-02: Responsive pass, including the animated background
 
 **Asked:** make sure the portfolio is responsive, including the background, and

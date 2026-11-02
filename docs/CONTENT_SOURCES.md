@@ -13,6 +13,7 @@ current.
 | Metro Manila | His public profiles name different cities within it, so the metro area is used |
 | Open to senior full-stack .NET roles, remote preferred | The owner's stated job-search preference |
 | Email, GitHub, LinkedIn | The owner's own public profiles |
+| Downloadable résumé (`wwwroot/files/Randolf_Segubre_Resume.pdf`) | An unedited copy of `Downloads/Corrected Resume/Final/Randolf_Segubre_Resume.pdf`, the résumé he currently sends to employers. Published at his request on 2026-11-02. It is his own document and is more detailed (and in places stronger worded, for example "Led", "Independently built") than the site's cards; see the devlog for two lines to review |
 | Mobile and Viber number +63 917 1022 203, and WhatsApp number +63 920 909 3036 | Supplied by the owner in writing on 2026-09-25, to be shown publicly. The mobile number matches the one on his job applications |
 | Stats strip: 9+ years, 3 industries (travel, healthcare, construction), 5 employers since 2017 | The employment history below: June 2017 to now, five employers (F. Gurrea Construction, BCS Technology International, Collabera, Accenture, Cloud Employee) |
 | Stats strip: 660+ commits across eight repositories on one client platform | Git history review of his authored commits, 4 August 2026 (666 commits, 8 of 19 repositories). Re-verify before changing the figure |
