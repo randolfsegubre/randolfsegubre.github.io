@@ -1,16 +1,22 @@
 @model Profile
 @*
     The hero's animated background (ADR-0008): lanes of scrolling code from the owner's own
-    stack, with a strip of technology logos scrolling along the top. It is the stronger twin of
-    the faint layer fixed behind the whole page (see _Layout.cshtml); both use the same lanes so
-    the background looks continuous. Purely decorative, so it is hidden from assistive technology
-    and never takes pointer events.
+    stack, with a few quiet technology logos scattered over it. It is the stronger twin of the
+    faint layer fixed behind the rest of the page (see _Layout.cshtml); both use the same lanes
+    so the background looks continuous. Purely decorative, so it is hidden from assistive
+    technology and never takes pointer events.
 
-    The logos come from Profile.BackdropTags, and a content test requires each one to appear in
-    the projects, roles or skills and to have a logo, so the background can never advertise a
-    technology the rest of the page does not back up (ADR-0006).
+    The technologies are shared between the two layers so each logo appears once: this layer
+    takes the first TechLogoData.HeroLogoCount of Profile.BackdropTags and the page layer takes
+    the rest. A content test requires every tag to appear in the projects, roles or skills and
+    to have a logo, so the background can never advertise a technology the page does not back
+    up (ADR-0006).
 *@
+@using Portfolio.Web.Content
+@{
+    var heroTechs = Model.BackdropTags.Take(TechLogoData.HeroLogoCount).ToList();
+}
 <div class="code-backdrop" aria-hidden="true">
     <partial name="_CodeStreams" model="@("hero")" />
-    <partial name="_LogoRail" model="Model.BackdropTags" />
+    <partial name="_TechLogos" model="heroTechs" view-data="@(new ViewDataDictionary(ViewData) { { "variant", "hero" } })" />
 </div>

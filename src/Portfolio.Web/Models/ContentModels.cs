@@ -33,7 +33,7 @@ public sealed record Stat(string Value, string Label);
 /// <param name="BackdropTags">Technologies shown as floating logos. Each must appear in the projects, roles or skills (ADR-0006) and have a logo in <c>TechLogoData</c>.</param>
 /// <param name="PhotoUrl">Site-relative path to the portrait under wwwroot, or null for no photo.</param>
 /// <param name="PhotoAlt">Alternative text describing the portrait for screen reader users.</param>
-/// <param name="ResumeUrl">Relative path to a resume file under wwwroot. The button is hidden while this is null.</param>
+/// <param name="ResumeUrl">Site-relative path to the downloadable resume under wwwroot (a PDF). The hero button and the contact card are hidden while this is null, so the site never shows a dead download link.</param>
 public sealed record Profile(
     string Name,
     string Title,

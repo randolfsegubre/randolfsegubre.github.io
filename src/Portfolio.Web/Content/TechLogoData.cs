@@ -33,6 +33,15 @@ public sealed record TechLogo(string Key, string Hex, string Markup)
 /// </remarks>
 public static class TechLogoData
 {
+    /// <summary>
+    /// How many logos sit in the hero (the first ones in the profile's list); all the others go in the page layer.
+    /// </summary>
+    /// <remarks>
+    /// The hero keeps only a few, in its top padding, because the hero's height changes at every screen size
+    /// and that padding is the one place content never occupies.
+    /// </remarks>
+    public const int HeroLogoCount = 3;
+
     public static IReadOnlyList<TechLogo> Logos { get; } =
     [
         new TechLogo(Key: "C#", Hex: "#512BD4", Markup: """<path d="M12 .8 21.6 6.4v11.2L12 23.2 2.4 17.6V6.4Z"/><text x="12" y="15.6" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="9.5" font-weight="700" style="fill:var(--cutout,#fff)">C#</text>"""),

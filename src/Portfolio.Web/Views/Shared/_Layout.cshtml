@@ -43,7 +43,7 @@
     @* Animated background fixed behind the whole page (code lanes and floating logos), so the motion covers every section as the visitor scrolls (ADR-0008). *@
     <partial name="_CodeStreams" model="@("page")" />
     <partial name="_LogoSprite" />
-    <partial name="_TechLogos" model="Content.Profile.BackdropTags" />
+    <partial name="_TechLogos" model="Content.Profile.BackdropTags.Skip(Portfolio.Web.Content.TechLogoData.HeroLogoCount).ToList()" />
     <div class="scroll-progress" aria-hidden="true"><span></span></div>
     <a class="skip-link" href="#main">Skip to main content</a>
     <partial name="_Header" />

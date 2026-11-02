@@ -93,12 +93,38 @@ public sealed class PageRenderTests(WebApplicationFactory<Program> factory) : IC
     }
 
     [Fact]
-    public async Task Resume_button_is_hidden_until_a_resume_file_is_configured()
+    public async Task Resume_download_is_offered_in_the_hero_and_the_contact_section_and_the_file_exists()
     {
         var page = await GetPageAsync("/");
 
-        Assert.Null(Content.Profile.ResumeUrl);
-        Assert.DoesNotContain(page.QuerySelectorAll("a"), a => a.TextContent.Contains("Download resume"));
+        // The link is only worth showing if the file behind it is real: a dead download is worse than none.
+        Assert.NotNull(Content.Profile.ResumeUrl);
+        var webRoot = factory.Services.GetRequiredService<IWebHostEnvironment>().WebRootPath;
+        var file = new FileInfo(Path.Combine(webRoot, Content.Profile.ResumeUrl.TrimStart('/')));
+        Assert.True(file.Exists);
+        Assert.True(file.Length > 10_000);
+        using (var stream = file.OpenRead())
+        {
+            var header = new byte[5];
+            await stream.ReadExactlyAsync(header);
+            Assert.Equal("%PDF-", System.Text.Encoding.ASCII.GetString(header));
+        }
+
+        var links = page.QuerySelectorAll($"a[href='{Content.Profile.ResumeUrl}']").ToList();
+        Assert.Contains(links, a => a.Closest(".hero") is not null && a.TextContent.Contains("Download resume"));
+        Assert.Contains(links, a => a.Closest("#contact") is not null);
+        Assert.All(links, a => Assert.NotNull(a.GetAttribute("download")));
+    }
+
+    [Fact]
+    public async Task Resume_download_works_from_the_static_site_as_a_pdf()
+    {
+        using var client = factory.CreateClient();
+
+        using var response = await client.GetAsync(Content.Profile.ResumeUrl);
+
+        Assert.Equal(System.Net.HttpStatusCode.OK, response.StatusCode);
+        Assert.Equal("application/pdf", response.Content.Headers.ContentType?.MediaType);
     }
 
     [Fact]
@@ -278,13 +304,44 @@ public sealed class PageRenderTests(WebApplicationFactory<Program> factory) : IC
             Assert.Equal(text[..half].Trim(), text[half..].Trim());
         });
 
-        // The hero's logo rail holds the same set of logos six times (the loop needs repeats), and the first
-        // set is exactly the profile's list. Each logo is a reference to a drawing in the shared sprite.
-        var sets = backdrop.QuerySelectorAll(".logo-rail .logo-set").ToList();
-        Assert.Equal(6, sets.Count);
-        Assert.Equal("6", backdrop.QuerySelector(".logo-track")?.GetAttribute("data-sets"));
-        Assert.All(sets, set => Assert.Equal(Content.Profile.BackdropTags, set.QuerySelectorAll(".tech-logo").Select(l => l.GetAttribute("data-tech"))));
-        Assert.All(backdrop.QuerySelectorAll(".logo-rail .tech-logo"), logo => Assert.NotNull(logo.QuerySelector("svg use")));
+        // The hero layer holds its share of the logos: the first few of the profile's list.
+        var heroLogos = backdrop.QuerySelectorAll(".tech-logos--hero .tech-logo").ToList();
+        Assert.Equal(Content.Profile.BackdropTags.Take(TechLogoData.HeroLogoCount), heroLogos.Select(l => l.GetAttribute("data-tech")));
+        Assert.Equal(TechLogoData.HeroLogoCount, heroLogos.Count);
+        Assert.All(heroLogos, logo => Assert.NotNull(logo.QuerySelector("svg use")));
+    }
+
+    [Fact]
+    public async Task Each_technology_logo_appears_once_across_the_hero_and_the_page_layer()
+    {
+        var page = await GetPageAsync("/");
+
+        // The two layers split the technologies between them, so nothing repeats (a strip of repeats looked redundant).
+        var shown = page.QuerySelectorAll(".tech-logo").Select(l => l.GetAttribute("data-tech")).ToList();
+        Assert.Equal(shown.Count, shown.Distinct().Count());
+        Assert.Equal(Content.Profile.BackdropTags.Order(), shown.Order());
+    }
+
+    [Fact]
+    public async Task Hero_has_no_crown_and_no_logo_strip()
+    {
+        var page = await GetPageAsync("/");
+
+        Assert.Null(page.QuerySelector(".crown"));
+        Assert.Null(page.QuerySelector(".logo-rail"));
+        Assert.Null(page.QuerySelector(".hero-identity-text svg"));
+    }
+
+    [Fact]
+    public async Task Logos_stay_faint_in_the_stylesheet_so_they_never_compete_with_content()
+    {
+        var webRoot = factory.Services.GetRequiredService<IWebHostEnvironment>().WebRootPath;
+        var css = await File.ReadAllTextAsync(Path.Combine(webRoot, "css", "site.css"));
+
+        foreach (System.Text.RegularExpressions.Match match in System.Text.RegularExpressions.Regex.Matches(css,@"\.tech-logo[^{]*\{[^}]*?opacity:\s*(?<o>[\d.]+)"))
+        {
+            Assert.True(double.Parse(match.Groups["o"].Value, System.Globalization.CultureInfo.InvariantCulture) <= 0.25, match.Value);
+        }
     }
 
     [Fact]
@@ -301,11 +358,11 @@ public sealed class PageRenderTests(WebApplicationFactory<Program> factory) : IC
     }
 
     [Fact]
-    public async Task Logo_rail_and_sprite_are_hidden_from_assistive_technology()
+    public async Task Logo_layers_and_sprite_are_hidden_from_assistive_technology()
     {
         var page = await GetPageAsync("/");
 
-        Assert.Equal("true", page.QuerySelector(".logo-rail")?.GetAttribute("aria-hidden"));
+        Assert.All(page.QuerySelectorAll(".tech-logos"), layer => Assert.Equal("true", layer.GetAttribute("aria-hidden")));
         var sprite = page.QuerySelector("svg:has(symbol)");
         Assert.NotNull(sprite);
         Assert.Equal("true", sprite.GetAttribute("aria-hidden"));

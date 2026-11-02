@@ -56,10 +56,11 @@ public sealed partial class ResponsiveDesignTests(WebApplicationFactory<Program>
     }
 
     [Fact]
-    public void Logo_rail_loop_distance_matches_the_number_of_repeated_sets()
+    public void Phones_show_fewer_smaller_logos_and_larger_screens_larger_ones()
     {
-        // _LogoRail.cshtml repeats the set 6 times; the loop must move by exactly one sixth of the track.
-        Assert.Contains("translate3d(calc(-100% / 6), 0, 0)", Css());
+        Assert.Contains(".tech-logo:not(.tech-logo--edge)", PhoneRules());
+        Assert.Matches(@"\.tech-logo \{\s*width: 2\.2rem", PhoneRules());
+        Assert.Matches(@"@media \(min-width: 120rem\)[^@]*\.tech-logo \{\s*width: 3\.6rem", Css());
     }
 
     [Fact]

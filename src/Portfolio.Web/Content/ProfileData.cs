@@ -55,5 +55,5 @@ public static class ProfileData
         ],
         PhotoUrl: "/images/randolf.jpg",
         PhotoAlt: "Portrait of Randolf Segubre",
-        ResumeUrl: null);
+        ResumeUrl: "/files/Randolf_Segubre_Resume.pdf");
 }

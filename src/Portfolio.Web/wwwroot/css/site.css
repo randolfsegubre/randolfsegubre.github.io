@@ -294,8 +294,7 @@ a:hover {
   position: relative;
   overflow: hidden;
   color: var(--hero-text);
-  /* The top padding includes a reserved band (about 6rem) for the logo rail, so logos never meet the content. */
-  padding-block: calc(var(--space-7) + 2rem) calc(var(--space-7) + var(--space-3));
+  padding-block: var(--space-7) calc(var(--space-7) + var(--space-3));
   background:
     radial-gradient(60rem 28rem at 88% -10%, color-mix(in srgb, var(--hero-gold) 22%, transparent), transparent 60%),
     radial-gradient(50rem 30rem at -10% 110%, color-mix(in srgb, #8b5cf6 35%, transparent), transparent 60%),
@@ -306,14 +305,6 @@ a:hover {
 
 .hero h1 {
   color: var(--hero-text);
-}
-
-.crown {
-  display: block;
-  width: 2.75rem;
-  height: auto;
-  color: var(--hero-gold);
-  margin-bottom: var(--space-3);
 }
 
 .eyebrow {
@@ -796,67 +787,11 @@ a:hover {
   color: color-mix(in srgb, var(--gold-bright) 17%, transparent);
 }
 
-/* Technology logos (decorative, ADR-0008). They appear in two places, both hidden from assistive technology:
-   1. The logo rail: a seamless strip scrolling slowly sideways along the top of the hero, inside a band the hero
-      reserves for it, so it can never overlap the portrait, the text or the code card at any screen size.
-   2. The page layer: a few faint silhouettes fixed behind the whole page. */
-
-.tech-logo {
-  display: grid;
-  place-items: center;
-  flex: none;
-  width: 3rem;
-  height: 3rem;
-  border-radius: 50%;
-  background: #f5f0ff;
-  box-shadow: 0 8px 20px -8px rgb(0 0 0 / 0.6), 0 0 0 3px color-mix(in srgb, var(--hero-gold) 40%, transparent);
-}
-
-/* Each logo is a reference to the shared sprite: fill comes from --brand, and --cutout is the color of any
-   lettering cut into a mark (the C# hexagon). */
-.tech-logo svg {
-  width: 58%;
-  height: 58%;
-  fill: var(--brand);
-  --cutout: #fff;
-}
-
-.logo-rail {
-  position: absolute;
-  inset: 1rem 0 auto 0;
-  z-index: 1;
-  overflow: hidden;
-  padding-block: 6px;
-  pointer-events: none;
-  -webkit-mask-image: linear-gradient(to right, transparent, #000 10%, #000 90%, transparent);
-  mask-image: linear-gradient(to right, transparent, #000 10%, #000 90%, transparent);
-}
-
-.logo-track {
-  display: flex;
-  width: max-content;
-  animation: rail 45s linear infinite;
-  will-change: transform;
-}
-
-.logo-set {
-  display: flex;
-  flex: none;
-  gap: 1rem;
-  padding-right: 1rem;
-}
-
-/* The track holds six identical sets, so moving by exactly one sixth of its width loops with no jump.
-   The "6" must match the number of sets in _LogoRail.cshtml; a test checks it. */
-@keyframes rail {
-  from {
-    transform: translate3d(0, 0, 0);
-  }
-
-  to {
-    transform: translate3d(calc(-100% / 6), 0, 0);
-  }
-}
+/* Technology logos (decorative, ADR-0008): quiet silhouettes scattered around the page, hidden from assistive
+   technology. They are deliberately faint (low opacity, no badge, a very slow drift) so they read as texture and
+   never as content. Two layers share the technologies between them, so each logo appears once:
+   1. the hero layer, inside the hero, positioned by percentage of the hero;
+   2. the page layer, fixed behind every other section. */
 
 .tech-logos {
   position: absolute;
@@ -870,24 +805,35 @@ a:hover {
   z-index: -1;
 }
 
-/* Behind the page's text, logos are quiet silhouettes in the theme color, so text never sits on a bright badge.
-   The left edge is clamped so a logo is never cut off by the right edge of any screen. */
-.tech-logos--page .tech-logo {
+/* The left edge is clamped so a logo is never cut off by the right edge of any screen. */
+.tech-logo {
   position: absolute;
   left: min(var(--x), calc(100% - 3.4rem));
   top: var(--y, auto);
   bottom: var(--b, auto);
   width: 2.6rem;
   height: 2.6rem;
-  background: transparent;
-  box-shadow: none;
-  opacity: 0.22;
+  opacity: 0.2;
   animation: bob var(--d, 12s) ease-in-out var(--delay, 0s) infinite alternate;
 }
 
-.tech-logos--page .tech-logo svg {
+/* Each logo is a reference to the shared sprite and is drawn in the layer's text color. --cutout is the color of
+   any lettering cut into a mark (the C# hexagon). */
+.tech-logo svg {
+  display: block;
+  width: 100%;
+  height: 100%;
   fill: var(--accent);
   --cutout: var(--bg);
+}
+
+.tech-logos--hero .tech-logo {
+  opacity: 0.13;
+}
+
+.tech-logos--hero .tech-logo svg {
+  fill: var(--hero-text);
+  --cutout: var(--hero-from);
 }
 
 @keyframes bob {
@@ -913,7 +859,7 @@ a:hover {
 
 /* Responsive scale (see docs/build/05_DEVLOG.md, 2026-11-02): lanes and content grow on large screens and
    shrink on small ones.
-     under 42rem (phones)   3 lanes, 2.6rem logos, touch-sized header
+     under 42rem (phones)   3 lanes, fewer and smaller logos, touch-sized header
      under 75rem (tablets)  5 lanes
      75rem and up           8 lanes
      over 120rem (ultrawide) larger background code and a wider content column */
@@ -949,12 +895,13 @@ a:hover {
     color: color-mix(in srgb, var(--accent) 10%, transparent);
   }
 
-  .logo-rail .tech-logo {
-    width: 2.6rem;
-    height: 2.6rem;
+  /* Fewer, smaller logos on phones, where the text spans the whole width. */
+  .tech-logo {
+    width: 2.2rem;
+    height: 2.2rem;
   }
 
-  .tech-logos--page .tech-logo:not(.tech-logo--edge) {
+  .tech-logo:not(.tech-logo--edge) {
     display: none;
   }
 
@@ -975,9 +922,9 @@ a:hover {
     font-size: clamp(0.74rem, 0.35vw + 0.3rem, 1.05rem);
   }
 
-  .logo-rail .tech-logo {
-    width: 3.5rem;
-    height: 3.5rem;
+  .tech-logo {
+    width: 3.6rem;
+    height: 3.6rem;
   }
 }
 
