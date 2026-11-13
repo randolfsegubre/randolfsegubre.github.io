@@ -26,6 +26,9 @@ an email to Ben). Next is his content review, then Phase 3.
       actions, canonical link, sitemap and sharing tags, `global.json`,
       `.editorconfig`, stricter analyzers, stale ADR references corrected; the
       standing checklist is `06_BEST_PRACTICE_CHECKLIST.md`.
+- [x] Lighthouse pass and phone-width check (2026-11-13): layout shift, small
+      decorative text and a stale navigation highlight fixed and pushed; decided
+      to keep `connect-src 'none'` (see devlog).
 - [x] Résumé download replaced with the 2026-11-13 version (corrected summary),
       same file name so the link never changes.
 - [x] Removed "senior" from the title, availability line and page

@@ -7,6 +7,59 @@ snapshot.
 
 ---
 
+## 2026-11-13 (final): Lighthouse pass and phone-width check
+
+**Asked:** "Yes, run the Lighthouse pass and phone-width check" (the two items
+the best-practice review had left unverified).
+
+**Lighthouse 12.8.2 on the live site, before fixes:** mobile 99 performance, 100
+accessibility, 96 best practices, 92 SEO; desktop 99 / 100 / 100 / 92. Largest
+Contentful Paint 1.5 s mobile and 0.3 s desktop; mobile Total Blocking Time 90 ms.
+Four findings were real or explainable:
+
+1. **Layout shift, desktop 0.064 (repeatable, same value in four runs).** The
+   trace showed the header growing 55 to 59 px and the navigation moving 89 px
+   left: the theme toggle ships `hidden` and `theme.js` reveals it after first
+   paint. Fixed in `site.css`: with the `js` class present the hidden toggle
+   keeps its space (`visibility: hidden`), without scripting it stays out of the
+   layout. Measured after the fix on a local build: CLS 0 on mobile and desktop.
+2. **Illegible text, mobile.** The decorative code lanes were 0.74rem (11.84 px),
+   under the 12 px legibility line, and made up most of the page's text. Now
+   0.75rem; the audit passes.
+3. **"robots.txt is not valid", SEO 92.** The file is fine (200, `text/plain`).
+   The audit fetches it from inside the page and the policy's
+   `connect-src 'none'` blocks that fetch; an experiment with `connect-src 'self'`
+   gave SEO 100. Kept `'none'` (ADR-0009) and left this as an owner decision:
+   see the open item below.
+4. **Not fixable here, GitHub Pages:** short cache lifetime (10 minutes) on
+   static files, and no way to set headers. The portrait (51 KB JPEG, shown at
+   120 px) could be a smaller WebP, about 30 KB saved; deferred, low value.
+
+**Phone width (375 and 320 px, real browser):** no horizontal page scroll (the
+only overflowing element is the swipeable navigation row, by design), no tap
+target under 24 px, smallest visible text 12 px, header 93 px, the theme toggle
+visible, hero, experience and contact read cleanly. One bug found and fixed:
+the navigation kept the last section highlighted after scrolling back up to the
+hero, because `site.js` ignored sections leaving the viewport band. It now clears
+the leaving section's link; checked by scrolling through every section and back
+to the top (the highlight follows, and is empty at the top).
+
+**Verified:** build with warnings as errors clean; 144 tests pass (one new);
+all measurements above taken in real Chrome (Lighthouse) and a real browser
+(phone width) against a local server that I stopped afterwards.
+**Not verified at the time of writing:** the live site after these fixes (see
+the push entry below the commit for the live re-measurement).
+
+**Decided (owner: "as long as we follow best practice", then "you can push"):**
+keep `connect-src 'none'`. The alternative, `'self'`, would raise the SEO audit
+to 100 and loses almost nothing (it only allows requests to the site's own
+address), but `'none'` is the stricter policy ADR-0009 specifies, the page makes
+no requests, and the 92 is a tool artifact (the file is valid). A real crawler is
+unaffected. Revisit only if a Lighthouse score ever matters more than the
+stricter policy.
+
+---
+
 ## 2026-11-13 (last): Workflow actions moved off Node 20
 
 **Asked:** "Yes, bump the actions and re-pin."
