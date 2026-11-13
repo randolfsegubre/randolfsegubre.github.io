@@ -7,6 +7,24 @@ snapshot.
 
 ---
 
+## 2026-11-13 (last): Workflow actions moved off Node 20
+
+**Asked:** "Yes, bump the actions and re-pin."
+
+**What changed:** `deploy.yml` now pins `actions/checkout` v7.0.1, `actions/setup-dotnet`
+v6.1.0, `actions/upload-pages-artifact` v5.0.0 and `actions/deploy-pages`
+v5.0.1, each to its full commit hash (resolved with `gh api
+repos/<owner>/<action>/git/ref/tags/<tag>`; all four are lightweight tags, so
+the hash is the commit). The three that run JavaScript declare `node24`;
+`upload-pages-artifact` is composite and pins its own `upload-artifact` v7.0.0
+by hash. Since version 4 that action skips dotfiles by default, so
+`include-hidden-files: true` keeps the `.nojekyll` marker the exporter writes
+in the published artifact.
+
+**Verified:** see the run result in the commit that follows this entry.
+
+---
+
 ## 2026-11-13 (later): Résumé download replaced
 
 **Asked:** "Yes, swap in the new résumé." The corrected résumé (no "Senior" in
