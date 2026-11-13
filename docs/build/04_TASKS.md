@@ -26,6 +26,14 @@ an email to Ben). Next is his content review, then Phase 3.
       actions, canonical link, sitemap and sharing tags, `global.json`,
       `.editorconfig`, stricter analyzers, stale ADR references corrected; the
       standing checklist is `06_BEST_PRACTICE_CHECKLIST.md`.
+- [x] Header link renamed "Home"; hero background replaced by a looping video of
+      his stack (`tools/hero-video`, ADR-0008 fifth amendment, ADR-0009
+      `media-src`), so the hero and the page no longer look like one surface
+      (2026-11-14).
+- [x] Local test of the Home link and hero video in a real browser (2026-11-14):
+      desktop, tablet, phone, reduced motion and the theme toggle verified; one
+      bug found and fixed (the "Live site" badge dot kept pulsing under reduced
+      motion). Not verified: Safari playback of the MP4, and the live site.
 - [x] Portrait converted to WebP for the page, JPEG kept for fallback and link
       previews (2026-11-14).
 - [x] Lighthouse pass and phone-width check (2026-11-13): layout shift, small
@@ -47,6 +55,12 @@ an email to Ben). Next is his content review, then Phase 3.
       Lighthouse pass.
 
 ## Explicitly deferred (tracked so they are never silently forgotten)
+
+- **Pause control for decorative motion.** The page has continuous decorative
+  motion (the page code layer, and the hero video on wide screens). Reduced
+  motion is respected, but the Web Content Accessibility Guidelines (WCAG)
+  success criterion 2.2.2 asks for a way to pause it. A small "pause
+  animations" toggle in the header would meet it; not built, owner's call.
 
 - **Resume file refresh (done 2026-11-13, kept as the how-to).** The download (hero button and contact card) serves
   `wwwroot/files/Randolf_Segubre_Resume.pdf`, a copy of his Final résumé from

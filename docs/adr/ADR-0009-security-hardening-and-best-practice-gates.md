@@ -56,6 +56,11 @@ practice a standing part of the workflow, not a one-off cleanup.
    checklist; the operating manual makes it a non-negotiable step before any
    change is called done, and the `best-practice-check` skill runs it.
 
+**Amendment, 2026-11-14:** the hero video (ADR-0008) needs one more directive,
+`media-src 'self'`, because `default-src 'none'` would otherwise block it. It
+allows audio and video from the site itself only; no remote media is
+permitted, and `HeadSecurityAndSeoTests` pins the directive.
+
 ## Alternatives considered
 
 - **Hash-based inline script allowance** instead of moving the script out:

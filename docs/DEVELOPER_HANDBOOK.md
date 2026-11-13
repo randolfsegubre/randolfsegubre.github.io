@@ -75,6 +75,12 @@ source (Settings, Pages, Build and deployment).
   Security Policy (ADR-0009). Put scripts in external files under
   `wwwroot/js/`, never inline or in `onclick=` attributes, and do not load
   anything from another site without a new ADR.
+- **The hero video does not play:** it plays only on screens wider than 42rem,
+  with reduced motion and data saving off (then a still frame shows instead),
+  and never on phones. A blocked or silent video usually means the
+  `media-src 'self'` directive was lost (ADR-0009) or a file is not under
+  `wwwroot/media`. To change the picture, edit `tools/hero-video/scene.html` and
+  run `npm run build` there (see its README); keep each file under 1 MB.
 - **Before calling a change done:** run the checklist in
   `docs/build/06_BEST_PRACTICE_CHECKLIST.md`.
 - **A test fails on writing rules:** it names the string and the rule. Write

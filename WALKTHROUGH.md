@@ -76,7 +76,14 @@ Architecture Decision Records (ADRs) instead of repeating their reasoning.
 **What the hero is made of (ADR-0008):** `_Hero.cshtml` lays out the copy beside
 `_DeveloperRecord.cshtml`, a code card that renders the same `Profile` as a C#
 record (so it cannot disagree with the page), over `_CodeBackdrop.cshtml`, a
-decorative layer of drifting C# fragments hidden from assistive technology.
+decorative layer hidden from assistive technology: a looping video of a request
+travelling through the owner's stack (`wwwroot/media`, built from
+`tools/hero-video`), plus a few quiet logos. `site.js` plays the video only on
+wide screens when motion and data saving allow it; otherwise the stylesheet
+shows a still frame, and phones get the plain gradient. The faint drifting C#
+fragments live behind the rest of the page, so the hero is a different surface.
+The header's first link says "Home" instead of repeating the name the hero
+already shows.
 `_StatsStrip.cshtml` then shows checkable facts under the hero, instead of
 unverifiable skill percentage bars.
 

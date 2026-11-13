@@ -122,6 +122,40 @@ background cannot advertise a technology the page does not back up); and the
 columns keep to the margins and behind the opaque code card so the headline
 stays readable.
 
+**Fifth amendment, 2026-11-14 (a hero of its own, "Home" in the header):** the
+owner said the name in the header repeats the hero's name, and that the hero
+banner and the page background "look redundant" (the same scrolling code sat in
+both, by the original design of one continuous surface). He chose a "Home"
+link in the header and asked for the hero background to be a unique video or
+GIF suited to his background and skills. Decision:
+
+- **The header's first link is labelled "Home"** (the conventional name for a
+  link to the top of the site), not the owner's name. The hero's `<h1>` stays
+  the one place the name is the page heading.
+- **The hero background is a looping video made for this site**, not stock
+  footage: his stack as a request path (browser, edge, ASP.NET Core, Umbraco
+  CMS, MongoDB, SQL Server, Docker, Jenkins) with gold packets, a small
+  Content Security Policy shield and a slow scan line. It is drawn on a canvas
+  by `tools/hero-video/scene.html` and encoded to WebM (about 250 KB) and MP4
+  (about 390 KB) with a 15 KB poster; the boxes ring the edges so the text
+  and the code card stay clear. Video was chosen over a Graphics Interchange Format (GIF) file: a GIF of this
+  size would be several megabytes.
+- **The hero's scrolling code lanes are removed.** The faint code-and-logo
+  layer stays behind the rest of the page, so the hero is plainly a separate
+  banner. The three hero logos stay.
+- **Playback is polite.** No `autoplay` attribute, `preload="none"`, muted,
+  no controls, hidden from assistive technology; `site.js` plays it only on
+  screens wider than 42rem when the visitor has not asked for reduced motion or
+  data saving, and pauses it while the hero is off screen. Under reduced
+  motion, before it plays, and without scripting, the stylesheet shows a still
+  frame. Phones hide the video (a tall, narrow hero would show a zoomed strip)
+  and fetch neither the video nor the still.
+- **Content Security Policy:** `media-src 'self'` is added (ADR-0009).
+- **Known limit:** the page has continuous decorative motion (the page layer
+  and, on wide screens, the video) but no pause button. Reduced motion is
+  respected; a pause control would be needed to meet the Web Content Accessibility Guidelines (WCAG) success criterion 2.2.2 fully, and is
+  recorded as an open item in the tasks.
+
 ## Consequences
 
 - The design has a recognisable idea that is the owner's own: his stack as the

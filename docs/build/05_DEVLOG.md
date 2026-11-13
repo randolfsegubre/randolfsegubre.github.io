@@ -7,6 +7,85 @@ snapshot.
 
 ---
 
+## 2026-11-14 (local test): the "Home" link and the hero video, in a real browser
+
+**Asked:** "Let's test locally the recent changes." Ran the best-practice-check
+skill (ADR-0009) against the uncommitted work, on a local server at port 5099.
+
+**Passed:** `dotnet build -warnaserror` clean; 147 tests (148 after the fix
+below); no vulnerable packages; no stale ADR-0002 references; the page sends the
+Content Security Policy with `media-src 'self'`; the console had zero messages
+across the whole session.
+- **Desktop 1440:** the video starts by itself, plays (checked at 7.6 s), only
+  the 240 KB WebM and the 15 KB poster are fetched, WebM is chosen, 1280 by 720,
+  no error. The hero shows his stack as a request path with travelling packets;
+  the text and code card stay readable.
+- **Tablet 820:** video plays behind the content, no sideways scroll.
+- **Phone 375:** video hidden and never fetched (no `/media/` requests), no
+  sideways scroll, header 93 px, tap targets at least 40 px.
+- **Reduced motion:** video paused and not fetched; only the still poster loads.
+- **Theme toggle:** switches, stores the choice and survives a reload; the
+  "Home" link is `#top`, keeps the query string, and scrolls to the top.
+
+**Bug found and fixed:** under reduced motion the browser still listed two
+running animations, both the pulsing dot on the "Live site" badge. The
+reduced-motion rule used `*`, which does not match `::before`, and that dot is a
+`::before`. The rule now also lists `*::before` and `*::after`; a new test guards
+it; the browser then reported zero running animations.
+
+**Tool notes:** the in-app browser pane was hidden, so its automatic video play
+could not fire (it never reports the hero as visible). I confirmed playback
+separately with a second real browser (Playwright) rather than guess. A tablet
+screenshot looked scrolled; scroll position stayed at 0 for three seconds, so it
+was a screenshot artifact.
+
+**Not verified:** Safari playback of the MP4 fallback (no Safari here), and the
+live site (nothing is pushed). Stopped only the server I started, by its PID.
+
+---
+
+## 2026-11-14 (later): "Home" in the header and a hero video of his own
+
+**Asked:** "Is it not redundant if my name is on the site-header. Hero banner
+background should be different from the page background. They look
+redundant." I looked at the page first (the name appeared in the header, the
+hero heading and the code card; the same scrolling code sat in the hero and
+behind the page) and asked how to fix both. His answers: the header link should
+say "Home", "what should be the standard name ... as what its functionality
+suggests"; and "Hero should be a unique .gif or video that is unique and
+suitable for my background and skills".
+
+**What changed:** (1) The header's first link reads "Home". (2) New hero video,
+made for this site: a request travelling through his stack (Browser, Edge,
+ASP.NET Core, Umbraco CMS, MongoDB, SQL Server, Docker, Jenkins, with a Content
+Security Policy shield and a scan line), drawn on a canvas and encoded to WebM
+(246 KB) and MP4 (387 KB) plus a 15 KB poster. The boxes ring the edges of the
+frame so the headline and the code card stay clear; a left-to-right shade
+keeps text readable. The hero's own scrolling code lanes are gone; the faint
+code and logo layer stays behind the rest of the page. (3) `site.js` step 4
+plays the video only on wide screens when motion and data saving allow, and
+pauses it off screen; otherwise a CSS background shows a still frame; phones
+fetch neither. (4) `media-src 'self'` in the policy. (5) The source and a
+rebuild script are in `tools/hero-video` (verified: a rebuild reproduces the
+poster and MP4 byte for byte). Chosen over a GIF because a GIF of this size is
+several megabytes.
+
+**Verified:** build clean with warnings as errors; 147 tests pass (two new, two
+updated); static export includes `media/`; real browser at 1440 and 375 wide:
+video plays (currentTime advances, no console errors, no policy violations),
+layout and text unchanged, phone shows the plain gradient with no media
+requests; Lighthouse on a local build: performance 100, accessibility 100, best
+practices 100 on mobile and desktop, layout shift 0, mobile fetches no media,
+desktop fetches the poster and the WebM (about 262 KB).
+**Not verified:** the live site (not pushed), and Safari playback of the MP4
+(only Chrome was available; the MP4 is encoded as H.264 High, yuv420p, with
+the index at the front, which is what Safari needs).
+
+**Open:** the owner has not yet seen it; wording and look are his call. A pause
+control for decorative motion is recorded in the tasks.
+
+---
+
 ## 2026-11-14: Portrait converted to WebP
 
 **Asked:** "Yes, convert the portrait to WebP" (the one Lighthouse image finding

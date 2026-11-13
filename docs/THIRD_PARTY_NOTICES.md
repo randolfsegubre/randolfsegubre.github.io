@@ -44,3 +44,15 @@ pixels; the image content is otherwise unedited. `randolf.webp` beside it is
 the same picture resized to 320 by 320 pixels and saved as WebP (quality 85,
 about 9 KB instead of 51 KB) for the page itself; the JPEG stays as the
 fallback and as the link-preview image.
+
+## Hero video
+
+`src/Portfolio.Web/wwwroot/media/` holds the hero background video (`hero.webm`,
+`hero.mp4`) and its still frame (`hero-poster.webp`). They are the site owner's
+own work, drawn by `tools/hero-video/scene.html` with no stock footage and no
+third-party artwork. The files are built with two development-only tools that
+never ship with the site: puppeteer-core (Apache License 2.0), which drives
+the owner's installed Chrome to draw the frames, and ffmpeg-static (a build of
+FFmpeg, which is licensed under the GNU General Public License in that build),
+which encodes them. The encoded files are the owner's output and carry no
+licence obligation from the encoder.

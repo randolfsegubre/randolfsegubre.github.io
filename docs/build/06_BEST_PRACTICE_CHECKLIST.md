@@ -48,7 +48,9 @@ the conflict and ask the owner; do not pick silently.
 
 - [ ] One `<h1>`, landmarks, skip link, visible focus, alt text, sufficient
       contrast in both themes, keyboard operability.
-- [ ] `prefers-reduced-motion` is respected for any new motion.
+- [ ] `prefers-reduced-motion` is respected for any new motion. A video never
+      autoplays under reduced motion or data saving, is muted, decorative and
+      under 1 MB per file, and is not fetched on phones (ADR-0008).
 - [ ] Checked in a real browser at phone and desktop width, light and dark,
       with the console empty (no policy violations).
 
