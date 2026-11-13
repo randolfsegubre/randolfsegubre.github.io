@@ -8,10 +8,10 @@ current.
 
 | Claim | Source |
 |---|---|
-| Senior full-stack .NET developer, more than nine years of professional C# and .NET | Employment history from June 2017 (first programming role) to now |
+| Full-stack .NET developer, more than 9 years of professional C# and .NET | Employment history from June 2017 (first programming role) to now |
 | Travel, healthcare and construction sectors | Airline (Scoot), healthcare payer (Centene, UnitedHealth Group), hospitality travel (Hotelplan UK), construction (F. Gurrea) |
 | Metro Manila | His public profiles name different cities within it, so the metro area is used |
-| Open to senior full-stack .NET roles, remote preferred | The owner's stated job-search preference |
+| Open to .NET and full-stack roles, remote preferred, open to hybrid | The owner's stated job-search preference |
 | Email, GitHub, LinkedIn | The owner's own public profiles |
 | Downloadable résumé (`wwwroot/files/Randolf_Segubre_Resume.pdf`) | An unedited copy of `Downloads/Corrected Resume/Final/Randolf_Segubre_Resume.pdf`, the résumé he currently sends to employers. Published at his request on 2026-11-02. It is his own document and is more detailed (and in places stronger worded, for example "Led", "Independently built") than the site's cards; see the devlog for two lines to review |
 | Mobile and Viber number +63 917 1022 203, and WhatsApp number +63 920 909 3036 | Supplied by the owner in writing on 2026-09-25, to be shown publicly. The mobile number matches the one on his job applications |

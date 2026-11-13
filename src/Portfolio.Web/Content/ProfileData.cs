@@ -15,10 +15,10 @@ public static class ProfileData
 {
     public static Profile Profile { get; } = new(
         Name: "Randolf Segubre",
-        Title: "Senior Full-Stack .NET Developer",
+        Title: "Full-Stack .NET Developer",
         Location: "Metro Manila, Philippines",
-        Headline: "I have spent more than nine years building and maintaining web platforms in C# and .NET across travel, healthcare and construction. I work on the backend, the Umbraco content management system, and the front end that sits on top of them, and I like the parts that usually go wrong in production: security headers, legacy upgrades, and data that has to be right.",
-        Availability: "Open to senior full-stack .NET roles. Remote preferred.",
+        Headline: "I have spent more than 9 years building and maintaining web platforms in C# and .NET across travel, healthcare and construction. I work on the backend, the Umbraco content management system, and the front end that sits on top of them, and I like the parts that usually go wrong in production: security headers, legacy upgrades, and data that has to be right.",
+        Availability: "Open to .NET and full-stack roles. Remote preferred, open to hybrid.",
         Email: "rsegubre@gmail.com",
         Links:
         [
