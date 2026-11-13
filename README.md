@@ -27,7 +27,7 @@ dotnet test Portfolio.slnx
 | `src/Portfolio.Web/Controllers/` | The single MVC controller |
 | `src/Portfolio.Web/Views/` | Razor layout, page and partial views |
 | `src/Portfolio.Web/Export/` | The static exporter that produces the deployable files |
-| `src/Portfolio.Web/wwwroot/` | Stylesheet, theme script, favicon, robots.txt |
+| `src/Portfolio.Web/wwwroot/` | Stylesheet, scripts, favicon, robots.txt, sitemap.xml |
 | `tests/Portfolio.Tests/` | xUnit tests: content rules, rendered HTML, exporter |
 | `docs/adr/` | Architecture Decision Records: why it is built this way |
 | `docs/build/` | Build plan, operating manual, patterns guide, tasks, devlog |

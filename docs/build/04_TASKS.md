@@ -21,6 +21,14 @@ an email to Ben). Next is his content review, then Phase 3.
 - [x] Public repository `randolfsegubre/randolfsegubre.github.io` created and
       Pages source set to "GitHub Actions" (2026-09-25).
 
+- [x] Best-practice review and fixes (2026-11-13, ADR-0009): Content Security
+      Policy, exporter safety guard, per-job workflow permissions and pinned
+      actions, canonical link, sitemap and sharing tags, `global.json`,
+      `.editorconfig`, stricter analyzers, stale ADR references corrected; the
+      standing checklist is `06_BEST_PRACTICE_CHECKLIST.md`.
+- [x] Removed "senior" from the title, availability line and page
+      descriptions (2026-11-13, at the owner's request).
+
 ## Next up (in order)
 
 - [x] Pushed `main`; the workflow succeeded and the live address loads
@@ -46,7 +54,7 @@ an email to Ben). Next is his content review, then Phase 3.
 
 ## Open questions
 
-- Should the availability line say "remote preferred"? Currently it does.
+- Resolved 2026-11-13: availability reads "Open to .NET and full-stack roles. Remote preferred, open to hybrid."
 - Which two or three projects get real screenshots first (BudgetPH has
   verified ones in its repository).
 

@@ -32,6 +32,7 @@ doubtful one, every time.
 8. `docs/CONTENT_SOURCES.md`: where each claim on the site comes from.
 9. `docs/DEVELOPER_HANDBOOK.md`: setup and everyday commands.
 10. `WALKTHROUGH.md`: how a page request flows through the code.
+11. `docs/build/06_BEST_PRACTICE_CHECKLIST.md`: the standing best-practice gate.
 
 ## First-session checklist
 
@@ -54,6 +55,7 @@ doubtful one, every time.
 | Content honesty and safety policy | [ADR-0006](../adr/ADR-0006-content-honesty-and-safety-policy.md) |
 | ASP.NET Core MVC on .NET 10, exported to static files | [ADR-0007](../adr/ADR-0007-aspnet-core-mvc-with-static-export.md) |
 | "Developer identity" design concept (code card, stats, vanilla motion), original not copied | [ADR-0008](../adr/ADR-0008-developer-identity-design-concept.md) |
+| Security hardening (Content Security Policy, exporter safety, workflow least privilege) and the best-practice gate | [ADR-0009](../adr/ADR-0009-security-hardening-and-best-practice-gates.md) |
 
 A new significant decision (a new dependency, a reversal) gets a new
 `ADR-000N` the moment it is made, and a row in this table.
@@ -65,6 +67,15 @@ A new significant decision (a new dependency, a reversal) gets a new
   gaps. Say "contributed to" unless "led" is documented truth. Never add
   confidential material, internal system names or ticket numbers. Never link
   a private repository. Never include confidential client work.
+- **Best practice is a standing requirement (ADR-0009).** Before any change is
+  called done, run `docs/build/06_BEST_PRACTICE_CHECKLIST.md` (the
+  `best-practice-check` skill in `.claude/skills/` does this). Follow the
+  project's own rules first, then current ASP.NET Core and web practice; when
+  they conflict, name the conflict to the owner instead of choosing silently.
+  Concretely: keep the Content Security Policy intact (no inline script or
+  event handlers, no third-party resources without a new ADR), keep the
+  exporter's safety checks, keep workflow permissions per job and actions
+  pinned to commit hashes, and cite only current ADRs in comments.
 - **No secrets, ever.** The site needs none. If a change seems to need one,
   stop and ask.
 - **No AI-attribution trailers.** Do not add `Co-Authored-By` lines or

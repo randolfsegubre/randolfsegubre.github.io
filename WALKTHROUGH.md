@@ -31,10 +31,13 @@ Architecture Decision Records (ADRs) instead of repeating their reasoning.
    MVC routing.
 4. **STEP 3 of 4** sees `--export`, checks the folder is absolute, starts the
    app on a free local port, and finds the address Kestrel chose.
-5. **`StaticExporter.ExportAsync`** runs four steps: empty the output folder;
-   copy `wwwroot` (stylesheet, script, favicon); request `/` and `/not-found`
-   and save the HTML as `index.html` and `404.html`; write `.nojekyll`. Any
-   response other than 200 throws, so a broken site is never published.
+5. **`StaticExporter.ExportAsync`** runs four steps: refuse an unsafe output
+   folder (`EnsureSafeToEmpty`: not a drive root, not the web root or above it,
+   and no non-empty folder without a previous export's `.nojekyll` marker) and
+   empty it; copy `wwwroot` (stylesheet, scripts, favicon, `robots.txt`,
+   `sitemap.xml`); request `/` and `/not-found` and save the HTML as
+   `index.html` and `404.html`; write `.nojekyll`. Any response other than 200
+   throws, so a broken site is never published.
 
 **For each page the exporter requests (a normal MVC request):**
 
@@ -45,8 +48,9 @@ Architecture Decision Records (ADRs) instead of repeating their reasoning.
    and returns `View(model)`.
 8. **`Views/Home/Index.cshtml`** sets the page title and includes one partial
    per section, passing each only the slice it needs.
-9. **`_Layout.cshtml` wraps it:** document head (with the inline theme script
-   that runs before first paint), skip link, `_Header`, the `<main>` landmark
+9. **`_Layout.cshtml` wraps it:** document head (the Content Security Policy
+   first, then the search and sharing tags, then `theme-init.js`, which runs
+   before first paint; ADR-0009), skip link, `_Header`, the `<main>` landmark
    holding the page, and `_Footer`.
 10. **Shared partials keep details consistent:** `_ExternalLink` adds
     `rel="noopener noreferrer"` and a screen-reader hint to every outbound
@@ -55,8 +59,9 @@ Architecture Decision Records (ADRs) instead of repeating their reasoning.
 
 **In the visitor's browser:**
 
-11. GitHub Pages returns the saved `index.html`. The inline script applies a
-    remembered theme before anything paints, and `site.css` reads its color
+11. GitHub Pages returns the saved `index.html`. The browser enforces the
+    policy in its meta tag, and `theme-init.js` applies a remembered theme
+    before anything paints, and `site.css` reads its color
     tokens (ADR-0004). Dark royal purple is the default for everyone; only an
     explicit "light" choice changes it.
 12. **`theme.js`** reveals the theme button (rendered hidden) and wires it: it
@@ -106,7 +111,8 @@ Take the BudgetPH "Known gap" sentence:
 |---|---|
 | A word or claim is wrong | `Content/*.cs`, then `docs/CONTENT_SOURCES.md` |
 | Layout or color is off | `wwwroot/css/site.css` tokens at the top |
-| Wrong theme on load | the inline script in `_Layout.cshtml`, then `wwwroot/js/theme.js` |
+| Wrong theme on load | `wwwroot/js/theme-init.js` (runs before paint), then `wwwroot/js/theme.js` |
+| A script, style or image silently does not load | the Content Security Policy in `_Layout.cshtml` (ADR-0009); the browser console names the blocked resource |
 | The export fails | the message names the route and status; run the app and open that route |
 | Blank page after deploy | the failed step in the GitHub Actions run |
 | A test fails on writing rules | `ContentTests` says which string and why |

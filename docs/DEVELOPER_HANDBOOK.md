@@ -66,8 +66,17 @@ source (Settings, Pages, Build and deployment).
 - **The export fails with a status code:** a route returned something other
   than 200. Run the app and open that route to see the error.
 - **`--export needs an absolute folder path`:** pass `"$PWD/dist"`, not `dist`.
-- **Wrong theme flash:** the inline script in `_Layout.cshtml` must stay in
-  the head, before the stylesheet.
+- **Wrong theme flash:** `theme-init.js` must stay in the head, before the
+  stylesheet, and must not be `defer`red.
+- **`Refusing to empty ... not a previous export`:** the export folder has
+  other files in it. Use a new or empty folder (`"$PWD/dist"` is ignored by
+  git and safe). This guard stops the exporter from deleting real work.
+- **A script or style is blocked in the browser:** the page has a Content
+  Security Policy (ADR-0009). Put scripts in external files under
+  `wwwroot/js/`, never inline or in `onclick=` attributes, and do not load
+  anything from another site without a new ADR.
+- **Before calling a change done:** run the checklist in
+  `docs/build/06_BEST_PRACTICE_CHECKLIST.md`.
 - **A test fails on writing rules:** it names the string and the rule. Write
   the full words, or add the short form in brackets right after them.
 - **Blank page after deploy:** check the failed step in the Actions run.

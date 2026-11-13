@@ -7,6 +7,51 @@ snapshot.
 
 ---
 
+## 2026-11-13: Title wording, best-practice review and fixes (ADR-0009)
+
+**Asked:** (1) remove "senior" from the portfolio title, because he is about
+75 percent back end and 25 percent front end and is not yet a full senior; the
+Cloud Employee and Accenture job titles stay, they are true. (2) "I preferred
+remote but open for hybrid." (3) "Use 9 years instead of nine." (4) "Are we
+following best practice in our code there?", then "fix everything that is not
+right ... it should also be part of our workflow and skills."
+
+**What changed:** the profile title is now "Full-Stack .NET Developer"; the
+availability line reads "Open to .NET and full-stack roles. Remote preferred,
+open to hybrid."; the page and link-preview descriptions no longer say
+"senior"; "nine" became "9" in the headline, the experience intro and the
+sources table. The review found and fixed (see ADR-0009): no Content Security
+Policy (now a meta policy, and the inline theme script moved to
+`theme-init.js`); an exporter that could recursively delete any absolute
+folder (now `EnsureSafeToEmpty`); workflow permissions granted to every job and
+actions pinned to movable tags (now per job, pinned to commit hashes); no
+canonical link, sitemap or complete sharing tags (added, one `SiteInfo.Url`);
+stale ADR-0002 citations in four comments (now ADR-0007); no `global.json` or
+`.editorconfig` (added; analyzers raised to `latest-recommended` with code
+style enforced in the build). Test packages were updated (AngleSharp 1.10.2,
+coverlet 10.1.0, Test.Sdk 18.12.0, runner 4.0.1); `Mvc.Testing` stays on 10.x
+because 11.x targets .NET 11.
+
+**Standing gate:** `docs/build/06_BEST_PRACTICE_CHECKLIST.md` is the one
+checklist, the operating manual makes it a non-negotiable step, and the
+`best-practice-check` skill (`.claude/skills/`) runs it.
+
+**Verified:** `dotnet build -warnaserror` clean; 143 tests pass (130 before,
+13 new for the policy, the sharing tags and the exporter guard; two existing
+tests were updated because their assumptions changed on purpose); no vulnerable
+packages. In a real browser on a local server the page renders, the console is
+empty, a `securitypolicyviolation` listener caught nothing, the theme toggle
+works and survives a reload, scroll progress and navigation highlighting work.
+**Not verified:** a Lighthouse pass, a phone-width re-check after the head
+change, and the GitHub Actions run itself (nothing is pushed yet).
+
+**Open:** nothing is committed or pushed; he reviews first. The résumé download
+still serves the 2026-10-11 file; the corrected 2026-11-13 résumé exists and
+can replace it. `style-src-attr 'unsafe-inline'` remains because per-element
+animation values are inline style attributes (ADR-0009).
+
+---
+
 ## 2026-11-02 (later): Calmer logos, no crown, résumé download
 
 **Asked:** the logos "look redundant and too distracting; they should just be
