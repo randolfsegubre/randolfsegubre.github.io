@@ -7,6 +7,30 @@ snapshot.
 
 ---
 
+## 2026-11-14: Portrait converted to WebP
+
+**Asked:** "Yes, convert the portrait to WebP" (the one Lighthouse image finding
+left from 2026-11-13: a 51 KB, 640 px JPEG shown at 120 to 160 px).
+
+**What changed:** `wwwroot/images/randolf.webp` (320 by 320, quality 85, 8,746
+bytes, made with the `sharp` library from the existing JPEG; side-by-side check
+showed no visible difference). The hero now renders `<picture>` with a WebP
+`<source>` and the existing `<img>` as fallback (`Profile.PhotoWebpUrl`, new
+optional field). **The JPEG stays** and is still the Open Graph image, because
+LinkedIn and some other sharing crawlers do not reliably show WebP previews;
+the 320 px size is twice the largest display size, so it stays sharp on dense
+screens.
+
+**Verified:** build clean with warnings as errors; 145 tests pass (one new:
+`<picture>` markup, real RIFF/WEBP file, under half the JPEG's size); in a real
+browser the WebP is the current source (320 by 320, shown at 120) and the layout
+is unchanged; Lighthouse on a local build lists only `randolf.webp` as fetched
+(8,960 bytes on the wire) and both "properly size images" and "modern image
+formats" now pass, CLS 0.
+**Not verified:** the live site after the push (see the run result below).
+
+---
+
 ## 2026-11-13 (final): Lighthouse pass and phone-width check
 
 **Asked:** "Yes, run the Lighthouse pass and phone-width check" (the two items
