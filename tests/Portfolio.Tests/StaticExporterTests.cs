@@ -42,6 +42,8 @@ public sealed class StaticExporterTests(WebApplicationFactory<Program> factory) 
         Directory.CreateDirectory(outputDirectory);
         var stale = Path.Combine(outputDirectory, "stale.html");
         await File.WriteAllTextAsync(stale, "old");
+        // The marker a previous export leaves behind: without it the exporter refuses to empty the folder.
+        await File.WriteAllTextAsync(Path.Combine(outputDirectory, ".nojekyll"), string.Empty);
         using var client = factory.CreateClient();
         var webRoot = factory.Services.GetRequiredService<IWebHostEnvironment>().WebRootPath;
 
@@ -59,6 +61,61 @@ public sealed class StaticExporterTests(WebApplicationFactory<Program> factory) 
         var error = await Assert.ThrowsAsync<InvalidOperationException>(() => StaticExporter.ExportAsync(broken, webRoot, outputDirectory));
 
         Assert.Contains("500", error.Message);
+    }
+
+    [Fact]
+    public async Task Export_refuses_a_folder_that_has_files_but_is_not_a_previous_export()
+    {
+        // A folder with someone's files and no .nojekyll marker is not the exporter's to empty.
+        Directory.CreateDirectory(outputDirectory);
+        var precious = Path.Combine(outputDirectory, "precious.txt");
+        await File.WriteAllTextAsync(precious, "keep me");
+        using var client = factory.CreateClient();
+        var webRoot = factory.Services.GetRequiredService<IWebHostEnvironment>().WebRootPath;
+
+        var error = await Assert.ThrowsAsync<ArgumentException>(() => StaticExporter.ExportAsync(client, webRoot, outputDirectory));
+
+        Assert.Contains("not a previous export", error.Message);
+        Assert.True(File.Exists(precious));
+    }
+
+    [Fact]
+    public async Task Export_accepts_a_folder_that_a_previous_export_left_behind()
+    {
+        using var client = factory.CreateClient();
+        var webRoot = factory.Services.GetRequiredService<IWebHostEnvironment>().WebRootPath;
+
+        await StaticExporter.ExportAsync(client, webRoot, outputDirectory);
+        await StaticExporter.ExportAsync(client, webRoot, outputDirectory);
+
+        Assert.True(File.Exists(Path.Combine(outputDirectory, "index.html")));
+    }
+
+    [Fact]
+    public void Export_refuses_the_web_root_a_folder_above_it_a_dotdot_path_and_a_drive_root()
+    {
+        var webRoot = factory.Services.GetRequiredService<IWebHostEnvironment>().WebRootPath;
+        var parentOfWebRoot = Path.GetDirectoryName(Path.TrimEndingDirectorySeparator(webRoot))!;
+        var driveRoot = Path.GetPathRoot(webRoot)!;
+        var dotDotPath = Path.Combine(webRoot, "..", "..");
+
+        Assert.Throws<ArgumentException>(() => StaticExporter.EnsureSafeToEmpty(webRoot, webRoot));
+        Assert.Throws<ArgumentException>(() => StaticExporter.EnsureSafeToEmpty(parentOfWebRoot, webRoot));
+        Assert.Throws<ArgumentException>(() => StaticExporter.EnsureSafeToEmpty(driveRoot, webRoot));
+        Assert.Throws<ArgumentException>(() => StaticExporter.EnsureSafeToEmpty(dotDotPath, webRoot));
+    }
+
+    [Fact]
+    public async Task Export_includes_the_sitemap_robots_and_theme_script_files()
+    {
+        using var client = factory.CreateClient();
+        var webRoot = factory.Services.GetRequiredService<IWebHostEnvironment>().WebRootPath;
+
+        await StaticExporter.ExportAsync(client, webRoot, outputDirectory);
+
+        Assert.True(File.Exists(Path.Combine(outputDirectory, "sitemap.xml")));
+        Assert.True(File.Exists(Path.Combine(outputDirectory, "robots.txt")));
+        Assert.True(File.Exists(Path.Combine(outputDirectory, "js", "theme-init.js")));
     }
 
     /// <summary>A client handler that answers every request with one fixed status code.</summary>
