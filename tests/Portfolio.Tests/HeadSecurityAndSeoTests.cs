@@ -47,6 +47,7 @@ public sealed class HeadSecurityAndSeoTests(WebApplicationFactory<Program> facto
         Assert.Equal("'self'", directives["style-src"]);
         Assert.Equal("'none'", directives["object-src"]);
         Assert.Equal("'none'", directives["connect-src"]);
+        Assert.Equal("'self'", directives["media-src"]);
         Assert.Equal("'self'", directives["base-uri"]);
         Assert.Equal("'none'", directives["form-action"]);
     }

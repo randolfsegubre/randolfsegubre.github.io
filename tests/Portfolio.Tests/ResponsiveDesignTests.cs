@@ -111,4 +111,17 @@ public sealed partial class ResponsiveDesignTests(WebApplicationFactory<Program>
         Assert.Contains("@media (prefers-reduced-motion: reduce)", css);
         Assert.Contains("animation: none !important", css);
     }
+
+    [Fact]
+    public void The_reduced_motion_rule_also_covers_pseudo_elements_such_as_the_live_badge_dot()
+    {
+        // "*" does not match ::before or ::after, so a bare "*" left the pulsing dot on the "Live site" badge running
+        // for visitors who asked for no motion. Found in a real browser on 2026-11-14 (getAnimations() listed it).
+        var css = Css();
+        var start = css.IndexOf("@media (prefers-reduced-motion: reduce)", StringComparison.Ordinal);
+        Assert.True(start >= 0);
+        var block = css[start..];
+
+        Assert.Matches(@"\*,\s*\*::before,\s*\*::after \{[^}]*animation: none !important", block);
+    }
 }

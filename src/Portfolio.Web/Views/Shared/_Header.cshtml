@@ -1,6 +1,8 @@
 @inject Portfolio.Web.Content.IPortfolioContent Content
 @*
-    Sticky site header: the owner's name, in-page anchor navigation and the theme toggle.
+    Sticky site header: a "Home" link, in-page anchor navigation and the theme toggle. The link says
+    "Home" rather than repeating the owner's name, which the hero already shows as the page heading
+    (a name in the bar and again in the hero looked redundant, 2026-11-14).
 
     Anchor links: on the home page they are pure in-page anchors ("#projects"), so tapping one only
     scrolls and works even when the page was opened with a query string, such as the tracking
@@ -17,7 +19,7 @@
 }
 <header class="site-header">
     <div class="container header-inner">
-        <a class="brand" href="@(prefix + "#top")">@Content.Profile.Name</a>
+        <a class="brand" href="@(prefix + "#top")">Home</a>
         <nav aria-label="Primary">
             <ul class="nav-list">
                 <li><a href="@(prefix + "#live-sites")">Live sites</a></li>

@@ -719,9 +719,9 @@ a:hover {
   }
 }
 
-/* Animated background (decorative, ADR-0008): lanes of scrolling code plus floating technology logos.
-   One copy lives in the hero (stronger) and one is fixed behind the whole page (fainter), and both use the
-   same lanes, so the background reads as one continuous surface from the top of the page to the bottom. */
+/* Animated background (decorative, ADR-0008): a faint layer of scrolling code and floating technology logos is
+   fixed behind the whole page; the hero has its own, different surface, a looping video (amended 2026-11-14,
+   because the same code lanes in both made the hero and the page look like one redundant surface). */
 
 .code-backdrop {
   position: absolute;
@@ -730,6 +730,41 @@ a:hover {
   overflow: hidden;
   pointer-events: none;
   user-select: none;
+}
+
+/* The hero's looping video fills the banner (muted, decorative; the page script plays it only when it is
+   appropriate). A shade, darkest behind the text on the left, keeps the headline and body copy readable. */
+.hero-video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 55% 50%;
+  /* The still frame shows until the video plays (and stays for visitors who prefer reduced motion). It is set
+     here, not as a poster attribute, so it is only fetched when the video is shown (see the phone rule below). */
+  background: url("/media/hero-poster.webp") 55% 50% / cover no-repeat;
+}
+
+.hero .code-backdrop::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    color-mix(in srgb, var(--hero-from) 80%, transparent),
+    color-mix(in srgb, var(--hero-from) 48%, transparent) 55%,
+    color-mix(in srgb, var(--hero-from) 22%, transparent)
+  );
+}
+
+/* On phones the tall, narrow hero would show only a zoomed strip of the video, and the download is not
+   worth it: the hero keeps its gradient there, which is still a different surface from the page. */
+@media (max-width: 41.99rem) {
+  .hero-video,
+  .hero .code-backdrop::after {
+    display: none;
+  }
 }
 
 /* Lanes are equal-width grid columns across the full width, so they can never overlap each other. */
@@ -779,15 +814,7 @@ a:hover {
   }
 }
 
-/* In the hero the code is clearly visible; behind the rest of the page it is quieter but still moving. */
-.code-streams--hero .code-stream pre {
-  color: color-mix(in srgb, var(--hero-muted) 38%, transparent);
-}
-
-.code-streams--hero .code-stream:nth-child(even) pre {
-  color: color-mix(in srgb, var(--hero-gold) 30%, transparent);
-}
-
+/* The hero is its own surface: a looping video (see below). Behind the rest of the page the code is quiet but still moving. */
 .code-streams--page .code-stream pre {
   color: color-mix(in srgb, var(--accent) 15%, transparent);
 }
@@ -890,14 +917,6 @@ a:hover {
 
   .code-stream:nth-child(n + 4) {
     display: none;
-  }
-
-  .code-streams--hero .code-stream pre {
-    color: color-mix(in srgb, var(--hero-muted) 22%, transparent);
-  }
-
-  .code-streams--hero .code-stream:nth-child(even) pre {
-    color: color-mix(in srgb, var(--hero-gold) 18%, transparent);
   }
 
   .code-streams--page .code-stream pre {
@@ -1263,7 +1282,10 @@ a:hover {
     scroll-behavior: auto;
   }
 
-  * {
+  /* "*" does not match pseudo-elements, so they are listed too: the pulsing dot on the "Live site" badge is a ::before. */
+  *,
+  *::before,
+  *::after {
     transition: none !important;
     animation: none !important;
   }

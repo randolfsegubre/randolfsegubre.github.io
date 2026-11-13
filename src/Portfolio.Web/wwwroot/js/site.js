@@ -1,5 +1,5 @@
 /**
- * Page behaviors (ADR-0008): scroll reveals, active-section highlight in the navigation,
+ * Page behaviors (ADR-0008): scroll reveals, active-section highlight in the navigation, the hero video,
  * and a scroll-progress bar. Plain vanilla script, no third-party library, and every
  * behavior is an enhancement: with scripting off (or reduced motion on) the page is
  * fully visible and fully usable.
@@ -10,7 +10,7 @@
   var root = document.documentElement;
   var reducedMotion = typeof window.matchMedia === "function" && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-  // STEP 1 of 3: reveal elements as they scroll into view. Without IntersectionObserver, or when
+  // STEP 1 of 4: reveal elements as they scroll into view. Without IntersectionObserver, or when
   // the visitor prefers reduced motion, show everything immediately instead of animating.
   var revealItems = document.querySelectorAll("[data-reveal]");
   if (!("IntersectionObserver" in window) || reducedMotion) {
@@ -34,7 +34,7 @@
     });
   }
 
-  // STEP 2 of 3: mark the navigation link of the section currently in view with aria-current,
+  // STEP 2 of 4: mark the navigation link of the section currently in view with aria-current,
   // which the stylesheet turns into a gold underline. Sections without a nav link are ignored.
   var navLinks = Array.prototype.slice.call(document.querySelectorAll(".nav-list a[href*='#']"));
   var sections = navLinks
@@ -91,7 +91,7 @@
     });
   }
 
-  // STEP 3 of 3: update the gold progress bar at the top as the page scrolls, at most once per frame.
+  // STEP 3 of 4: update the gold progress bar at the top as the page scrolls, at most once per frame.
   var ticking = false;
   function updateProgress() {
     var scrollable = root.scrollHeight - window.innerHeight;
@@ -110,4 +110,34 @@
     { passive: true }
   );
   updateProgress();
+
+  // STEP 4 of 4: play the hero video only when it is appropriate. The markup has no autoplay and
+  // preload="none", so until this runs the browser has fetched only the poster. We skip playing when
+  // the visitor prefers reduced motion, has asked to save data, or is on a phone-sized screen (where
+  // the stylesheet hides the video anyway). It also pauses while the hero is out of view, so it uses
+  // no processor time the rest of the page needs.
+  var heroVideo = document.querySelector(".hero-video");
+  var saveData = navigator.connection && navigator.connection.saveData === true;
+  var wideScreen = typeof window.matchMedia === "function" && window.matchMedia("(min-width: 42rem)").matches;
+  if (heroVideo && !reducedMotion && !saveData && wideScreen) {
+    var playHero = function () {
+      var attempt = heroVideo.play();
+      if (attempt && typeof attempt.catch === "function") {
+        attempt.catch(function () {
+          // Autoplay can be refused; the poster simply stays, which is a fine result.
+        });
+      }
+    };
+    if ("IntersectionObserver" in window) {
+      new IntersectionObserver(function (entries) {
+        if (entries[0].isIntersecting) {
+          playHero();
+        } else {
+          heroVideo.pause();
+        }
+      }).observe(heroVideo);
+    } else {
+      playHero();
+    }
+  }
 })();

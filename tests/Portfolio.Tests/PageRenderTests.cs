@@ -295,8 +295,11 @@ public sealed class PageRenderTests(WebApplicationFactory<Program> factory) : IC
         Assert.NotNull(backdrop);
         Assert.Equal("true", backdrop.GetAttribute("aria-hidden"));
 
-        // Every lane of scrolling code is present, each holding its code twice so the loop has no visible jump.
-        var streams = backdrop.QuerySelectorAll(".code-streams--hero .code-stream").ToList();
+        // The hero is its own surface (a video), not a second copy of the page's scrolling code (ADR-0008, 2026-11-14).
+        Assert.Empty(backdrop.QuerySelectorAll(".code-streams"));
+
+        // The page layer behind the other sections still holds every lane, each with its code twice so the loop has no jump.
+        var streams = page.QuerySelectorAll(".code-streams--page .code-stream").ToList();
         Assert.Equal(BackdropCode.Streams.Count, streams.Count);
         Assert.All(streams, stream =>
         {
@@ -310,6 +313,54 @@ public sealed class PageRenderTests(WebApplicationFactory<Program> factory) : IC
         Assert.Equal(Content.Profile.BackdropTags.Take(TechLogoData.HeroLogoCount), heroLogos.Select(l => l.GetAttribute("data-tech")));
         Assert.Equal(TechLogoData.HeroLogoCount, heroLogos.Count);
         Assert.All(heroLogos, logo => Assert.NotNull(logo.QuerySelector("svg use")));
+    }
+
+    [Fact]
+    public async Task Hero_video_is_decorative_muted_not_autoplaying_and_its_files_exist_and_stay_small()
+    {
+        var page = await GetPageAsync("/");
+
+        var video = page.QuerySelector(".hero .code-backdrop video.hero-video");
+        Assert.NotNull(video);
+
+        // Decorative and polite: muted, looping, inline on phones, out of the tab order, and no autoplay attribute
+        // (the page script plays it only when motion and data are allowed), so no video bytes are fetched up front.
+        Assert.NotNull(video.GetAttribute("muted"));
+        Assert.NotNull(video.GetAttribute("loop"));
+        Assert.NotNull(video.GetAttribute("playsinline"));
+        Assert.Null(video.GetAttribute("autoplay"));
+        Assert.Null(video.GetAttribute("controls"));
+        Assert.Equal("none", video.GetAttribute("preload"));
+        Assert.Equal("-1", video.GetAttribute("tabindex"));
+        Assert.NotNull(video.GetAttribute("width"));
+        Assert.NotNull(video.GetAttribute("height"));
+
+        // Both formats and a poster are real files in wwwroot, and each stays small (a background must not weigh more than the page).
+        var webRoot = factory.Services.GetRequiredService<IWebHostEnvironment>().WebRootPath;
+        var sources = video.QuerySelectorAll("source").Select(s => (Src: s.GetAttribute("src")!, Type: s.GetAttribute("type"))).ToList();
+        Assert.Equal(["video/webm", "video/mp4"], sources.Select(s => s.Type));
+        // The still frame comes from the stylesheet (so phones, which hide the video, never fetch it), not a poster attribute.
+        Assert.Null(video.GetAttribute("poster"));
+        var css = await File.ReadAllTextAsync(Path.Combine(webRoot, "css", "site.css"));
+        const string posterPath = "/media/hero-poster.webp";
+        Assert.Contains($"url(\"{posterPath}\")", css);
+        foreach (var path in sources.Select(s => s.Src).Append(posterPath))
+        {
+            var file = new FileInfo(Path.Combine(webRoot, path.TrimStart('/')));
+            Assert.True(file.Exists, path);
+            Assert.True(file.Length is > 5_000 and < 1_000_000, $"{path} is {file.Length} bytes");
+        }
+    }
+
+    [Fact]
+    public async Task Header_link_is_labelled_Home_and_does_not_repeat_the_owners_name()
+    {
+        var page = await GetPageAsync("/");
+
+        var brand = page.QuerySelector(".site-header a.brand");
+        Assert.NotNull(brand);
+        Assert.Equal("Home", brand.TextContent.Trim());
+        Assert.DoesNotContain(Content.Profile.Name, page.QuerySelector(".site-header")!.TextContent);
     }
 
     [Fact]

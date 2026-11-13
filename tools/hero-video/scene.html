@@ -1,0 +1,293 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+  html, body { margin: 0; background: #1a0b3b; }
+  canvas { display: block; }
+</style>
+</head>
+<body>
+<canvas id="c" width="1280" height="720"></canvas>
+<script>
+/*
+ * Hero background: "the path of a request through my stack".
+ *
+ * Nodes are the technologies Randolf actually works with (browser front end in Vue.js and React,
+ * an ASP.NET Core API, Umbraco CMS, SQL Server, MongoDB, Docker, Jenkins). Gold packets travel
+ * along the links between them, a node glows when a packet arrives, and a slow vertical scan line
+ * stands for the security-header work (Content Security Policy). Everything is a pure function of
+ * the time t in seconds, and every motion repeats a whole number of times per loop, so frame
+ * t = LOOP is identical to frame t = 0 and the video loops with no visible jump.
+ */
+const W = 1280, H = 720, LOOP = 12;
+const canvas = document.getElementById('c');
+const ctx = canvas.getContext('2d');
+const TAU = Math.PI * 2;
+const frac = (x) => x - Math.floor(x);
+const clamp = (x, a, b) => Math.min(b, Math.max(a, x));
+
+const MONO = '"Cascadia Mono", Consolas, "Courier New", monospace';
+
+// Colours match the site's hero tokens (--hero-from, --hero-via, --hero-to, gold, violet).
+const C = {
+  from: '#1a0b3b', via: '#3a1878', to: '#2a1160',
+  gold: '#e8c547', goldDeep: '#c9a227', violet: '#8b5cf6', lav: '#d8ccff',
+};
+
+// The nodes ring the edges of the frame (left strip, top band, right strip, bottom band) and leave the
+// middle open: on the page the headline and paragraph sit over the left-middle and the code card over
+// the right-middle, so nothing here competes with them.
+const NODES = {
+  browser: { x: 190, y: 150, title: 'Browser', sub: 'Vue.js · React', seed: 0.0 },
+  edge:    { x: 525, y: 78, title: 'Edge', sub: 'static + cache', seed: 0.9 },
+  api:     { x: 800, y: 78, title: 'ASP.NET Core', sub: 'Web API · .NET 10', seed: 1.8 },
+  cms:     { x: 1075, y: 150, title: 'Umbraco CMS', sub: 'content + backoffice', seed: 2.7 },
+  mongo:   { x: 1085, y: 385, title: 'MongoDB', sub: 'documents', seed: 4.5 },
+  sql:     { x: 1010, y: 610, title: 'SQL Server', sub: 'T-SQL · EF Core', seed: 3.6 },
+  docker:  { x: 585, y: 655, title: 'Docker', sub: 'containers', seed: 5.4 },
+  ci:      { x: 190, y: 520, title: 'Jenkins', sub: 'build + deploy', seed: 0.5 },
+};
+const NODE_W = 164, NODE_H = 56;
+
+// [from, to, packets, loops per cycle]; the loop count is a whole number so the motion repeats.
+const EDGES = [
+  ['browser', 'edge', 2, 1],
+  ['edge', 'api', 2, 1],
+  ['api', 'cms', 2, 1],
+  ['cms', 'mongo', 2, 1],
+  ['mongo', 'sql', 2, 1],
+  ['ci', 'docker', 2, 1],
+  ['docker', 'sql', 3, 1],
+];
+
+function nodePos(key, t) {
+  const n = NODES[key];
+  // A gentle float, one full cycle per loop.
+  return { x: n.x, y: n.y + Math.sin(TAU * (t / LOOP) + n.seed) * 5 };
+}
+
+function edgePoints(a, b, t) {
+  const A = nodePos(a, t), B = nodePos(b, t);
+  const dx = B.x - A.x, dy = B.y - A.y;
+  // Leave and enter horizontally when the link is mostly horizontal, vertically otherwise.
+  const horizontal = Math.abs(dx) >= Math.abs(dy) * 0.7;
+  const p0 = { x: A.x + (horizontal ? Math.sign(dx) * NODE_W / 2 : 0), y: A.y + (horizontal ? 0 : Math.sign(dy) * NODE_H / 2) };
+  const p3 = { x: B.x - (horizontal ? Math.sign(dx) * NODE_W / 2 : 0), y: B.y - (horizontal ? 0 : Math.sign(dy) * NODE_H / 2) };
+  const k = 0.5;
+  const p1 = horizontal ? { x: p0.x + (p3.x - p0.x) * k, y: p0.y } : { x: p0.x, y: p0.y + (p3.y - p0.y) * k };
+  const p2 = horizontal ? { x: p3.x - (p3.x - p0.x) * k, y: p3.y } : { x: p3.x, y: p3.y - (p3.y - p0.y) * k };
+  return [p0, p1, p2, p3];
+}
+
+function bez(p, u) {
+  const v = 1 - u;
+  const a = v * v * v, b = 3 * v * v * u, c = 3 * v * u * u, d = u * u * u;
+  return { x: a * p[0].x + b * p[1].x + c * p[2].x + d * p[3].x, y: a * p[0].y + b * p[1].y + c * p[2].y + d * p[3].y };
+}
+
+// Deterministic pseudo-random numbers, so every render of the video is identical.
+function rng(seed) {
+  let s = seed >>> 0;
+  return () => { s = (s * 1664525 + 1013904223) >>> 0; return s / 4294967296; };
+}
+const R = rng(20261113);
+const PARTICLES = Array.from({ length: 70 }, () => ({
+  x: R() * W, y: R() * H, r: 0.8 + R() * 1.6, loops: R() < 0.5 ? 1 : 2, tw: R() * TAU, a: 0.15 + R() * 0.35,
+}));
+const TOKENS = ['200 OK', 'GET /', 'nonce', 'SELECT', 'JOIN', 'await', 'CSP', 'INSERT', '<partial>', 'async', '404', 'Task<T>'];
+const FLOATERS = Array.from({ length: 12 }, (_, i) => ({
+  text: TOKENS[i], x: 60 + R() * (W - 120), y: 40 + R() * (H - 80), loops: 1, ph: R(), a: 0.10 + R() * 0.10,
+}));
+
+function drawBackground(t) {
+  const g = ctx.createLinearGradient(0, 0, W * 0.5, H);
+  g.addColorStop(0, C.from); g.addColorStop(0.55, C.via); g.addColorStop(1, C.to);
+  ctx.fillStyle = g;
+  ctx.fillRect(0, 0, W, H);
+
+  // The same gold glow and violet bloom as the site's hero, so the video feels native to it.
+  let r = ctx.createRadialGradient(W * 0.88, -H * 0.1, 0, W * 0.88, -H * 0.1, W * 0.55);
+  r.addColorStop(0, 'rgba(201,162,39,0.30)'); r.addColorStop(1, 'rgba(201,162,39,0)');
+  ctx.fillStyle = r; ctx.fillRect(0, 0, W, H);
+  r = ctx.createRadialGradient(-W * 0.05, H * 1.1, 0, -W * 0.05, H * 1.1, W * 0.5);
+  r.addColorStop(0, 'rgba(139,92,246,0.38)'); r.addColorStop(1, 'rgba(139,92,246,0)');
+  ctx.fillStyle = r; ctx.fillRect(0, 0, W, H);
+
+  // A faint dot grid drifting one cell per loop.
+  const cell = 40, off = (t / LOOP) * cell;
+  ctx.fillStyle = 'rgba(216,204,255,0.10)';
+  for (let y = -cell + off; y < H + cell; y += cell) {
+    for (let x = -cell + off; x < W + cell; x += cell) {
+      ctx.fillRect(Math.round(x), Math.round(y), 2, 2);
+    }
+  }
+}
+
+function drawEdges(t) {
+  ctx.lineCap = 'round';
+  EDGES.forEach(([a, b]) => {
+    const p = edgePoints(a, b, t);
+    ctx.beginPath();
+    ctx.moveTo(p[0].x, p[0].y);
+    ctx.bezierCurveTo(p[1].x, p[1].y, p[2].x, p[2].y, p[3].x, p[3].y);
+    ctx.setLineDash([6, 8]);
+    ctx.lineDashOffset = -(t / LOOP) * 14 * 4; // four dash periods per loop
+    ctx.strokeStyle = 'rgba(167,139,250,0.62)';
+    ctx.lineWidth = 1.6;
+    ctx.stroke();
+    ctx.setLineDash([]);
+  });
+}
+
+// Pulse strength per node, from packets arriving (strong) and leaving (weak) in this frame.
+function nodePulses(t) {
+  const pulses = {};
+  Object.keys(NODES).forEach((k) => { pulses[k] = 0; });
+  EDGES.forEach(([a, b, count, loops], ei) => {
+    for (let i = 0; i < count; i++) {
+      const u = frac(loops * (t / LOOP) + i / count + ei * 0.137);
+      const arriving = clamp((u - 0.86) / 0.14, 0, 1);
+      pulses[b] += arriving * (1 - arriving) * 4;
+      const leaving = clamp(1 - u / 0.1, 0, 1);
+      pulses[a] += leaving * 0.35;
+    }
+  });
+  Object.keys(pulses).forEach((k) => { pulses[k] = Math.min(1, pulses[k]); });
+  return pulses;
+}
+
+function drawPackets(t) {
+  EDGES.forEach(([a, b, count, loops], ei) => {
+    const p = edgePoints(a, b, t);
+    for (let i = 0; i < count; i++) {
+      const u = frac(loops * (t / LOOP) + i / count + ei * 0.137);
+      // A short fading trail behind the packet.
+      for (let s = 10; s >= 1; s--) {
+        const us = u - s * 0.012;
+        if (us < 0) continue;
+        const q = bez(p, us);
+        ctx.fillStyle = `rgba(232,197,71,${0.30 * (1 - s / 11)})`;
+        ctx.beginPath(); ctx.arc(q.x, q.y, 3.2 * (1 - s / 14), 0, TAU); ctx.fill();
+      }
+      const q = bez(p, u);
+      ctx.save();
+      ctx.shadowColor = 'rgba(232,197,71,0.95)';
+      ctx.shadowBlur = 16;
+      ctx.fillStyle = C.gold;
+      ctx.beginPath(); ctx.arc(q.x, q.y, 4.2, 0, TAU); ctx.fill();
+      ctx.restore();
+    }
+  });
+}
+
+function roundRect(x, y, w, h, r) {
+  ctx.beginPath();
+  ctx.moveTo(x + r, y);
+  ctx.arcTo(x + w, y, x + w, y + h, r);
+  ctx.arcTo(x + w, y + h, x, y + h, r);
+  ctx.arcTo(x, y + h, x, y, r);
+  ctx.arcTo(x, y, x + w, y, r);
+  ctx.closePath();
+}
+
+function drawNodes(t, pulses) {
+  const scanX = W * frac(t / LOOP);
+  Object.entries(NODES).forEach(([key, n]) => {
+    const pos = nodePos(key, t);
+    const pulse = pulses[key];
+    const scan = Math.exp(-Math.pow((scanX - pos.x) / 90, 2)); // the security scan lights nodes as it passes
+    const x = pos.x - NODE_W / 2, y = pos.y - NODE_H / 2;
+
+    ctx.save();
+    ctx.shadowColor = `rgba(232,197,71,${0.55 * pulse})`;
+    ctx.shadowBlur = 24 * pulse;
+    roundRect(x, y, NODE_W, NODE_H, 12);
+    ctx.fillStyle = `rgba(20,8,48,${0.62 + 0.1 * pulse})`;
+    ctx.fill();
+    ctx.restore();
+
+    roundRect(x, y, NODE_W, NODE_H, 12);
+    const edgeAlpha = 0.42 + 0.45 * pulse + 0.25 * scan;
+    ctx.strokeStyle = pulse > 0.05 ? `rgba(232,197,71,${edgeAlpha})` : `rgba(167,139,250,${edgeAlpha})`;
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+
+    ctx.textBaseline = 'alphabetic';
+    ctx.font = `600 15px ${MONO}`;
+    ctx.fillStyle = `rgba(240,234,255,${0.78 + 0.2 * pulse})`;
+    ctx.fillText(n.title, x + 14, y + 26);
+    ctx.font = `12px ${MONO}`;
+    ctx.fillStyle = 'rgba(216,204,255,0.55)';
+    ctx.fillText(n.sub, x + 14, y + 46);
+  });
+}
+
+function drawShield(t) {
+  // A small shield near the API: the Content Security Policy work, glowing as the scan line passes.
+  const cx = 662, cy = 78;
+  const scan = Math.exp(-Math.pow((W * frac(t / LOOP) - cx) / 90, 2));
+  ctx.save();
+  ctx.translate(cx, cy);
+  ctx.shadowColor = `rgba(232,197,71,${0.7 * scan})`;
+  ctx.shadowBlur = 20 * scan;
+  ctx.beginPath();
+  ctx.moveTo(0, -24); ctx.lineTo(19, -17); ctx.lineTo(19, 3);
+  ctx.quadraticCurveTo(19, 17, 0, 26);
+  ctx.quadraticCurveTo(-19, 17, -19, 3);
+  ctx.lineTo(-19, -17); ctx.closePath();
+  ctx.fillStyle = 'rgba(20,8,48,0.6)'; ctx.fill();
+  ctx.strokeStyle = `rgba(232,197,71,${0.45 + 0.5 * scan})`;
+  ctx.lineWidth = 1.6; ctx.stroke();
+  ctx.shadowBlur = 0;
+  ctx.font = `600 12px ${MONO}`;
+  ctx.fillStyle = `rgba(240,234,255,${0.7 + 0.3 * scan})`;
+  ctx.textAlign = 'center';
+  ctx.fillText('CSP', 0, 6);
+  ctx.restore();
+}
+
+function drawScan(t) {
+  // One slow sweep per loop.
+  const x = W * frac(t / LOOP);
+  const g = ctx.createLinearGradient(x - 120, 0, x + 6, 0);
+  g.addColorStop(0, 'rgba(232,197,71,0)'); g.addColorStop(1, 'rgba(232,197,71,0.06)');
+  ctx.fillStyle = g;
+  ctx.fillRect(x - 120, 0, 126, H);
+  ctx.fillStyle = 'rgba(232,197,71,0.10)';
+  ctx.fillRect(x + 5, 0, 1.5, H);
+}
+
+function drawParticles(t) {
+  PARTICLES.forEach((p) => {
+    const y = ((p.y - (t / LOOP) * H * p.loops) % H + H) % H;
+    const tw = 0.6 + 0.4 * Math.sin(TAU * p.loops * (t / LOOP) + p.tw);
+    ctx.fillStyle = `rgba(216,204,255,${p.a * tw})`;
+    ctx.beginPath(); ctx.arc(p.x, y, p.r, 0, TAU); ctx.fill();
+  });
+  ctx.font = `12px ${MONO}`;
+  ctx.textAlign = 'left';
+  FLOATERS.forEach((f) => {
+    const y = ((f.y - (t / LOOP) * H * f.loops) % H + H) % H;
+    const edge = Math.min(y, H - y) / 80; // fade in and out near the top and bottom
+    ctx.fillStyle = `rgba(216,204,255,${f.a * clamp(edge, 0, 1)})`;
+    ctx.fillText(f.text, f.x, y);
+  });
+}
+
+function draw(t) {
+  ctx.clearRect(0, 0, W, H);
+  drawBackground(t);
+  drawParticles(t);
+  drawScan(t);
+  drawEdges(t);
+  const pulses = nodePulses(t);
+  drawShield(t);
+  drawNodes(t, pulses);
+  drawPackets(t);
+}
+window.draw = draw;
+draw(0);
+</script>
+</body>
+</html>

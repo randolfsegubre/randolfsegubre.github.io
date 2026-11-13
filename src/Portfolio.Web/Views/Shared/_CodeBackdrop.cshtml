@@ -1,10 +1,10 @@
 @model Profile
 @*
-    The hero's animated background (ADR-0008): lanes of scrolling code from the owner's own
-    stack, with a few quiet technology logos scattered over it. It is the stronger twin of the
-    faint layer fixed behind the rest of the page (see _Layout.cshtml); both use the same lanes
-    so the background looks continuous. Purely decorative, so it is hidden from assistive
-    technology and never takes pointer events.
+    The hero's animated background (ADR-0008, amended 2026-11-14): a looping video of the owner's
+    own stack at work, with a few quiet technology logos over it. It is deliberately a different
+    surface from the faint code-and-logo layer fixed behind the rest of the page (see
+    _Layout.cshtml), so the hero reads as its own banner. Purely decorative, so it is hidden from
+    assistive technology and never takes pointer events.
 
     The technologies are shared between the two layers so each logo appears once: this layer
     takes the first TechLogoData.HeroLogoCount of Profile.BackdropTags and the page layer takes
@@ -17,6 +17,16 @@
     var heroTechs = Model.BackdropTags.Take(TechLogoData.HeroLogoCount).ToList();
 }
 <div class="code-backdrop" aria-hidden="true">
-    <partial name="_CodeStreams" model="@("hero")" />
+    @* Looping video, made for this site: a request travelling through the owner's own stack. The
+       page script plays it only on wide screens, with motion allowed and data saving off; otherwise
+       a still frame of the same scene stays (hero-poster.webp, set in the stylesheet so phones, which
+       hide the video, never fetch it). There is no autoplay attribute and preload is "none", so no
+       video bytes are fetched until the script decides. Files: wwwroot/media; how they are made:
+       tools/hero-video/README.md. *@
+    <video class="hero-video" muted loop playsinline preload="none" width="1280" height="720"
+           disablepictureinpicture disableremoteplayback tabindex="-1">
+        <source src="/media/hero.webm" type="video/webm" />
+        <source src="/media/hero.mp4" type="video/mp4" />
+    </video>
     <partial name="_TechLogos" model="heroTechs" view-data="@(new ViewDataDictionary(ViewData) { { "variant", "hero" } })" />
 </div>
