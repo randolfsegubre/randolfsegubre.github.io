@@ -26,6 +26,8 @@ an email to Ben). Next is his content review, then Phase 3.
       actions, canonical link, sitemap and sharing tags, `global.json`,
       `.editorconfig`, stricter analyzers, stale ADR references corrected; the
       standing checklist is `06_BEST_PRACTICE_CHECKLIST.md`.
+- [x] Résumé download replaced with the 2026-11-13 version (corrected summary),
+      same file name so the link never changes.
 - [x] Removed "senior" from the title, availability line and page
       descriptions (2026-11-13, at the owner's request).
 
@@ -41,7 +43,7 @@ an email to Ben). Next is his content review, then Phase 3.
 
 ## Explicitly deferred (tracked so they are never silently forgotten)
 
-- **Resume file refresh.** The download (hero button and contact card) serves
+- **Resume file refresh (done 2026-11-13, kept as the how-to).** The download (hero button and contact card) serves
   `wwwroot/files/Randolf_Segubre_Resume.pdf`, a copy of his Final résumé from
   2026-10-11. When he corrects the résumé (two lines are flagged in the devlog,
   2026-11-02), replace that one file and push; no code change is needed.

@@ -7,6 +7,25 @@ snapshot.
 
 ---
 
+## 2026-11-13 (later): Résumé download replaced
+
+**Asked:** "Yes, swap in the new résumé." The corrected résumé (no "Senior" in
+the Professional Summary, personal AI setup wording) was made the same day.
+
+**What changed:** `wwwroot/files/Randolf_Segubre_Resume.pdf` is now a byte for
+byte copy of `Randolf_Segubre_Resume_2026-11-13.pdf` (SHA-256 starts D333190E,
+357,247 bytes). The file name is unchanged, so the hero button, the contact
+card and any shared link keep working; no code change. `CONTENT_SOURCES.md`
+and `04_TASKS.md` updated.
+
+**Verified:** hash of the copy equals the source; the file starts with `%PDF-`;
+the first page text reads "Full-stack .NET developer with 9+ years"; the
+checklist's build, test and vulnerability checks were rerun (see the commit).
+The résumé's real job titles (Cloud Employee "Senior Full-Stack .NET
+Developer", Accenture "Package App Senior Analyst") stay as they are true.
+
+---
+
 ## 2026-11-13: Title wording, best-practice review and fixes (ADR-0009)
 
 **Asked:** (1) remove "senior" from the portfolio title, because he is about
