@@ -123,6 +123,22 @@ public sealed class HeadSecurityAndSeoTests(WebApplicationFactory<Program> facto
     }
 
     [Fact]
+    public async Task Stylesheet_reserves_the_hidden_theme_toggle_space_and_keeps_decorative_code_readable()
+    {
+        var webRoot = factory.Services.GetRequiredService<IWebHostEnvironment>().WebRootPath;
+
+        var css = await File.ReadAllTextAsync(Path.Combine(webRoot, "css", "site.css"));
+
+        // Layout shift: with scripting on, the hidden toggle must still occupy its space until theme.js reveals it.
+        Assert.Matches(@"\.js \.theme-toggle\[hidden\]\s*\{[^}]*visibility:\s*hidden", css);
+        Assert.Matches(@"\.js \.theme-toggle\[hidden\]\s*\{[^}]*display:\s*inline-block", css);
+        // Lighthouse counts text under 12px as illegible, even when decorative: the code lanes stay at 12px or more.
+        var codeStreamRule = System.Text.RegularExpressions.Regex.Match(css, @"\.code-stream pre\s*\{[^}]*font-size:\s*([\d.]+)rem");
+        Assert.True(codeStreamRule.Success);
+        Assert.True(double.Parse(codeStreamRule.Groups[1].Value, System.Globalization.CultureInfo.InvariantCulture) >= 0.75);
+    }
+
+    [Fact]
     public async Task Sitemap_and_robots_point_at_the_one_site_address_and_the_theme_script_exists()
     {
         var webRoot = factory.Services.GetRequiredService<IWebHostEnvironment>().WebRootPath;

@@ -283,6 +283,15 @@ a:hover {
   color: var(--chrome-gold);
 }
 
+/* With scripting on, theme.js will reveal the toggle a moment after first paint. Keep its space reserved
+   (invisible, not focusable) until then, so the header and the nav do not jump when it appears: that
+   jump was a measured layout shift (0.064 in a Lighthouse desktop run, 2026-11-13). Without scripting
+   the "js" class is absent and the rule below keeps the toggle out of the layout entirely. */
+.js .theme-toggle[hidden] {
+  display: inline-block;
+  visibility: hidden;
+}
+
 /* The toggle ships hidden and theme.js reveals it, so it never shows as a dead button. */
 .theme-toggle[hidden] {
   display: none;
@@ -752,7 +761,7 @@ a:hover {
 .code-stream pre {
   margin: 0;
   font-family: var(--font-mono);
-  font-size: 0.74rem;
+  font-size: 0.75rem;
   line-height: 1.6;
   white-space: pre;
   will-change: transform;
