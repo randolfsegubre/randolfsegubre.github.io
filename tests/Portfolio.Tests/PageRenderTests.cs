@@ -426,6 +426,33 @@ public sealed class PageRenderTests(WebApplicationFactory<Program> factory) : IC
     }
 
     [Fact]
+    public async Task Portrait_offers_a_small_webp_with_the_jpeg_as_fallback_and_the_webp_file_is_real()
+    {
+        var page = await GetPageAsync("/");
+
+        // The page asks for WebP first; the plain <img> inside <picture> is the fallback for browsers without it.
+        var source = page.QuerySelector(".hero picture > source[type='image/webp']");
+        Assert.NotNull(source);
+        Assert.Equal(Content.Profile.PhotoWebpUrl, source.GetAttribute("srcset"));
+        Assert.Equal(Content.Profile.PhotoUrl, page.QuerySelector(".hero picture > img.avatar")?.GetAttribute("src"));
+
+        // The file must be a real WebP (RIFF container, WEBP marker) and meaningfully smaller than the JPEG.
+        Assert.NotNull(Content.Profile.PhotoWebpUrl);
+        var webRoot = factory.Services.GetRequiredService<IWebHostEnvironment>().WebRootPath;
+        var webp = new FileInfo(Path.Combine(webRoot, Content.Profile.PhotoWebpUrl.TrimStart('/')));
+        var jpeg = new FileInfo(Path.Combine(webRoot, Content.Profile.PhotoUrl!.TrimStart('/')));
+        Assert.True(webp.Exists);
+        Assert.True(webp.Length < jpeg.Length / 2);
+        var header = new byte[12];
+        await using (var stream = webp.OpenRead())
+        {
+            await stream.ReadExactlyAsync(header);
+        }
+        Assert.Equal("RIFF", System.Text.Encoding.ASCII.GetString(header, 0, 4));
+        Assert.Equal("WEBP", System.Text.Encoding.ASCII.GetString(header, 8, 4));
+    }
+
+    [Fact]
     public async Task Portrait_file_exists_and_link_previews_use_it_with_an_absolute_address()
     {
         var page = await GetPageAsync("/");

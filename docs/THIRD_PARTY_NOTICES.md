@@ -40,4 +40,7 @@ third-party material is embedded in the source, listed here.
 The portrait `src/Portfolio.Web/wwwroot/images/randolf.jpg` is the site
 owner's own photograph, supplied by him. It is a square crop (head and
 shoulders) of the photo he supplied on 2026-09-26, resized to 640 by 640
-pixels; the image content is otherwise unedited.
+pixels; the image content is otherwise unedited. `randolf.webp` beside it is
+the same picture resized to 320 by 320 pixels and saved as WebP (quality 85,
+about 9 KB instead of 51 KB) for the page itself; the JPEG stays as the
+fallback and as the link-preview image.

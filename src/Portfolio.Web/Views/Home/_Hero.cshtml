@@ -14,7 +14,14 @@
                 @if (Model.PhotoUrl is not null)
                 {
                     @* The portrait is above the fold, so it is neither lazy-loaded nor left without a size (avoids layout shift). *@
-                    <img class="avatar" src="@Model.PhotoUrl" alt="@Model.PhotoAlt" width="160" height="160" decoding="async" fetchpriority="high" />
+                    @* A 9 KB WebP for browsers that support it; the 640 px JPEG is the fallback (and the link-preview image). *@
+                    <picture>
+                        @if (Model.PhotoWebpUrl is not null)
+                        {
+                            <source srcset="@Model.PhotoWebpUrl" type="image/webp" />
+                        }
+                        <img class="avatar" src="@Model.PhotoUrl" alt="@Model.PhotoAlt" width="160" height="160" decoding="async" fetchpriority="high" />
+                    </picture>
                 }
                 <div class="hero-identity-text">
                     <p class="eyebrow">@Model.Title</p>
