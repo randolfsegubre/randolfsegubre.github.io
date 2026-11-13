@@ -7,6 +7,8 @@
     <LangVersion>latest</LangVersion>
     <RootNamespace>Portfolio.Web</RootNamespace>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <AnalysisLevel>latest-recommended</AnalysisLevel>
+    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
   </PropertyGroup>
 
 </Project>
