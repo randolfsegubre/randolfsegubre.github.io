@@ -133,9 +133,14 @@ GIF suited to his background and skills. Decision:
   link to the top of the site), not the owner's name. The hero's `<h1>` stays
   the one place the name is the page heading.
 - **The hero background is a looping video made for this site**, not stock
-  footage: his stack as a request path (browser, edge, ASP.NET Core, Umbraco
-  CMS, MongoDB, SQL Server, Docker, Jenkins) with gold packets, a small
-  Content Security Policy shield and a slow scan line. It is drawn on a canvas
+  footage: his stack as a request path (browser, ASP.NET Core, Umbraco CMS,
+  MongoDB, SQL Server, Docker, Jenkins) with gold packets, a small Content
+  Security Policy shield and a slow scan line. **Content rule, added
+  2026-11-14:** the video may show only technologies he has really worked with
+  in his career. The first cut also had an invented "Edge" delivery box (easy to
+  misread as the Microsoft browser), a "React" label (about six months
+  commercially) and ".NET 10" (personal projects only); he asked for them to go
+  and they were removed. It is drawn on a canvas
   by `tools/hero-video/scene.html` and encoded to WebM (about 250 KB) and MP4
   (about 390 KB) with a 15 KB poster; the boxes ring the edges so the text
   and the code card stay clear. Video was chosen over a Graphics Interchange Format (GIF) file: a GIF of this

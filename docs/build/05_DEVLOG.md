@@ -7,6 +7,30 @@ snapshot.
 
 ---
 
+## 2026-11-14 (after the push): the video shows only what is really his
+
+**Asked:** he saw "Edge" in the new banner and said "I don't usually use Edge
+... Only appropriate to me, my skills and experience." The video was made in the
+job-search chat, not this one.
+
+**What I did:** audited every box and label in `tools/hero-video/scene.html`
+against his verified experience (profile and résumé facts). Removed the "Edge"
+box (an invented delivery layer, and easy to read as the Microsoft browser) and
+rejoined Browser to ASP.NET Core with the CSP shield on that link. Also changed
+two labels that overstated: "Vue.js · React" to "Vue.js · JavaScript" (his
+commercial React is about six months) and "Web API · .NET 10" to "Web API · MVC"
+(.NET 10 is his personal projects only). Kept the rest: Umbraco CMS, MongoDB
+(Centene), SQL Server and EF Core, Docker, Jenkins, and the Content Security
+Policy work. Rebuilt with `npm run build` in `tools/hero-video`: 244 KB WebM,
+392 KB MP4, 14 KB poster, all under the 1 MB limit. Documented the rule (only
+what he has really worked with) in the tool README, ADR-0008 and CONTENT_SOURCES.
+
+**Lighthouse on the live site, run before this change:** performance 100,
+accessibility 100, best practices 100, SEO 92 (the known robots.txt audit
+blocked by `connect-src 'none'`); LCP 1.3 s, CLS 0, 42 KiB transferred.
+
+---
+
 ## 2026-11-14 (local test): the "Home" link and the hero video, in a real browser
 
 **Asked:** "Let's test locally the recent changes." Ran the best-practice-check
