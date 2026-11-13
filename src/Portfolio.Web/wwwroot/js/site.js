@@ -62,6 +62,14 @@
       function (entries) {
         entries.forEach(function (entry) {
           if (!entry.isIntersecting) {
+            // A section that leaves the band stops being current. Without this, scrolling back up to the
+            // hero (which has no navigation link) left the last link highlighted. A section that is
+            // entering in the same batch has already replaced it, so only a still-marked link is cleared.
+            navLinks.forEach(function (link) {
+              if (link.getAttribute("href").split("#")[1] === entry.target.id) {
+                link.removeAttribute("aria-current");
+              }
+            });
             return;
           }
           navLinks.forEach(function (link) {
