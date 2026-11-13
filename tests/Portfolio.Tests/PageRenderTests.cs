@@ -83,7 +83,8 @@ public sealed class PageRenderTests(WebApplicationFactory<Program> factory) : IC
     {
         var page = await GetPageAsync("/");
 
-        var references = page.QuerySelectorAll("link[href], script[src]")
+        // Resources the browser loads; the canonical link is only a pointer to this same site, not a download.
+        var references = page.QuerySelectorAll("link[rel='stylesheet'], link[rel='icon'], script[src]")
             .Select(e => e.GetAttribute("href") ?? e.GetAttribute("src"))
             .Where(r => r is not null)
             .ToList();

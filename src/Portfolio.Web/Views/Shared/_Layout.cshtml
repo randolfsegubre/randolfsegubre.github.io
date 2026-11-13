@@ -1,5 +1,5 @@
 @*
-    The page shell shared by every view (ADR-0002).
+    The page shell shared by every view (ADR-0007).
     It owns the document head, the skip link, the header and footer, and the single
     <main> landmark that each view's content is rendered into.
 *@
@@ -9,34 +9,40 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    @* Content Security Policy (ADR-0009). GitHub Pages cannot send headers, so the policy rides in a meta tag.
+       Scripts and styles may only come from this site; the one allowance is style="" attributes, which carry
+       per-element animation values. frame-ancestors and similar header-only directives cannot be set here. *@
+    <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; style-src-attr 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'none'; manifest-src 'none'; object-src 'none'; base-uri 'self'; form-action 'none'" />
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
     <title>@ViewData["Title"]</title>
-    <meta name="description" content="Portfolio of Randolf Segubre, a senior full-stack .NET developer with 9+ years across travel, healthcare and construction. Selected projects, experience and contact." />
+    <meta name="description" content="Portfolio of Randolf Segubre, a full-stack .NET developer with 9+ years of C# and .NET experience across travel, healthcare and construction. Selected projects, experience and contact." />
     <meta property="og:type" content="website" />
     <meta property="og:title" content="@ViewData["Title"]" />
-    <meta property="og:description" content="Selected projects, experience and skills of a senior full-stack .NET developer based in Metro Manila, Philippines." />
-    <meta property="og:url" content="https://randolfsegubre.github.io/" />
+    <meta property="og:description" content="Selected projects, experience and skills of a full-stack .NET developer based in Metro Manila, Philippines." />
+    <meta property="og:url" content="@Portfolio.Web.Content.SiteInfo.Url/" />
+    @if (ViewData["NoIndex"] is true)
+    {
+        @* The not-found page must never compete with the real page in search results. *@
+        <meta name="robots" content="noindex" />
+    }
+    else
+    {
+        <link rel="canonical" href="@Portfolio.Web.Content.SiteInfo.Url/" />
+    }
+    <meta name="twitter:title" content="@ViewData["Title"]" />
+    <meta name="twitter:description" content="Selected projects, experience and skills of a full-stack .NET developer based in Metro Manila, Philippines." />
     @if (Content.Profile.PhotoUrl is not null)
     {
         @* Link previews (email, LinkedIn, chat apps) show the portrait. Absolute address, as previews require. *@
-        <meta property="og:image" content="https://randolfsegubre.github.io@(Content.Profile.PhotoUrl)" />
+        <meta property="og:image" content="@Portfolio.Web.Content.SiteInfo.Url@(Content.Profile.PhotoUrl)" />
+        <meta property="og:image:width" content="640" />
+        <meta property="og:image:height" content="640" />
         <meta property="og:image:alt" content="@Content.Profile.PhotoAlt" />
         <meta name="twitter:card" content="summary" />
     }
     <meta name="theme-color" content="#1a0b3b" />
     <link rel="icon" type="image/svg+xml" href="~/favicon.svg" />
-    <script>
-        // STEP 1 of 2: mark the page as scripted, so scroll-reveal styles only hide
-        // content when the script that reveals it is actually going to run.
-        document.documentElement.classList.add("js");
-        // STEP 2 of 2: apply a remembered manual theme choice before first paint so the
-        // page never flashes the wrong theme. With no saved choice, dark is the default.
-        try {
-            var saved = localStorage.getItem("theme");
-            if (saved === "light" || saved === "dark") {
-                document.documentElement.setAttribute("data-theme", saved);
-            }
-        } catch (e) { }
-    </script>
+    <script src="~/js/theme-init.js" asp-append-version="true"></script>
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
 </head>
 <body>
