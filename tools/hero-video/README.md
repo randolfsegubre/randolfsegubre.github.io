@@ -8,11 +8,16 @@ be changed or rebuilt later instead of being an unexplained binary.
 ## What it shows
 
 The path of a request through my own stack. Boxes for the Browser (Vue.js and
-React), an Edge, ASP.NET Core, Umbraco CMS, MongoDB, SQL Server, Docker and
-Jenkins; gold packets travel along the links and each box glows when one
-arrives; a small Content Security Policy (CSP) shield glows when a slow vertical
-scan line passes it. Every technology shown is one named on the site
-(ADR-0006). The boxes sit around the edges of the frame, because on the page the
+JavaScript), ASP.NET Core (Web API and MVC), Umbraco CMS, MongoDB, SQL Server
+(T-SQL and EF Core), Docker and Jenkins; gold packets travel along the links and
+each box glows when one arrives; a small Content Security Policy (CSP) shield
+sits on the Browser to ASP.NET Core link and glows when a slow vertical scan
+line passes it. Every technology shown is one named on the site (ADR-0006),
+**and only things I have really worked with in my career**: the first version
+also had an "Edge" box (a delivery layer I made up for the diagram, and easy to
+misread as the Microsoft browser), a "React" label (my commercial React is about
+six months) and ".NET 10" (a personal-project version only). They were removed on
+2026-11-14. Before adding a box or label, check it against `docs/CONTENT_SOURCES.md`. The boxes sit around the edges of the frame, because on the page the
 headline and paragraph cover the left-middle and the code card covers the
 right-middle.
 

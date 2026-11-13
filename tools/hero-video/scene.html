@@ -13,8 +13,11 @@
 /*
  * Hero background: "the path of a request through my stack".
  *
- * Nodes are the technologies Randolf actually works with (browser front end in Vue.js and React,
- * an ASP.NET Core API, Umbraco CMS, SQL Server, MongoDB, Docker, Jenkins). Gold packets travel
+ * Nodes are only technologies Randolf has really worked with in his career (a browser front end in
+ * Vue.js and JavaScript, an ASP.NET Core Web API, Umbraco CMS, SQL Server, MongoDB, Docker, Jenkins).
+ * Nothing is here because it looks realistic: an earlier "Edge" box (a content delivery layer) and the
+ * "React" and ".NET 10" labels were removed on 2026-11-14 because they were not his experience to
+ * claim, or were easy to misread (Edge looks like the Microsoft browser). Gold packets travel
  * along the links between them, a node glows when a packet arrives, and a slow vertical scan line
  * stands for the security-header work (Content Security Policy). Everything is a pure function of
  * the time t in seconds, and every motion repeats a whole number of times per loop, so frame
@@ -39,9 +42,8 @@ const C = {
 // middle open: on the page the headline and paragraph sit over the left-middle and the code card over
 // the right-middle, so nothing here competes with them.
 const NODES = {
-  browser: { x: 190, y: 150, title: 'Browser', sub: 'Vue.js · React', seed: 0.0 },
-  edge:    { x: 525, y: 78, title: 'Edge', sub: 'static + cache', seed: 0.9 },
-  api:     { x: 800, y: 78, title: 'ASP.NET Core', sub: 'Web API · .NET 10', seed: 1.8 },
+  browser: { x: 190, y: 150, title: 'Browser', sub: 'Vue.js · JavaScript', seed: 0.0 },
+  api:     { x: 800, y: 78, title: 'ASP.NET Core', sub: 'Web API · MVC', seed: 1.8 },
   cms:     { x: 1075, y: 150, title: 'Umbraco CMS', sub: 'content + backoffice', seed: 2.7 },
   mongo:   { x: 1085, y: 385, title: 'MongoDB', sub: 'documents', seed: 4.5 },
   sql:     { x: 1010, y: 610, title: 'SQL Server', sub: 'T-SQL · EF Core', seed: 3.6 },
@@ -52,8 +54,7 @@ const NODE_W = 164, NODE_H = 56;
 
 // [from, to, packets, loops per cycle]; the loop count is a whole number so the motion repeats.
 const EDGES = [
-  ['browser', 'edge', 2, 1],
-  ['edge', 'api', 2, 1],
+  ['browser', 'api', 3, 1],
   ['api', 'cms', 2, 1],
   ['cms', 'mongo', 2, 1],
   ['mongo', 'sql', 2, 1],
@@ -224,8 +225,9 @@ function drawNodes(t, pulses) {
 }
 
 function drawShield(t) {
-  // A small shield near the API: the Content Security Policy work, glowing as the scan line passes.
-  const cx = 662, cy = 78;
+  // A small shield on the Browser to API link (its midpoint, where the response leaves for the browser): the
+  // Content Security Policy work, glowing as the scan line passes. If the two nodes move, move this too.
+  const cx = 495, cy = 114;
   const scan = Math.exp(-Math.pow((W * frac(t / LOOP) - cx) / 90, 2));
   ctx.save();
   ctx.translate(cx, cy);
