@@ -8,7 +8,7 @@ namespace Portfolio.Web.Controllers;
 /// The site's only controller: serves the single portfolio page and the not-found page.
 /// </summary>
 /// <remarks>
-/// This is the "C" in ASP.NET Core MVC (ADR-0002). It stays deliberately thin:
+/// This is the "C" in ASP.NET Core MVC (ADR-0007). It stays deliberately thin:
 /// it asks <see cref="IPortfolioContent"/> for data, packs it into one view model,
 /// and lets the Razor views render it. No copy or claim lives here.
 /// </remarks>

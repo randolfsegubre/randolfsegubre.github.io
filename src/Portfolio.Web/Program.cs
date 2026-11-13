@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Hosting.Server.Features;
 using Portfolio.Web.Content;
 using Portfolio.Web.Export;
 
-// Composition root for the portfolio site (ADR-0002).
+// Composition root for the portfolio site (ADR-0007).
 // STEP 1 of 4: register the services the app needs.
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
