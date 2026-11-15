@@ -1,13 +1,17 @@
 @inject Portfolio.Web.Content.IPortfolioContent Content
 @*
     Page footer: copyright and a pointer to this site's own source, itself a small,
-    public example of the owner's work. The year is fixed at export time.
+    public example of the owner's work. The year is fixed at export time. The page-transition
+    switch is rendered hidden and revealed by site.js, so it never shows as a dead button (ADR-0010).
 *@
 <footer class="site-footer">
     <div class="container">
         <p>
             &copy; @DateTime.UtcNow.Year @Content.Profile.Name. Built with ASP.NET Core MVC on .NET 10 and exported as a static site.
             <partial name="_ExternalLink" model="@(new Link("Source of this site", "https://github.com/randolfsegubre/randolfsegubre.github.io"))" />
+        </p>
+        <p class="footer-controls">
+            <button type="button" class="footer-toggle" id="transition-toggle" aria-pressed="true" hidden>Page transitions: on</button>
         </p>
         <p class="footer-note">Technology logos are from the Simple Icons set (public domain), apart from the C# mark, which is drawn for this site. All trademarks belong to their owners.</p>
     </div>

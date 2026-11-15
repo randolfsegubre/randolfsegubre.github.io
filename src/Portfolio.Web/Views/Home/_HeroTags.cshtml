@@ -1,0 +1,14 @@
+@using Portfolio.Web.Content
+@*
+    Faint code tags in the hero's side margins, as if the page were showing its own source
+    (the idea the owner liked in another developer's portfolio, redrawn here in Razor and C#
+    terms, ADR-0010). Purely decorative: hidden from assistive technology, no pointer events,
+    and the stylesheet only shows them on wide screens where the margins are empty. The
+    wording lives in HeroTagData, not here (ADR-0003).
+*@
+<div class="hero-tags" aria-hidden="true">
+    @for (var i = 0; i < HeroTagData.Tags.Count; i++)
+    {
+        <span class="hero-tag hero-tag-@(i + 1)">@HeroTagData.Tags[i]</span>
+    }
+</div>

@@ -8,6 +8,7 @@
 *@
 <section id="top" class="hero" aria-labelledby="hero-heading">
     <partial name="_CodeBackdrop" model="Model" />
+    <partial name="_HeroTags" />
     <div class="container hero-grid">
         <div class="hero-copy">
             <div class="hero-identity">
@@ -24,8 +25,9 @@
                     </picture>
                 }
                 <div class="hero-identity-text">
-                    <p class="eyebrow">@Model.Title</p>
+                    <p class="hero-hi">@Model.Greeting</p>
                     <h1 id="hero-heading" class="hero-title">@Model.Name</h1>
+                    <p class="eyebrow hero-role">@Model.Title</p>
                 </div>
             </div>
             <hr class="hero-rule" />
