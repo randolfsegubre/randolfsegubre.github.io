@@ -204,15 +204,35 @@ a:hover {
 .brand {
   order: 1;
   font-family: var(--font-display);
-  font-size: 1.15rem;
+  font-size: 1.6rem;
   font-weight: 700;
-  color: var(--chrome-text);
+  letter-spacing: -0.06em;
+  line-height: 1;
+  color: var(--chrome-gold);
+  /* A violet copy a hair to the right gives the monogram its offset look. */
+  text-shadow: 0.05em 0 0 rgb(139 92 246 / 0.8);
   text-decoration: none;
   margin-right: auto;
+  /* The crown sits on top of the letters, like a royal monogram. */
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.16rem;
+}
+
+/* One gold path with the cross cut out of it (even-odd rule), so the header shows through the cross as if it were
+   engraved on the front of the crown. The violet copy matches the letters' offset look. */
+.brand-crown {
+  display: block;
+  width: 1.7rem;
+  height: 1.13rem;
+  fill: currentColor;
+  filter: drop-shadow(0.05rem 0 0 rgb(139 92 246 / 0.8));
 }
 
 .brand:hover {
-  color: var(--chrome-gold);
+  color: var(--chrome-text);
 }
 
 .header-inner > nav {
@@ -325,10 +345,53 @@ a:hover {
   margin-bottom: var(--space-2);
 }
 
+.hero-hi {
+  margin: 0;
+  color: var(--hero-muted);
+  font-family: var(--font-display);
+  font-size: clamp(1.25rem, 3.5vw, 1.75rem);
+}
+
 .hero-title {
   font-size: clamp(2.5rem, 7vw, 4rem);
   letter-spacing: -0.01em;
-  margin-bottom: var(--space-3);
+  margin-bottom: var(--space-2);
+}
+
+.hero-role {
+  margin-bottom: 0;
+  letter-spacing: 0.2em;
+}
+
+/* Faint code tags in the side margins, wide screens only, where the margins are empty (ADR-0010). */
+.hero-tags {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  display: none;
+  pointer-events: none;
+  color: color-mix(in srgb, var(--hero-muted) 50%, transparent);
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  font-style: italic;
+}
+
+.hero-tag {
+  position: absolute;
+  white-space: nowrap;
+}
+
+.hero-tag-1 { left: 1.5rem; top: 7rem; }
+.hero-tag-2 { left: 1.5rem; top: 38%; }
+.hero-tag-3 { right: 1.5rem; top: 38%; }
+.hero-tag-4 { left: 1.5rem; bottom: 4rem; }
+.hero-tag-5 { right: 1.5rem; bottom: 4rem; }
+.hero-tag-6 { right: 1.5rem; top: 7rem; }
+
+@media (min-width: 75rem) {
+  .hero-tags {
+    display: block;
+  }
 }
 
 .hero-rule {
@@ -350,23 +413,44 @@ a:hover {
   color: var(--hero-muted);
 }
 
+/* The hero buttons form a tidy two-column grid instead of a ragged wrapping row: the primary button takes the first
+   row, then the other buttons pair up, all the same height and width. Below 34rem the columns would be too narrow
+   for "Download resume (PDF)", so the buttons stack full width. */
 .hero-actions {
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: var(--space-3);
+  max-width: 30rem;
   margin-top: var(--space-5);
 }
 
+.hero-actions .button-primary {
+  grid-column: 1 / -1;
+}
+
+@media (max-width: 33.99rem) {
+  .hero-actions {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
 .button {
-  display: inline-block;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 2.75rem;
+  text-align: center;
   font: inherit;
+  line-height: 1.25;
   font-weight: 600;
   text-decoration: none;
   color: var(--hero-text);
-  background: transparent;
+  /* A soft dark fill, not transparent: the hero video's boxes drift behind the buttons, and their labels would
+     otherwise show through the button text. */
+  background: color-mix(in srgb, var(--hero-from) 86%, transparent);
   border: 1px solid color-mix(in srgb, var(--hero-text) 45%, transparent);
   border-radius: 999px;
-  padding: var(--space-2) var(--space-5);
+  padding: var(--space-2) var(--space-4);
   transition: background-color 0.15s, border-color 0.15s, color 0.15s, transform 0.15s;
 }
 
@@ -624,6 +708,512 @@ a:hover {
 
 .skill-group .tags {
   margin-bottom: 0;
+}
+
+/* Skills as a 3D cloud of spheres (ADR-0010). Each technology is a glossy sphere holding its logo, with its name
+   underneath; .NET is the large golden sphere at the centre. Script turns the flat fallback into the 3D cloud. */
+
+/* The cloud is a big square under the text, centred and as wide as the band allows (up to 58rem), because it holds every
+   skill and needs the room. */
+.universe {
+  max-width: 58rem;
+  margin: var(--space-6) auto 0;
+}
+
+/* "About me": his paragraphs beside the intro to the skills on wide screens, stacked on narrow ones. */
+.about-grid {
+  display: grid;
+  gap: var(--space-5) var(--space-6);
+}
+
+@media (min-width: 64rem) {
+  .about-grid {
+    grid-template-columns: minmax(0, 1.35fr) minmax(0, 0.65fr);
+    align-items: start;
+  }
+}
+
+.universe-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3) var(--space-4);
+  margin-bottom: var(--space-3);
+}
+
+.universe-walk,
+.universe-control {
+  flex-shrink: 0;
+  white-space: nowrap;
+  min-height: 2.75rem;
+  padding: 0 var(--space-5);
+  background: var(--bg);
+  color: var(--gold-bright);
+  border: 1px solid var(--gold-bright);
+  border-radius: 999px;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.universe-walk:hover,
+.universe-control:hover {
+  background: color-mix(in srgb, var(--gold-bright) 14%, var(--bg));
+}
+
+.universe-control[hidden],
+.universe-walk[hidden] {
+  display: none;
+}
+
+/* The turn buttons are quieter than the walk button. */
+.universe-control {
+  padding-inline: var(--space-4);
+  font-weight: 500;
+}
+
+/* The hint only appears once script has made the cloud turnable. */
+.universe-hint {
+  display: none;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+
+.universe.is-3d .universe-hint {
+  display: inline;
+}
+
+/* The cloud keeps the purple of the hero in both themes, like the header and footer do. It is a 3D scene, so without
+   script it is hidden and the caption list below it carries the content; with script it is square and fits its box. */
+.universe-scroll {
+  display: none;
+  overflow: hidden;
+  color: var(--hero-text);
+  background: radial-gradient(ellipse at center, var(--hero-via) 0%, var(--hero-from) 78%);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+.universe.is-3d .universe-scroll {
+  display: block;
+}
+
+.universe-map {
+  position: relative;
+  aspect-ratio: 1 / 1;
+}
+
+.universe.is-3d .universe-map {
+  cursor: grab;
+  user-select: none;
+  /* A vertical swipe still scrolls the page; a sideways swipe turns the cloud. */
+  touch-action: pan-y;
+}
+
+.universe.is-dragging .universe-map {
+  cursor: grabbing;
+}
+
+.universe-lines {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+/* Connections appear only for the sphere that is chosen, so the cloud itself stays clean. */
+.universe-link {
+  stroke: var(--hero-muted);
+  stroke-opacity: 0;
+  stroke-width: 1.4;
+  vector-effect: non-scaling-stroke;
+  transition: stroke 0.25s, stroke-opacity 0.25s;
+}
+
+.universe-link.is-hot,
+.universe.is-3d .universe-link.is-hot {
+  stroke: var(--hero-gold);
+  stroke-opacity: 0.95;
+  stroke-width: 2.2;
+  stroke-dasharray: 7 6;
+  animation: universe-flow 1s linear infinite;
+}
+
+@keyframes universe-flow {
+  to {
+    stroke-dashoffset: -26;
+  }
+}
+
+.universe-dust {
+  fill: var(--hero-text);
+}
+
+.universe-stars {
+  position: absolute;
+  inset: 0;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+/* One star: a sphere above its name. Script centres the whole thing on the position it computes and sets
+   --orb (sphere size) and --name (text size) to suit the box. Long names (for example "Custom backoffice property
+   editors") wrap onto a few short lines under the sphere instead of widening the star. */
+.star {
+  --orb: 2.2rem;
+  --name: 0.68rem;
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.2rem;
+  transform: translate(-50%, -50%);
+  color: var(--hero-text);
+  font-size: var(--name);
+  font-weight: 600;
+  line-height: 1.15;
+  text-align: center;
+  text-shadow: 0 1px 6px rgb(10 4 30 / 0.9);
+}
+
+.star-name {
+  max-width: 6.5em;
+  text-wrap: balance;
+  opacity: var(--name-opacity, 1);
+}
+
+/* A larger invisible target so a finger can hit a small sphere. */
+.star::before {
+  content: "";
+  position: absolute;
+  inset: -0.4rem;
+}
+
+.star-depth-0 {
+  --orb: 4rem;
+  --name: 0.9rem;
+}
+
+.orb {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: var(--orb);
+  height: var(--orb);
+  border-radius: 50%;
+  color: var(--hero-button-text);
+  /* A pearl-white sphere: a bright spot top left shading to violet at the lower right, so brand colours stay readable. */
+  background: radial-gradient(circle at 34% 28%, #ffffff 0%, #efe9fc 26%, #c4b5f1 62%, #7a62c4 100%);
+  box-shadow: inset -0.3em -0.4em 0.7em rgb(50 20 110 / 0.5), 0 0.35rem 0.9rem rgb(0 0 0 / 0.4);
+  transition: box-shadow 0.25s;
+}
+
+/* The shine: a small soft highlight that makes the shape read as a ball. */
+.orb::after {
+  content: "";
+  position: absolute;
+  top: 11%;
+  left: 20%;
+  width: 34%;
+  height: 22%;
+  border-radius: 50%;
+  background: radial-gradient(ellipse, rgb(255 255 255 / 0.85), transparent 70%);
+  transform: rotate(-28deg);
+  pointer-events: none;
+}
+
+.orb-icon {
+  position: relative;
+  z-index: 1;
+  width: 56%;
+  height: 56%;
+}
+
+/* Logos whose own colour needs a dark ground (for example the yellow JavaScript mark). */
+.star.tone-dark .orb {
+  color: #ffffff;
+  background: radial-gradient(circle at 34% 28%, #6a4fc0 0%, #3a1f80 45%, #1a0b3b 100%);
+  box-shadow: inset -0.3em -0.4em 0.7em rgb(0 0 0 / 0.5), 0 0.35rem 0.9rem rgb(0 0 0 / 0.4);
+}
+
+/* The sun: .NET, the golden sphere everything else grows out of. */
+.star-depth-0 .orb {
+  background: radial-gradient(circle at 34% 28%, #fff3bf 0%, #e3c766 30%, var(--hero-gold) 62%, #7a5e0b 100%);
+  box-shadow: inset -0.4em -0.5em 0.9em rgb(80 55 0 / 0.55), 0 0 2.5rem color-mix(in srgb, var(--hero-gold) 55%, transparent);
+}
+
+.star-depth-0 .orb-icon {
+  width: 62%;
+  height: 62%;
+  fill: var(--hero-button-text);
+}
+
+/* Script adds these classes; without script every sphere simply stays as drawn. */
+.universe.is-interactive .star {
+  cursor: pointer;
+}
+
+.star.is-near .star-name,
+.star.is-active .star-name {
+  color: var(--hero-gold);
+}
+
+.star.is-near .orb {
+  box-shadow: inset -0.3em -0.4em 0.7em rgb(50 20 110 / 0.5), 0 0 0 2px var(--hero-gold), 0 0 1rem color-mix(in srgb, var(--hero-gold) 40%, transparent);
+}
+
+.star.is-active .orb {
+  box-shadow: inset -0.3em -0.4em 0.7em rgb(50 20 110 / 0.5), 0 0 0 3px var(--hero-gold), 0 0 1.8rem color-mix(in srgb, var(--hero-gold) 65%, transparent);
+}
+
+.universe-scroll:focus-visible,
+.star:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 3px;
+  border-radius: 0.5rem;
+}
+
+.universe-captions {
+  display: grid;
+  gap: var(--space-2);
+  list-style: none;
+  margin: var(--space-4) 0 0;
+  padding: 0;
+  color: var(--text-muted);
+}
+
+.universe-caption strong {
+  color: var(--heading);
+}
+
+/* With script, one caption at a time appears in a live region instead of the whole list. */
+.universe.is-interactive .universe-captions {
+  display: none;
+}
+
+.universe-live {
+  min-height: 5.5rem;
+  margin: var(--space-4) 0 0;
+  padding: var(--space-4) var(--space-5);
+  background: var(--surface);
+  border-left: 3px solid var(--gold-bright);
+  border-radius: 0 var(--radius) var(--radius) 0;
+  color: var(--text-muted);
+}
+
+.universe-live strong {
+  display: block;
+  color: var(--heading);
+  font-family: var(--font-display);
+  font-size: 1.2rem;
+}
+
+/* "About me" is a purple band like the hero and footer, in both themes (ADR-0010): his paragraphs beside the cloud of
+   skill spheres, which sits straight on the band. The band is only a little see-through (so the page background,
+   the faint code and logos, still shows faintly, and it stays dark in the light theme), and it is wider than the ordinary column to give the cloud room. */
+.about-band {
+  color: var(--hero-text);
+  background: linear-gradient(
+    160deg,
+    color-mix(in srgb, var(--hero-from) 96%, transparent),
+    color-mix(in srgb, var(--hero-via) 93%, transparent) 55%,
+    color-mix(in srgb, var(--hero-to) 96%, transparent)
+  );
+  border-block: 1px solid color-mix(in srgb, var(--hero-gold) 45%, transparent);
+}
+
+.about-band .container {
+  max-width: max(var(--content-width), 72rem);
+}
+
+.about-band .section-title,
+.about-band .about-sub {
+  color: var(--hero-text);
+}
+
+.about-band .about-copy,
+.about-band .section-intro {
+  color: var(--hero-text);
+}
+
+.about-band .section-intro,
+.about-band .universe-hint {
+  color: var(--hero-muted);
+}
+
+.about-band .universe-walk,
+.about-band .universe-control {
+  background: color-mix(in srgb, var(--hero-from) 75%, transparent);
+  color: var(--hero-gold);
+  border-color: var(--hero-gold);
+}
+
+.about-band .universe-walk:hover,
+.about-band .universe-control:hover {
+  background: color-mix(in srgb, var(--hero-gold) 18%, var(--hero-from));
+}
+
+.about-band .universe-scroll {
+  background: none;
+  border: 0;
+}
+
+/* A soft golden glow behind the centre, so the cloud has a heart. */
+.about-band .universe.is-3d .universe-map {
+  background: radial-gradient(circle at 50% 50%, color-mix(in srgb, var(--hero-gold) 14%, transparent), transparent 58%);
+}
+
+.about-band .universe-live {
+  background: color-mix(in srgb, var(--hero-from) 78%, transparent);
+  border-left-color: var(--hero-gold);
+  color: var(--hero-muted);
+}
+
+.about-band .universe-live strong,
+.about-band .universe-caption strong {
+  color: var(--hero-text);
+}
+
+.about-band .universe-captions {
+  color: var(--hero-muted);
+}
+
+.about-band :focus-visible {
+  outline-color: var(--hero-gold);
+}
+
+/* "About me": his paragraphs, then the skills as a sub-section of the same section. */
+.about-copy {
+  max-width: 44rem;
+}
+
+.about-sub {
+  margin-top: 0;
+  font-size: 1.35rem;
+}
+
+.skills-all {
+  margin-top: 0;
+}
+
+.skills-all summary {
+  display: flex;
+  align-items: center;
+  min-height: 2.75rem;
+  color: var(--heading);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.skills-all .grid {
+  margin-top: var(--space-4);
+}
+
+/* Letter-by-letter headings (ADR-0010). Script splits a heading into words and letters; each letter glows gold,
+   then settles into the heading color. Without script, or with reduced motion, headings are never split. */
+
+.js .letters .word {
+  display: inline-block;
+  white-space: nowrap;
+}
+
+.js .letters .ch {
+  display: inline-block;
+  opacity: 0;
+  transform: translateY(0.35em);
+  color: var(--hero-gold);
+  text-shadow: 0 0 0.6em color-mix(in srgb, var(--hero-gold) 70%, transparent);
+  transition: opacity 0.35s ease, transform 0.35s ease, color 0.7s ease, text-shadow 0.7s ease;
+  transition-delay: calc(var(--i) * 40ms);
+}
+
+.js .letters.is-in .ch {
+  opacity: 1;
+  transform: none;
+  color: inherit;
+  text-shadow: none;
+}
+
+/* The page-change veil: when a link jumps to another section, the page fades to the RS monogram and a thin
+   loading line for a moment, then to the new place. Script adds it, so it never exists without script. */
+.veil {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: var(--space-4);
+  background: color-mix(in srgb, var(--chrome-bg) 93%, transparent);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease;
+}
+
+.veil.is-on {
+  opacity: 1;
+}
+
+.veil-mark {
+  color: var(--chrome-gold);
+  font-family: var(--font-display);
+  font-size: 3rem;
+  font-weight: 700;
+  letter-spacing: -0.06em;
+  line-height: 1;
+  text-shadow: 0.05em 0 0 rgb(139 92 246 / 0.8);
+}
+
+.veil-line {
+  position: relative;
+  display: block;
+  width: 9rem;
+  height: 2px;
+  overflow: hidden;
+  background: color-mix(in srgb, var(--chrome-text) 20%, transparent);
+}
+
+.veil-line::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, #8b5cf6, var(--chrome-gold));
+  transform: translateX(-100%);
+}
+
+.veil.is-on .veil-line::after {
+  animation: veil-load 0.7s ease-in-out forwards;
+}
+
+@keyframes veil-load {
+  to {
+    transform: translateX(0);
+  }
+}
+
+.footer-controls {
+  margin-top: var(--space-3);
+}
+
+.footer-toggle {
+  min-height: 2.75rem;
+  padding: 0 var(--space-4);
+  background: transparent;
+  color: var(--chrome-gold);
+  border: 1px solid color-mix(in srgb, var(--chrome-gold) 60%, transparent);
+  border-radius: 999px;
+  font: inherit;
+  cursor: pointer;
+}
+
+.footer-toggle:hover {
+  background: color-mix(in srgb, var(--chrome-gold) 14%, transparent);
+}
+
+.footer-toggle[hidden] {
+  display: none;
 }
 
 /* Contact and footer */
@@ -1044,6 +1634,8 @@ a:hover {
   .brand {
     display: inline-flex;
     align-items: center;
+    /* The monogram is only two letters wide, so give it a full touch-sized target both ways. */
+    min-width: 2.75rem;
     min-height: 2.75rem;
   }
 }
