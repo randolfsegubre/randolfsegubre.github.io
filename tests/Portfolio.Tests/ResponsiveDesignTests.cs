@@ -104,6 +104,23 @@ public sealed partial class ResponsiveDesignTests(WebApplicationFactory<Program>
     }
 
     [Fact]
+    public void The_skills_cloud_is_a_square_that_fits_its_box_and_needs_script_so_it_never_scrolls_the_page_sideways()
+    {
+        var css = Css();
+
+        // Without script the cloud is hidden (the caption list carries the content); script reveals it.
+        Assert.Matches(@"\.universe-scroll \{[^}]*display: none", css);
+        Assert.Matches(@"\.universe\.is-3d \.universe-scroll \{[^}]*display: block", css);
+
+        // The cloud is square and fits its box, and a vertical swipe still scrolls the page.
+        Assert.Matches(@"\.universe-map \{[^}]*aspect-ratio: 1 / 1", css);
+        Assert.Matches(@"\.universe\.is-3d \.universe-map \{[^}]*touch-action: pan-y", css);
+
+        // A small sphere gets a larger invisible target so a finger can hit it.
+        Assert.Matches(@"\.star::before \{[^}]*inset: -0\.4rem", css);
+    }
+
+    [Fact]
     public void Every_animation_stops_for_visitors_who_prefer_reduced_motion()
     {
         var css = Css();

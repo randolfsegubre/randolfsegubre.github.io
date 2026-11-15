@@ -353,14 +353,82 @@ public sealed class PageRenderTests(WebApplicationFactory<Program> factory) : IC
     }
 
     [Fact]
-    public async Task Header_link_is_labelled_Home_and_does_not_repeat_the_owners_name()
+    public async Task Header_shows_the_RS_monogram_as_the_home_link_without_repeating_the_owners_name()
     {
         var page = await GetPageAsync("/");
 
         var brand = page.QuerySelector(".site-header a.brand");
         Assert.NotNull(brand);
-        Assert.Equal("Home", brand.TextContent.Trim());
+        Assert.Equal("RS", brand.TextContent.Trim());
+        Assert.Equal("#top", brand.GetAttribute("href"));
+
+        // The accessible name starts with the visible letters (WCAG 2.5.3 label in name) and says where it goes.
+        var name = brand.GetAttribute("aria-label")!;
+        Assert.StartsWith("RS", name);
+        Assert.Contains("home", name, StringComparison.OrdinalIgnoreCase);
         Assert.DoesNotContain(Content.Profile.Name, page.QuerySelector(".site-header")!.TextContent);
+
+        // The crown on the monogram is decoration: hidden from assistive technology, and drawn as one even-odd path so the
+        // cross is a real hole in the front of the crown rather than a second shape laid over it.
+        var crown = brand.QuerySelector("svg.brand-crown");
+        Assert.NotNull(crown);
+        Assert.Equal("true", crown.GetAttribute("aria-hidden"));
+        Assert.Equal("evenodd", crown.QuerySelector("path")!.GetAttribute("fill-rule"));
+    }
+
+    [Fact]
+    public async Task Header_navigation_calls_the_first_link_About_Me()
+    {
+        var page = await GetPageAsync("/");
+
+        Assert.Equal("About Me", page.QuerySelector(".nav-list a")!.TextContent.Trim());
+    }
+
+    [Fact]
+    public async Task Not_found_page_sends_the_RS_monogram_to_the_real_home_page()
+    {
+        var page = await GetPageAsync("/not-found");
+
+        Assert.Equal("/#top", page.QuerySelector(".site-header a.brand")?.GetAttribute("href"));
+    }
+
+    [Fact]
+    public async Task Hero_introduces_him_with_a_greeting_above_the_name_and_the_title_below_it()
+    {
+        var page = await GetPageAsync("/");
+
+        var text = page.QuerySelector(".hero-identity-text")!;
+        var children = text.Children.Select(c => c.ClassName ?? string.Empty).ToList();
+
+        Assert.Equal(Content.Profile.Greeting, page.QuerySelector(".hero-hi")!.TextContent.Trim());
+        Assert.Equal(Content.Profile.Title, page.QuerySelector(".hero-role")!.TextContent.Trim());
+        Assert.True(children.FindIndex(c => c.Contains("hero-hi")) < children.FindIndex(c => c.Contains("hero-title")));
+        Assert.True(children.FindIndex(c => c.Contains("hero-title")) < children.FindIndex(c => c.Contains("hero-role")));
+
+        // The single h1 is still exactly his name, so the greeting never turns the page heading into a sentence.
+        Assert.Equal(Content.Profile.Name, Assert.Single(page.QuerySelectorAll("h1")).TextContent.Trim());
+    }
+
+    [Fact]
+    public async Task Hero_margin_tags_are_decorative_and_match_the_data()
+    {
+        var page = await GetPageAsync("/");
+
+        var container = page.QuerySelector(".hero-tags")!;
+        Assert.Equal("true", container.GetAttribute("aria-hidden"));
+        Assert.Equal(HeroTagData.Tags, container.QuerySelectorAll(".hero-tag").Select(t => t.TextContent));
+        Assert.Equal(HeroTagData.Count, HeroTagData.Tags.Count);
+    }
+
+    [Fact]
+    public async Task Footer_page_transition_switch_ships_hidden_so_it_is_never_a_dead_button()
+    {
+        var page = await GetPageAsync("/");
+
+        var toggle = page.QuerySelector("footer #transition-toggle");
+        Assert.NotNull(toggle);
+        Assert.True(toggle.HasAttribute("hidden"));
+        Assert.Equal("true", toggle.GetAttribute("aria-pressed"));
     }
 
     [Fact]
@@ -401,10 +469,11 @@ public sealed class PageRenderTests(WebApplicationFactory<Program> factory) : IC
     {
         var page = await GetPageAsync("/");
 
-        var symbolIds = page.QuerySelectorAll("svg symbol").Select(s => s.GetAttribute("id")).ToHashSet();
+        // Two sprites live on the page: the technology logos (this test) and the skills map's own icons (SkillUniverseTests).
+        var symbolIds = page.QuerySelectorAll("svg symbol").Select(s => s.GetAttribute("id")!).Where(id => id.StartsWith("logo-", StringComparison.Ordinal)).ToHashSet();
         Assert.Equal(TechLogoData.Logos.Count, symbolIds.Count);
 
-        var references = page.QuerySelectorAll("svg use").Select(u => u.GetAttribute("href")!.TrimStart('#')).ToList();
+        var references = page.QuerySelectorAll("svg use").Select(u => u.GetAttribute("href")!.TrimStart('#')).Where(id => id.StartsWith("logo-", StringComparison.Ordinal)).ToList();
         Assert.NotEmpty(references);
         Assert.All(references, id => Assert.Contains(id, symbolIds));
     }

@@ -14,7 +14,7 @@ namespace Portfolio.Tests;
 public sealed partial class ContentTests
 {
     /// <summary>Product names that legitimately contain capital-letter runs in prose. Longest first: ".NET" would otherwise strand "ASP".</summary>
-    private static readonly string[] AllowedCapitals = ["ASP.NET", ".NET", "SQL Server", "UK"];
+    private static readonly string[] AllowedCapitals = ["ASP.NET", ".NET", "SQL Server", "UK", "AI Tutor"];
 
     private static readonly PortfolioContent Content = new();
 
@@ -31,7 +31,12 @@ public sealed partial class ContentTests
         {
             ("profile.headline", Content.Profile.Headline),
             ("profile.availability", Content.Profile.Availability),
+            ("universe.intro", Content.Universe.Intro),
         };
+
+        prose.AddRange((Content.Profile.About ?? []).Select((text, i) => ($"profile.about[{i}]", text)));
+
+        prose.AddRange(Content.Universe.Stars.Select(p => ($"universe.{p.Star.Id}.caption", p.Star.Caption)));
 
         prose.AddRange(Content.Profile.Stats.Select((stat, i) => ($"profile.stats[{i}].label", stat.Label)));
 
@@ -72,7 +77,8 @@ public sealed partial class ContentTests
             .Concat(Content.Profile.Stats.Select(s => s.Value))
             .Concat(Content.Projects.SelectMany(p => p.Stack.Prepend(p.Name)))
             .Concat(Content.Experience.SelectMany(r => r.Stack.Concat([r.Company, r.Title, r.Period]).Concat(r.Client is null ? [] : [r.Client])))
-            .Concat(Content.Skills.SelectMany(g => g.Items.Prepend(g.Label)));
+            .Concat(Content.Skills.SelectMany(g => g.Items.Prepend(g.Label)))
+            .Concat(Content.Universe.Stars.Select(p => p.Star.Label));
 
     [Fact]
     public void Contains_no_em_dashes_anywhere()
