@@ -47,7 +47,9 @@ const NODES = {
   cms:     { x: 1075, y: 150, title: 'Umbraco CMS', sub: 'content + backoffice', seed: 2.7 },
   mongo:   { x: 1085, y: 385, title: 'MongoDB', sub: 'documents', seed: 4.5 },
   sql:     { x: 1010, y: 610, title: 'SQL Server', sub: 'T-SQL · EF Core', seed: 3.6 },
-  docker:  { x: 585, y: 655, title: 'Docker', sub: 'containers', seed: 5.4 },
+  // Docker sits right of centre, below the code card, because the hero buttons occupy the bottom-left and
+  // bottom-centre of the frame on wide screens; a box at x = 585 ended up behind them (2026-11-14).
+  docker:  { x: 840, y: 655, title: 'Docker', sub: 'containers', seed: 5.4 },
   ci:      { x: 190, y: 520, title: 'Jenkins', sub: 'build + deploy', seed: 0.5 },
 };
 const NODE_W = 164, NODE_H = 56;
