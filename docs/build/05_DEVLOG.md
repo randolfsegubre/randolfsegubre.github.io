@@ -7,6 +7,256 @@ snapshot.
 
 ---
 
+## 2026-11-16: JavaScript joined to React and AngularJS, Nuxt.js added
+
+**Asked:** "Nuxt.js is not on the map. Also, why JavaScript is not connect to react and angular like
+vue.js." Both are fair: JavaScript had a single parent link (Vue.js) because the map is a tree, and
+I had held Nuxt back after asking whether he had used it (he repeated the request instead).
+
+**What I did:** two cross links from JavaScript to React and to AngularJS (a tree has one parent, so
+the other relationships are cross links); Nuxt.js as a sphere under Vue.js with its CC0 logo, a
+generic caption and a row in `CONTENT_SOURCES.md` saying it is on his instruction and that memory
+holds it only as a LinkedIn skill; Nuxt.js added to the grouped skills list. Verified in a real
+browser: choosing JavaScript lights Vue.js, React and AngularJS, Nuxt.js shows in its green, nothing
+past the edge, console empty. **Note for him:** an interviewer may ask about Nuxt, and nothing in his
+record backs a project answer.
+
+---
+
+## 2026-11-15 (afternoon): the main stack drawn larger
+
+**Asked:** "make the other stack that not my main on a smaller circle." I read it as smaller
+spheres for everything outside his main stack (an alternative reading, a smaller orbit, would put
+them closer to .NET, which is the opposite of what the cloud needs).
+
+**What I did:** `SkillStar.Main` on the five signature-stack technologies (C#, ASP.NET Core, Umbraco,
+Vue.js, SQL Server), the `star-main` class in the markup, and separate sizes in `site.js` for the
+centre, the main stack and the rest. A test ties the flag to `Profile.SignatureStack` so there is one
+definition of "main". Measured in a real browser: .NET 102 pixels, main 79, others 41 to 54, nothing
+past the edge, console empty. **Not re-checked:** the phone view (the spheres only got smaller).
+**Open:** whether other technologies (for example JavaScript, Web API or EF Core) should also count as
+main; today only the signature stack does.
+
+---
+
+## 2026-11-15 (midday): only what he has used, a lighter cloud, About Me, a crowned monogram
+
+**Asked:** change About to About Me in the header; give RS a crown with a cross engraved like
+a hole in its front; the 3D graph is too cramped, so remove the nodes that are not tech stack and
+the stack he has not experienced (Azure Service Bus, TanStack Query named), keeping only what he
+used directly, personal projects included; check memory, claude-dotfiles and GitHub first.
+
+**What I checked:** his memory (profile, resume facts, the Aluvii and 77GSI notes: "he has NOT
+used Azure Service Bus", the 2026-11-02 note "he has no TypeScript experience", the Q8 line
+"budgeting project with AI help uses TanStack Query"), the dotfiles memory (same files) and
+`gh repo list`. Lesson from my own last turn: I had treated "appears in a project stack" as
+"he has experience", which is the exact mistake his memory already warns about (a package in a
+project is not experience). The rule now is his own: only what he has used himself.
+
+**What I did (ADR-0010 fifth amendment):**
+- 68 spheres became 44; the denylist test keeps the removed ones out. Practices and techniques
+  are not spheres. Copilot and Claude Code hang from Git and GitHub. Azure DevOps added (and to the
+  grouped list; TypeScript left it).
+- Found two wrong facts while checking: the BudgetPH card still listed MediatR (dropped
+  2026-10-01), and the Scoot bullet said "designed" and "achieved 90 percent" (he corrected both
+  on 2026-11-06). Fixed both; also reworded the TanStack Query, Zustand and Azure Service Bus sentences.
+- "About Me" in the navigation and the heading; the crown is one even-odd path above RS.
+- Spheres enlarged a little now there is room; the phone zoom lowered to 0.62 because a full turn
+  pushed names up to 7 pixels past the edge at 0.66.
+- The checklist line I added this morning ("every skill on the map") was wrong and is replaced.
+
+**Verified:** strict build clean, 172 tests passing, real browser at 1440 and 390 pixels, console
+empty, nothing past the edge over a full turn on a phone, no sideways scrolling, crown inspected
+zoomed in (the cross shows the header through it). **Not verified:** a real touch phone, Safari,
+the live site. **Open:** Nuxt.js (asked for; memory says it is only a LinkedIn skill, so waiting for his confirmation).
+
+**Follow-up, same day (his yes):** removed the GraphQL (Lakbay), Vite (BudgetPH), Semantic Kernel
+and SQLite (AI Tutor) tags from the project cards, reworded the AI Tutor highlight to "a local Ollama
+model behind it", and dropped SQLite from the grouped skills list so the page does not contradict
+itself. He also asked for Nuxt.js. His memory says Nuxt is only a self-declared LinkedIn skill with
+no project or role behind it (levate note: "Nuxt only a LinkedIn skill"), which is the exact case his
+rule excludes, so I asked him rather than add it.
+
+---
+
+## 2026-11-15 (morning): every skill on the map, a real AngularJS logo, documentation as a gate
+
+**Asked:** "I am not sure if updating documentations accordingly is in our workflow but
+please sure that it is. Also, Angularjs, is that its logo? And all of my skills and stack
+are not in there too."
+
+**What I found:**
+- *Documentation:* the checklist already required `WALKTHROUGH.md`, `04_TASKS.md` and
+  the devlog, but said nothing about ADR amendments, the notices file for new assets or
+  timing, so docs could lag. Made explicit in `06_BEST_PRACTICE_CHECKLIST.md` section 6
+  and the operating manual: done means in the same turn, and an amendment must also fix
+  the earlier sentences it makes false (I fixed three in ADR-0010 this time).
+- *AngularJS:* it was a generic "sliders" glyph, not a logo. The CC0 icon set has no
+  AngularJS mark (only the newer Angular, now black), so the sphere draws that shield in
+  AngularJS red and the notices file says it is an approximation.
+- *Skills:* the map had 19 spheres; the grouped list and the role and project stacks have
+  many more. Now 68, one for every skill and stack entry, enforced by a new test.
+
+**What I did (ADR-0010 fourth amendment):**
+- Three shells (radius 260, 430, 600) because two were too crowded; the flat no-script map
+  was removed (it cannot hold 68 stars) and the caption list is the fallback.
+- Names of far spheres fade out first, long names wrap, the cloud is a larger square under
+  the About text, the walk is 1.8 seconds a step.
+- 18 more Simple Icons logos and 17 more glyphs; captions written only from facts already
+  in `CONTENT_SOURCES.md`, with the thin ones marked "generic" there.
+- Found while testing: a hash-only navigation does not reload, so my first look at the
+  browser showed the old 19-star page; reloaded with a query string.
+
+**Verified:** strict build clean, 171 tests passing, real browser at 1440 and 390 pixels,
+console empty, no sphere past the edge and no sideways scrolling, choosing AngularJS lit
+its connections and showed its caption. **Not verified:** a real touch phone, Safari, the
+live site. **Known:** dense on a phone; the owner may want fewer, grouped spheres.
+
+---
+
+## 2026-11-15 (small hours): bigger spheres, an even arrangement, the page made to match
+
+**Asked:** "Make the spheres bigger. Make the whole design of the page appropriate.
+Fix the arrangement. And update the documentation accordingly."
+
+**What I did (ADR-0010 third amendment):**
+- *Arrangement:* the cause of the clumping was the layout, not the spheres. Rings per
+  tree level plus a random-looking height spread let spheres line up along the view
+  axis and pile up behind the centre, and bigger spheres made it obvious. The layout now
+  puts the four first-step stars on an inner sphere and the other fourteen on an outer
+  one, each spread with a golden-angle spiral (`SkillUniverseLayout.SpreadOverSphere`).
+  New test: the nearest two stars on each sphere are at least half a radius apart.
+- *Size:* the centre about 107 px and the rest about 51 to 70 px on a wide screen, in a
+  700 px square cloud; names have a 10 px floor on phones.
+- *Page design:* "About me" is now a hero-purple band (both themes) with the cloud
+  directly on it and a golden glow behind .NET, wider than the usual column; the grouped
+  skills list is a plain section underneath. The page background still shows faintly
+  through the band. The sun's repeated ".NET" label is visually hidden.
+
+**Verified:** `dotnet test` 172 passing (the orbit tests became sphere-spread tests;
+the details selector no longer assumes the list is inside the About section);
+warnings-as-errors build clean. In a real browser: desktop and 390 px, the cloud evenly
+spread at several rotations, far spheres fading back, no page overflow. **Not verified:**
+a real touch phone, Safari, and the live site. **Known and accepted:** two spheres that
+line up along the view axis can overlap for a moment as the cloud turns; the farther one
+is faint then, and it clears as the cloud rotates.
+
+---
+
+## 2026-11-14 (late night): the skills become a cloud of logo spheres
+
+**Asked:** after looking at `jack.gif` again: "notice the stack design, the
+arrangement; I want mine like that, with .NET at the centre", then "use spheres
+instead of pills, use their logos with a small name under the logo, and expand
+them", and "what is this design called, is it a Hoberman sphere?".
+
+**Answer to the naming question (also in ADR-0010):** the reference is a 3D tag
+cloud (sphere or globe cloud). Ours is a 3D radial node graph (radial tree or
+constellation map). It is not a Hoberman sphere (a mechanical expanding toy); the
+"solar system" wording I used earlier was loose.
+
+**What I did:** each star is now a glossy sphere with its logo and name underneath
+(`SkillIconData`, a second hidden sprite `_SkillIcons`, `SkillStar.Icon`);
+the cloud is square and sits beside the About text on wide screens; shells are
+wider and the camera looks down at about 37 degrees so the spheres spread around
+the centre; connection lines appear only for the chosen sphere; touch devices can
+swipe it because nothing needs sideways scrolling any more. ASP.NET Core got a
+globe glyph so only the sun carries the .NET logo.
+
+**Found on the way:** with a flat camera the spheres lined up behind the centre
+and overlapped it (fixed by raising the pitch and spreading the first ring); the
+flat fallback's outer chain overlapped (the overlap test caught it; rings opened
+up); the existing sprite test counted every `use` element and broke when a second
+sprite appeared (now scoped to logo symbols).
+
+**Verified:** `dotnet test` 172 passing (new: every star has a resolvable icon,
+unique valid icon ids, no dead icons, each star rendered as sphere plus logo plus
+name with its symbol defined). In a real browser: desktop and 390 pixel width, no
+page overflow, spheres readable. **Not verified:** a real touch phone, Safari, and
+the live site. **Open:** he may want the spheres larger still (he said "expand");
+the size table is in `site.js` (`ORB_SIZES`).
+
+---
+
+## 2026-11-14 (night): About me, and the skills become a 3D solar system
+
+**Asked:** "Skills should have been grouped with About me. Make the nodes
+floating, like a multiverse. They should appear 3D and rotatable like a solar
+system." (Local only; test thoroughly before any deploy.)
+
+**What I did (ADR-0010 amendment):** a new `_AboutSection` replaces the Skills
+section: `Profile.About` (two sourced paragraphs), then the map, then the
+grouped list. Navigation now starts with "About". The map is drawn flat on the
+server (still the no-script fallback), and `site.js` step 5 turns it into a 3D
+scene with no library: orbit radii from `SkillUniverseLayout.OrbitRadii`,
+direction from each star's flat angle, a fixed height spread, a small
+projection, floating, dust, slow spin, drag and arrow-key turning, Turn and
+Pause buttons, click-to-front and a walk that turns each star forward.
+
+**Decisions worth remembering:**
+- No three-dimensional library: it would be a third-party script and break the
+  Content Security Policy and the "no script libraries" rule, and the scene is
+  only about twenty points.
+- Pause freezes everything (spin and floating), not only the rotation.
+- Touch screens keep native scrolling, so dragging to rotate is mouse and pen
+  only; touch uses the Turn buttons and a tap on a star.
+- The first version of the click handling could swallow the next click after a
+  drag that produced no click event; fixed by clearing the flag after the
+  release. The centre star was dimmed along with the others; it now never fades.
+
+**Verified:** `dotnet test` 170 passing (new: orbit radii and directions,
+rendered depth and angle attributes, About me content and navigation, controls
+ship hidden). In a real browser: the system spins and floats, drag turns and
+tilts it, click turns a star to the front, Pause stops it, phone width has no
+page overflow, reduced motion moves nothing and hides Pause while Turn still
+works instantly, and the console is empty. **Not verified:** a real touch phone,
+Safari, frame rate on a slow machine, and the live site.
+
+---
+
+## 2026-11-14 (evening): the new design, built locally
+
+**Asked:** "Is there a better, more modern, unique design?", then (after a
+comparison page of four concepts and a motion prototype he liked) "code it ...
+apply the new design now and let's see how it looks. Don't forget the
+background we have", plus "consider my portfolio picture", "as always, observe
+best practice", and "keep it local ... thoroughly test it before we deploy".
+
+**What I did (ADR-0010):**
+- Skills became a star map with .NET at the centre. Data in
+  `SkillUniverseData`, positions from the pure function `SkillUniverseLayout`
+  (radial tree, subtree slices by leaf count), drawn server-side so it works
+  without script; `site.js` adds hover, focus and tap highlighting, a caption
+  live region and a "Walk my journey" button. The grouped list stays in a
+  disclosure. "Web API" added to the grouped skills so every star is backed.
+- Header monogram is now "RS" (link to the top, accessible name "RS, home");
+  the hero got a "Hi, I'm" greeting above his name (`Profile.Greeting`) and the
+  title moved below the name; faint code tags in the hero margins at 75 rem and
+  wider; letter-by-letter headings; a translucent page-change veil with an off
+  switch in the footer. Portrait, background layers and the hero video are
+  unchanged.
+
+**Found and fixed on the way:** the first layout put long chains where the
+rings are shortest and two labels overlapped (the overlap test caught it);
+chains now point upward and the rings are wider. The "Walk" button wrapped
+onto two lines on a phone (now no-wrap) and had page code showing through it
+(now a solid background). The monogram was only 31 pixels wide on touch
+screens (now a 44 pixel target).
+
+**Verified:** `dotnet test` 167 passing (new tests: layout geometry and
+overlaps, tree errors, journey, labels backed, captions, rendered markup,
+culture-independent numbers, monogram, greeting, margin tags, footer switch,
+phone scroll rules). In a real browser: 1440 and 390 pixel widths, light and
+dark, no horizontal page scroll, layout shift 0 on the phone, and with
+reduced motion no letters split, no veil, the switch hidden and no running
+animations. **Not verified:** real touch devices, Safari, the live site, and
+a full Lighthouse run.
+
+**Next:** he reviews the look and the star-map captions; then deploy only on
+his explicit yes. Optional later: the left navigation rail from the prototype.
+
+---
+
 ## 2026-11-14 (after the push): the video shows only what is really his
 
 **Asked:** he saw "Edge" in the new banner and said "I don't usually use Edge

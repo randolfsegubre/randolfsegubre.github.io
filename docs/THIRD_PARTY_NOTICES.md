@@ -24,6 +24,29 @@ third-party material is embedded in the source, listed here.
   name to `Profile.BackdropTags` (it must also appear in a project or role stack)
   and add an entry to `TechLogoData`.
 
+## Skills map icons
+
+- **Logos:** JavaScript, HTML5, Sass, OWASP, JSON Web Tokens, GitHub Copilot, Claude Code,
+  Model Context Protocol, Redux, Unity and Ollama come from the same Simple Icons
+  package, version 16.32.0, released under the CC0 1.0 public-domain dedication, embedded in
+  `src/Portfolio.Web/Content/SkillIconData.cs`. The C#, .NET, Umbraco, Vue.js, React, Blazor,
+  Docker, Jenkins, MongoDB, MySQL, GitHub and Next.js spheres reuse the logos listed above.
+  Trademarks belong to their owners; the logos only show which technologies the owner has
+  used. (An earlier version also carried TypeScript, Figma, SQLite, React Query, Vite,
+  GraphQL and Markdown; those spheres were removed on 2026-11-15, see ADR-0010.)
+- **AngularJS is an approximation.** The Simple Icons set has no AngularJS mark (its
+  Angular mark is the newer framework's, now black), so the AngularJS sphere draws
+  the Angular shield shape from that set in AngularJS red (#E23237). It is not the
+  official artwork and can be replaced by editing the `angularjs` entry.
+- **Generic glyphs:** the database cylinder, table, bolt, check mark, braces, layers,
+  shield, prompt, globe, history, window, layout, flow, code, cloud and lock in
+  `SkillIconData.cs` are simple line drawings made for this site. They are not any
+  company's artwork. They stand in where the public-domain icon set has no logo for a
+  technology (SQL Server, Entity Framework Core, Dapper, xUnit, Azure and AWS among
+  them), because a generic symbol is more honest than a lookalike of a trademarked mark.
+- **The crown on the RS monogram** in the header (`_Header.cshtml`) is a simple shape drawn
+  for this site, with a cross cut out of it. It is not copied from any logo.
+
 ## Profile link icons
 
 - **GitHub** uses the same public-domain Simple Icons shape as the technology

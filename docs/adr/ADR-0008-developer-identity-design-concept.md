@@ -161,6 +161,12 @@ GIF suited to his background and skills. Decision:
   respected; a pause control would be needed to meet the Web Content Accessibility Guidelines (WCAG) success criterion 2.2.2 fully, and is
   recorded as an open item in the tasks.
 
+**Sixth amendment, 2026-11-14:** the owner chose further parts of a new design
+(RS monogram, greeting, margin code tags, letter-by-letter headings, a page-change
+veil and a skills star map). They are recorded in
+[ADR-0010](ADR-0010-skills-star-map-and-page-transitions.md); the background,
+video and portrait described here are unchanged.
+
 ## Consequences
 
 - The design has a recognisable idea that is the owner's own: his stack as the

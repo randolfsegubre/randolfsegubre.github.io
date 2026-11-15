@@ -66,7 +66,22 @@ the conflict and ask the owner; do not pick silently.
 - [ ] Every new claim has a row in `docs/CONTENT_SOURCES.md` (ADR-0006).
 - [ ] Writing style holds: first person, no em dashes, Full Word Format.
 - [ ] `WALKTHROUGH.md`, the handbook and `README.md` match the code.
+- [ ] A change to a design, layout, data shape or behaviour that an ADR describes
+      updates that ADR in the same turn: an amendment that says what changed and
+      why, and a fix to any earlier sentence it makes false (an amendment never
+      leaves a contradiction behind). A new decision gets a new ADR and a row in
+      the table in `docs/build/01_CLAUDE.md`.
+- [ ] A new or changed image, icon or logo has its source and licence in
+      `docs/THIRD_PARTY_NOTICES.md`, and says so plainly when it is an
+      approximation and not the official artwork.
+- [ ] The skills cloud shows only technologies the owner has used himself (ADR-0010,
+      fifth amendment). Adding a sphere needs a caption, a row in
+      `docs/CONTENT_SOURCES.md` and the owner's confirmation that he used it; a
+      practice or technique is not a sphere. Check his memory and repositories first, and
+      remember that a package in a project built with AI help is not his experience.
 - [ ] `04_TASKS.md` updated and a dated entry appended to `05_DEVLOG.md`.
+- [ ] All of the above happen in the same turn as the code change, never as a
+      later "docs pass".
 - [ ] Nothing is committed, pushed or published without the owner's explicit
       yes (operating manual, "Do not publish without approval").
 

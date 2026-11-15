@@ -82,10 +82,29 @@ travelling through the owner's stack (`wwwroot/media`, built from
 wide screens when motion and data saving allow it; otherwise the stylesheet
 shows a still frame, and phones get the plain gradient. The faint drifting C#
 fragments live behind the rest of the page, so the hero is a different surface.
-The header's first link says "Home" instead of repeating the name the hero
-already shows.
+The header's first link shows the "RS" monogram (accessible name "RS, home")
+instead of repeating the name the hero already shows, and the hero greets the
+visitor with `Profile.Greeting` above the name (ADR-0010).
 `_StatsStrip.cshtml` then shows checkable facts under the hero, instead of
 unverifiable skill percentage bars.
+
+**About Me and the skills cloud (ADR-0010):** `SkillUniverseData` holds the tree of
+technologies he has used himself (45, not every skill listed elsewhere) and one honest caption each; `SkillUniverseLayout.Build` turns it
+into positions once at start-up: an even spread over three spheres around .NET (the
+stars one step out, two steps out, and further out; a golden-angle spiral, stars in
+tree order). There is no flat drawing: with this many stars it would be a pile, so a visitor
+without script gets the caption list. The controller
+passes the result in `PortfolioViewModel.Universe`, `Index.cshtml` wraps it with
+his `Profile.About` paragraphs and the grouped list in an `AboutSectionModel`, and
+`_AboutSection.cshtml` (a purple band, then a plain section for the grouped list)
+draws the paragraphs, every star (a sphere holding its logo with its name below,
+carrying `data-depth` and its place on the sphere in `data-azimuth`, `data-elevation`
+and `data-radius`; the logos come from `SkillIconData` and the page sprites), the lines
+and the caption list, all without script (the cloud stays hidden until script runs).
+`site.js` step 5 then turns that markup into a 3D scene: it projects each star's place
+on the sphere to the screen every frame, floats and slowly spins it, fades the names of
+the far spheres, and lets the visitor drag, key or button it around. Steps 6 and 7 split headings into letters
+and run the page-change veil.
 
 **The technology logos (ADR-0008):** `_LogoSprite.cshtml` draws each logo once as
 an SVG `<symbol>` in a hidden sprite at the top of `<body>`. `_TechLogos.cshtml`

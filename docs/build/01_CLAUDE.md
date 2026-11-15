@@ -56,6 +56,7 @@ doubtful one, every time.
 | ASP.NET Core MVC on .NET 10, exported to static files | [ADR-0007](../adr/ADR-0007-aspnet-core-mvc-with-static-export.md) |
 | "Developer identity" design concept (code card, stats, vanilla motion), original not copied | [ADR-0008](../adr/ADR-0008-developer-identity-design-concept.md) |
 | Security hardening (Content Security Policy, exporter safety, workflow least privilege) and the best-practice gate | [ADR-0009](../adr/ADR-0009-security-hardening-and-best-practice-gates.md) |
+| Skills star map, RS monogram, letter-by-letter headings and the page-change veil | [ADR-0010](../adr/ADR-0010-skills-star-map-and-page-transitions.md) |
 
 A new significant decision (a new dependency, a reversal) gets a new
 `ADR-000N` the moment it is made, and a row in this table.
@@ -122,6 +123,11 @@ A new significant decision (a new dependency, a reversal) gets a new
 
 ## Working with Randolf on this project
 
+- **Documentation is part of done, in the same turn as the change** (owner
+  confirmed 2026-11-15): the affected ADR (an amendment, and a fix to anything it
+  makes false), `CONTENT_SOURCES.md`, `THIRD_PARTY_NOTICES.md` for any new
+  asset, `WALKTHROUGH.md`, `04_TASKS.md` and a dated `05_DEVLOG.md` entry.
+  `06_BEST_PRACTICE_CHECKLIST.md` section 6 lists it.
 - Update `04_TASKS.md` and append to `05_DEVLOG.md` at the end of every
   session or phase boundary.
 - Surface any request that would reverse an ADR before following it.
