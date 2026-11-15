@@ -56,5 +56,10 @@ public static class ProfileData
         PhotoUrl: "/images/randolf.jpg",
         PhotoAlt: "Portrait of Randolf Segubre",
         ResumeUrl: "/files/Randolf_Segubre_Resume.pdf",
-        PhotoWebpUrl: "/images/randolf.webp");
+        PhotoWebpUrl: "/images/randolf.webp",
+        About:
+        [
+            "I am a full-stack .NET developer based in Metro Manila. For more than 9 years I have built and maintained web platforms in C# and .NET for travel, healthcare and construction.",
+            "My work began in 2017 with a desktop application in C# and Dapper. It has since grown into ASP.NET Core web platforms, an Umbraco content platform and the Vue.js front end that sits on top of them.",
+        ]);
 }

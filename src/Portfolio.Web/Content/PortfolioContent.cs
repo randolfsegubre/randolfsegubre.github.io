@@ -3,7 +3,7 @@ using Portfolio.Web.Models;
 namespace Portfolio.Web.Content;
 
 /// <summary>
-/// The default <see cref="IPortfolioContent"/>: composes the four data classes.
+/// The default <see cref="IPortfolioContent"/>: composes the content data classes.
 /// </summary>
 /// <remarks>
 /// Registered as a singleton in <c>Program.cs</c>. The data is immutable, so one
@@ -20,4 +20,6 @@ public sealed class PortfolioContent : IPortfolioContent
     public IReadOnlyList<Role> Experience => ExperienceData.Roles;
 
     public IReadOnlyList<SkillGroup> Skills => SkillData.Groups;
+
+    public UniverseMap Universe => SkillUniverseData.Map;
 }

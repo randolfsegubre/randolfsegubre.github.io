@@ -74,7 +74,7 @@ public static class ExperienceData
             [
                 "Built backend services for customer-facing airline booking tools, deployed on Amazon Web Services.",
                 "Integrated the Navitaire Dot-Rez reservation system over its Simple Object Access Protocol interface for flight-transfer management.",
-                "Designed the schema and Entity Framework Core Code First models against MySQL, with 90 percent backend test coverage in xUnit.",
+                "Implemented the Entity Framework Core Code First models against MySQL from my senior developer's design, writing xUnit tests toward a team target of at least 90 percent backend coverage.",
             ],
             Stack: ["C#", "ASP.NET", "Vue.js", "EF Core", "MySQL", "xUnit", "AWS"]),
 

@@ -25,12 +25,12 @@ public static class ProjectData
             Highlights:
             [
                 "Real JavaScript Object Notation Web Token (JWT) login with silent refresh through an axios interceptor, against an ASP.NET Core Application Programming Interface with an explicit cross-origin allow-list.",
-                "Front end uses TanStack Query for server state and Zustand for client state, with a development proxy and a same-origin production build.",
+                "The React front end runs behind a development proxy and ships as a same-origin production build.",
                 "Audited end to end in a real browser against a real SQL Server database: register, log in, create accounts, post transactions, and watch the dashboard update.",
                 "That audit found and fixed three contract bugs by reproducing them first, including AutoMapper failing to build a record through its constructor.",
             ],
             HonestNote: "Automated test coverage is still small (one domain test and one application test).",
-            Stack: ["C#", ".NET 10", "ASP.NET Core", "EF Core", "MediatR", "SQL Server", "React", "Vite", "TanStack Query", "Zustand"],
+            Stack: ["C#", ".NET 10", "ASP.NET Core", "EF Core", "SQL Server", "React"],
             Links: [new Link("Source on GitHub", "https://github.com/randolfsegubre/BudgetPH")]),
 
         new Project(
@@ -63,12 +63,12 @@ public static class ProjectData
             Highlights:
             [
                 "A booking service using Command Query Responsibility Segregation, with an atomic availability decrement so two people cannot book the last room.",
-                "A denormalised search service fed from the content system over Azure Service Bus.",
+                "A denormalised search service kept in sync with the content system over messaging.",
                 "Eight repositories, one architecture repository with numbered decision records, and a documented local infrastructure setup.",
                 "The early phases were verified running against real services on a local machine, not only by reading the code.",
             ],
             HonestNote: "Checkout and payment are not built yet, and the storefront does not call the booking service yet.",
-            Stack: ["C#", ".NET", "Umbraco 18", "Next.js", "GraphQL", "Azure Service Bus", "MongoDB", "MediatR"],
+            Stack: ["C#", ".NET", "Umbraco 18", "Next.js", "MongoDB", "MediatR"],
             Links: [new Link("Architecture repository", "https://github.com/randolfsegubre/Lakbay.Docs")]),
 
         new Project(
@@ -81,11 +81,11 @@ public static class ProjectData
             Featured: false,
             Highlights:
             [
-                "Blazor WebAssembly front end on an ASP.NET Core 10 Application Programming Interface in Clean Architecture layers, with Semantic Kernel talking to a local Ollama model.",
+                "Blazor WebAssembly front end on an ASP.NET Core 10 Application Programming Interface in Clean Architecture layers, with a local Ollama model behind it.",
                 "Built from scratch: sign-in with access and refresh tokens, and an encrypted vault for premium provider keys.",
             ],
             HonestNote: null,
-            Stack: ["Blazor WebAssembly", "ASP.NET Core 10", "EF Core", "SQLite", "Semantic Kernel", "Ollama"],
+            Stack: ["Blazor WebAssembly", "ASP.NET Core 10", "EF Core", "Ollama"],
             Links: [new Link("Source on GitHub", "https://github.com/randolfsegubre/ai-tutor")]),
 
         new Project(

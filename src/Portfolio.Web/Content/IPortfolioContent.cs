@@ -23,5 +23,9 @@ public interface IPortfolioContent
     /// <summary>Employment history, newest first.</summary>
     IReadOnlyList<Role> Experience { get; }
 
+    /// <summary>The full skills list, grouped. Kept under the star map so nothing is lost.</summary>
     IReadOnlyList<SkillGroup> Skills { get; }
+
+    /// <summary>The skills star map: .NET at the centre, laid out and ready to draw (ADR-0010).</summary>
+    UniverseMap Universe { get; }
 }

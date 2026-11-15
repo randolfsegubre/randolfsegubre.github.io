@@ -34,6 +34,8 @@ public sealed record Stat(string Value, string Label);
 /// <param name="PhotoUrl">Site-relative path to the portrait under wwwroot, or null for no photo.</param>
 /// <param name="PhotoAlt">Alternative text describing the portrait for screen reader users.</param>
 /// <param name="PhotoWebpUrl">Optional smaller WebP copy of the portrait for the page itself (320 by 320, twice its display size). <see cref="PhotoUrl"/> stays the fallback and the link-preview image, because LinkedIn and some other sharing crawlers do not reliably show WebP.</param>
+/// <param name="Greeting">The short line above the name in the hero, so the page introduces him in his own voice. Prose, so it follows the writing rules.</param>
+/// <param name="About">The paragraphs of the "About me" section, in order. Prose, so they follow the writing rules; each claim needs a row in <c>docs/CONTENT_SOURCES.md</c>.</param>
 /// <param name="ResumeUrl">Site-relative path to the downloadable resume under wwwroot (a PDF). The hero button and the contact card are hidden while this is null, so the site never shows a dead download link.</param>
 public sealed record Profile(
     string Name,
@@ -50,7 +52,9 @@ public sealed record Profile(
     string? PhotoUrl,
     string? PhotoAlt,
     string? ResumeUrl,
-    string? PhotoWebpUrl = null);
+    string? PhotoWebpUrl = null,
+    string Greeting = "Hi, I'm",
+    IReadOnlyList<string>? About = null);
 
 /// <summary>
 /// Where a project stands. Shown on its card so nothing is oversold.
@@ -129,6 +133,49 @@ public sealed record Role(
 public sealed record SkillGroup(string Id, string Label, IReadOnlyList<string> Items);
 
 /// <summary>
+/// One star on the skills map: a technology, where it hangs from, and one honest line about where it was used.
+/// </summary>
+/// <param name="Id">Stable unique identifier, also used for the element ids and the walk order.</param>
+/// <param name="Label">The product name shown on the star. Must appear in the roles, projects or skills (a test enforces this).</param>
+/// <param name="ParentId">The star this one grows out of, or null for the single centre. The parent decides the ring and the direction.</param>
+/// <param name="Caption">One sentence about where the technology was used. Prose, so it follows the writing rules (ADR-0006).</param>
+/// <param name="Icon">The key of the icon drawn inside the sphere: a technology logo or a generic glyph (<c>SkillIconData</c>). Every star needs one.</param>
+/// <param name="Main">True for the owner's main stack (the profile's signature stack), which is drawn as a larger sphere than the rest. A test keeps this in step with <c>Profile.SignatureStack</c>.</param>
+public sealed record SkillStar(string Id, string Label, string? ParentId, string Caption, string Icon, bool Main = false);
+
+/// <summary>
+/// A line between two stars on the map. Every parent link is drawn automatically; these are the extra cross links.
+/// </summary>
+public sealed record SkillLink(string FromId, string ToId);
+
+/// <summary>
+/// A star with its place on the map.
+/// </summary>
+/// <param name="Depth">0 for the centre, 1 for the first step out, and so on outward.</param>
+/// <param name="Azimuth">Where the star sits round the 3D cloud, in degrees (0 to 360). Zero for the centre.</param>
+/// <param name="Elevation">How far above (positive) or below (negative) the middle of the 3D cloud the star sits, in degrees. Zero for the centre.</param>
+/// <param name="Radius">The star's distance from the centre of the 3D cloud in world units; stars one step out share the inner sphere, two steps the middle one and the rest the outer one. Zero for the centre.</param>
+public sealed record PlacedStar(SkillStar Star, int Depth, double Azimuth, double Elevation, double Radius);
+
+/// <summary>
+/// The whole skills map, laid out and ready to draw (ADR-0010).
+/// </summary>
+/// <param name="Intro">A short line above the map. Prose, so it follows the writing rules.</param>
+/// <param name="Stars">Every star with its position.</param>
+/// <param name="Links">Every line to draw: parent links first, then the cross links.</param>
+/// <param name="Journey">The order the "walk my journey" button visits the stars; each star appears exactly once.</param>
+public sealed record UniverseMap(
+    string Intro,
+    IReadOnlyList<PlacedStar> Stars,
+    IReadOnlyList<SkillLink> Links,
+    IReadOnlyList<string> Journey);
+
+/// <summary>
+/// What the "About me" section needs: his own paragraphs, then the skills map, with the full grouped list kept underneath it.
+/// </summary>
+public sealed record AboutSectionModel(IReadOnlyList<string> Paragraphs, UniverseMap Map, IReadOnlyList<SkillGroup> Groups);
+
+/// <summary>
 /// Everything the home page needs, passed from the controller to the view as one model.
 /// </summary>
 public sealed record PortfolioViewModel(
@@ -136,7 +183,8 @@ public sealed record PortfolioViewModel(
     IReadOnlyList<LiveSite> LiveSites,
     IReadOnlyList<Project> Projects,
     IReadOnlyList<Role> Experience,
-    IReadOnlyList<SkillGroup> Skills);
+    IReadOnlyList<SkillGroup> Skills,
+    UniverseMap Universe);
 
 /// <summary>
 /// Input for the shared tag-list partial: the chips and the accessible name of the list.
