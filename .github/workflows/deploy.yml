@@ -1,13 +1,18 @@
 name: Deploy to GitHub Pages
 
 # Runs on every push to main. Tests gate the deploy: a failing test means
-# nothing is published (ADR-0005). The MVC app is exported to static files
-# because GitHub Pages cannot run a server (ADR-0001, ADR-0007).
+# nothing is published (ADR-0005). The .NET backend writes the content, Nuxt
+# generates the static site from it, and the tests then check that generated
+# folder, which is exactly what gets published (ADR-0011). GitHub Pages cannot
+# run a server, so only static files are deployed (ADR-0001).
 #
-# Security (ADR-0009): permissions are granted per job, least privilege first,
-# and every third-party action is pinned to a full commit hash, because a
-# version tag such as v4 can be moved after the fact. The comment after each
-# hash names the tag it was resolved from; refresh them together when updating.
+# Security (ADR-0009, ADR-0011): permissions are granted per job, least
+# privilege first, and every third-party action is pinned to a full commit hash,
+# because a version tag such as v4 can be moved after the fact. The comment after
+# each hash names the tag it was resolved from; refresh them together when
+# updating. Dependencies are installed from the lock files only (npm ci), npm
+# install scripts are not run, and the build fails on a known vulnerability in
+# the .NET packages or a moderate or worse one in the npm packages.
 on:
   push:
     branches: [main]
@@ -30,14 +35,32 @@ jobs:
       - uses: actions/setup-dotnet@0f4a354dd5547a28c70b7853dbd95d5b67886e73 # v6.1.0
         with:
           global-json-file: global.json
-      - name: Test
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+      - name: Check the .NET packages for known vulnerabilities
+        run: |
+          dotnet list Portfolio.slnx package --vulnerable --include-transitive | tee vulnerable.txt
+          if grep -q "has the following vulnerable packages" vulnerable.txt; then exit 1; fi
+      - name: Install the front-end packages from the lock file
+        working-directory: web
+        run: npm ci
+      - name: Check the front-end packages for known vulnerabilities (moderate or worse fails)
+        working-directory: web
+        run: npm audit --audit-level=moderate
+      - name: Generate the static site (the .NET backend writes the content, then Nuxt builds from it)
+        working-directory: web
+        run: npm run generate
+      - name: Test the generated site and the backend
         run: dotnet test Portfolio.slnx --configuration Release
-      - name: Export static site
-        run: dotnet run --project src/Portfolio.Web --configuration Release --no-launch-profile -- --export "$GITHUB_WORKSPACE/dist"
+        env:
+          PORTFOLIO_SITE_DIR: ${{ github.workspace }}/web/.output/public
       - uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
         with:
-          path: dist
-          # Keep the .nojekyll marker the exporter writes (v4+ skips dotfiles by default).
+          path: web/.output/public
+          # Keep dotfiles: Pages needs none today, but the upload action skips them by default (v4+), so be explicit.
           include-hidden-files: true
 
   deploy:

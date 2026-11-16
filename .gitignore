@@ -10,3 +10,9 @@ TestResults/
 !.env.example
 .DS_Store
 Thumbs.db
+
+# Nuxt front end (ADR-0011): dependencies, build output and the content file the .NET backend generates.
+web/node_modules/
+web/.nuxt/
+web/.output/
+web/data/
