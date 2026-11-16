@@ -2,8 +2,10 @@
 
 This traces what actually happens, in order, from the .NET backend to the page in a
 visitor's browser. It explains vocabulary as it goes and points at the Architecture
-Decision Records (ADRs) instead of repeating their reasoning. The shape (ADR-0011): a
-**.NET backend** owns the content and serves it as JSON; a **Nuxt front end** (Vue.js
+Decision Records (ADRs) instead of repeating their reasoning. The shape (ADR-0011,
+ADR-0012, ADR-0013): the words live in **JSON data files** and in **SQL Server**; a
+**.NET backend**, built as three layers (presentation, business, data access), reads
+them from the database and serves them as JSON; a **Nuxt front end** (Vue.js
 components) turns that JSON into plain static files; **GitHub Pages** serves the files.
 
 ## Vocabulary
@@ -22,23 +24,41 @@ components) turns that JSON into plain static files; **GitHub Pages** serves the
   page is plain HTML plus the page's own three small scripts. The Content Security
   Policy (`script-src 'self'`) is therefore unchanged (ADR-0009, ADR-0011).
 - **Dependency injection:** the framework builds objects and passes them in through
-  constructors, so classes ask for an interface (`IPortfolioContent`) instead of
-  creating their own dependencies.
+  constructors, so classes ask for an interface (`IPortfolioContent`, `IContentRepository`)
+  instead of creating their own dependencies.
+- **The three layers (ADR-0013):** *presentation* (`Portfolio.Api`: the endpoint and the build
+  commands) talks only to *business* (`Portfolio.Business`: content models, rules, the
+  document builder, the content service), which talks to *data access* (`Portfolio.Data`:
+  the SQL Server schema, migrations and the repository). Dependencies point one way, and
+  `LayeringTests` enforce it. A layer is a separation of code; a tier would be a separation
+  of machines, which this site deliberately does not have in production.
+- **Seeding:** making the database say exactly what the JSON files in `content/` say,
+  replacing everything inside one transaction. It is safe to run on every build.
+- **Row and record:** a *row* is the database's shape of a piece of content (`Portfolio.Data`);
+  a *record* is the shape the page is drawn from (`Portfolio.Business`). `ContentMapper` is the
+  one place that translates between them.
 
 ## The flow, step by step
 
 **At build time (what CI and `npm run generate` do):**
 
-1. **`web/scripts/export-content.mjs`** runs the backend in export mode:
-   `dotnet run --project src/Portfolio.Api -- --export-content <absolute path>`.
-2. **`Program.cs` (STEP 1 of 4)** sees `--export-content` and calls
-   `ContentExporter.WriteAsync`, then exits without starting a web server. (In normal
-   mode it serves the same document at `GET /api/content`, with security headers.)
-3. **`SiteContentBuilder.Build`** gathers the profile, projects, experience, skills and the
-   skills cloud from the `Content/*.cs` classes, and does what the old Razor views did
-   that was not markup: page titles, project status wording, each sphere's icon and where
-   the floating logos go. **`ContentExporter`** writes it to `web/data/content.json`
-   (git-ignored, regenerated every build).
+1. **`web/scripts/export-content.mjs`** runs the backend's build commands in one go:
+   `dotnet run --project src/Portfolio.Api -- --migrate --seed <content folder> --export-content <file>`
+   (absolute paths; the connection string comes from `ConnectionStrings__Portfolio`, or the
+   local Windows default).
+2. **`Program.cs` (the presentation layer)** sees the commands and asks the business layer to
+   do the work, never touching the database itself. `--migrate` creates or updates the
+   database (the migrations live in the data layer). `--seed` calls
+   `ContentService.SeedFromFilesAsync`: **`ContentFiles`** reads and strictly checks the 12
+   JSON files, **`ContentMapper.ToRows`** turns the content into rows, and the repository
+   (`ContentRepository`, data layer) replaces every table inside one transaction.
+3. **`--export-content`** calls `ContentService.LoadAsync`: the repository reads the rows,
+   **`ContentMapper.ToSnapshot`** turns them back into content (the skills cloud is laid out in
+   space here), then **`SiteContentBuilder.Build`** works out what the front end should not decide:
+   page titles, project status wording, each sphere's icon and where the floating logos go.
+   **`ContentExporter`** writes the result to `web/data/content.json` (git-ignored, regenerated
+   every build). In normal mode the same document is served at `GET /api/content` from the
+   content loaded once at start-up, with security headers.
 4. **`nuxt generate`** loads the components in `web/app/`, which read that file through
    `app/utils/content.js`, renders `/` and `/404`, and writes `index.html` and
    `404.html` into `web/.output/public`, together with everything in `web/public`
@@ -94,7 +114,7 @@ the margins. The header's first link shows the "RS" monogram with its crown (one
 even-odd path, so the cross is a real hole), accessible name "RS, home". `StatsStrip.vue`
 shows checkable facts under the hero, instead of unverifiable percentage bars.
 
-**About Me and the skills cloud (ADR-0010):** `SkillUniverseData` holds the tree of
+**About Me and the skills cloud (ADR-0010):** `content/skill-universe.json` holds the tree of
 technologies he has used himself (45, not every skill listed elsewhere) with one honest
 caption each. `SkillUniverseLayout.Build` spreads them evenly over three spheres around
 .NET (a golden-angle spiral, stars in tree order) once at start-up. The content document
@@ -116,9 +136,10 @@ backend decides which logo goes in which slot (`SiteContentBuilder`).
 
 Take the BudgetPH "Known gap" sentence:
 
-1. It is written in `src/Portfolio.Api/Content/ProjectData.cs` as `HonestNote`.
-2. `ContentTests` checks it against the writing rules.
-3. `SiteContentBuilder` puts the project, with its status wording, in the content document.
+1. It is written in `content/projects.json` as `honestNote`.
+2. `ContentTests` checks it against the writing rules (it reads that same file), and
+   `SqlContentTests` proves the database hands it back unchanged.
+3. The business layer loads it from SQL Server and `SiteContentBuilder` puts the project, with its status wording, in the content document.
 4. `ProjectsSection.vue` passes it to `ProjectCard.vue`, which draws
    `<p class="honest-note">` because the note is not empty.
 5. `PageRenderTests` counts the rendered "honest-note" paragraphs in the generated page
@@ -129,7 +150,12 @@ Take the BudgetPH "Known gap" sentence:
 
 | Symptom | Look at |
 |---|---|
-| A word or claim is wrong | `src/Portfolio.Api/Content/*.cs`, then `docs/CONTENT_SOURCES.md` |
+| A word or claim is wrong | `content/*.json`, then `docs/CONTENT_SOURCES.md` |
+| The build says the content database is empty, or cannot connect | SQL Server running? `npm run content`; the connection string is `ConnectionStrings__Portfolio` |
+| A content file is rejected | the error names the file; reading is strict (typos, nulls, bad JSON) |
+| A table, a constraint or a query is wrong | `src/Portfolio.Data/` (`PortfolioDbContext.cs`, `ContentRepository.cs`, migrations) |
+| A row is translated wrongly | `ContentMapper` in `src/Portfolio.Business/Services/` |
+| A layering test fails | the code is in the wrong layer; move it (ADR-0013) |
 | The page layout or markup is off | the component in `web/app/components/` |
 | Layout or color is off | `web/public/css/site.css` tokens at the top |
 | Wrong theme on load | `web/public/js/theme-init.js` (runs before paint), then `theme.js` |

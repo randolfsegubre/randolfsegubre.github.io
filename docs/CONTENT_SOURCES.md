@@ -32,7 +32,7 @@ current.
 |---|---|
 | Full-stack .NET developer based in Metro Manila; more than 9 years building and maintaining web platforms in C# and .NET for travel, healthcare and construction | The Profile rows above (employment history from June 2017; sectors; location) |
 | His work began in 2017 with a desktop application in C# and Dapper | The F. Gurrea row below (first professional role, Dapper data access) |
-| It grew into ASP.NET Core web platforms, an Umbraco content platform and the Vue.js front end on top of them | The Accenture, Hotelplan UK and BCS rows below and their role stacks in `ExperienceData.cs` |
+| It grew into ASP.NET Core web platforms, an Umbraco content platform and the Vue.js front end on top of them | The Accenture, Hotelplan UK and BCS rows below and their role stacks in `content/experience.json` |
 
 ## Skills star map (ADR-0010)
 
@@ -61,7 +61,7 @@ answers, the Azure Service Bus correction of 2026-10-29), the cross-machine memo
 | Web API | Backend services for client platforms and his own projects | The projects section and the Hotelplan UK roles |
 | ASP.NET MVC, HTML and CSS | The controller-and-view pattern of the ASP.NET applications in his earlier roles (it stopped being this portfolio's own pattern on 2026-11-16, ADR-0011); markup and styling | The Scoot and Centene role stacks and the grouped skills; this repository |
 | Razor Pages, Blazor | Razor Pages at Accenture; Blazor WebAssembly in AI Tutor and Blazor in DevHub | The Accenture role stack; the AI Tutor and DevHub project stacks |
-| Vue.js, JavaScript | Front-end work on top of the backend, in two roles; JavaScript behind it. JavaScript is also joined to React and AngularJS by a line, since both are written in it | The Hotelplan UK and BCS role stacks in `ExperienceData.cs`; the grouped skills |
+| Vue.js, JavaScript | Front-end work on top of the backend, in two roles; JavaScript behind it. JavaScript is also joined to React and AngularJS by a line, since both are written in it | The Hotelplan UK and BCS role stacks in `content/experience.json`; the grouped skills |
 | Nuxt.js | "The framework built on Vue.js; this portfolio is generated with it." True since 2026-11-16: this site is built with Nuxt (ADR-0011), with the owner directing the work and AI help. Before that his memory held Nuxt only as a self-declared LinkedIn skill, so no earlier project or role is claimed | This repository (`web/`), ADR-0011 |
 | React, Redux, Next.js | About six months of React and Redux in 2020 (his own correction of 2026-08-17); the Lakbay front end, which he describes as built by himself with Next.js, React and Redux Toolkit | His interview answers and the Collabera row below; the Lakbay project stack |
 | MongoDB | Document storage in an earlier role and in the Lakbay project | The Centene role stack and the Lakbay project stack |

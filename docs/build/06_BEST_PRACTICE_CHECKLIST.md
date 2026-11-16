@@ -16,9 +16,14 @@ the conflict and ask the owner; do not pick silently.
 - [ ] `dotnet build Portfolio.slnx -warnaserror` is clean: zero warnings, zero
       errors. Nullable and analyzers (`latest-recommended`) stay on; do not
       silence a rule without a comment that names why.
-- [ ] `npm run generate` (in `web/`) succeeds, then `dotnet test Portfolio.slnx` passes, and new behaviour has a test.
+- [ ] `npm run generate` (in `web/`, with SQL Server running) succeeds, then `dotnet test Portfolio.slnx` passes, and new behaviour has a test.
 - [ ] The conventions in the operating manual hold: components draw, the API stays
-      thin, content in `Content/`, `<summary>` blocks and numbered `STEP N of M` comments.
+      thin, content in `content/` (JSON), `<summary>` blocks and numbered `STEP N of M` comments.
+- [ ] The layers hold (ADR-0013): `LayeringTests` pass; presentation talks only to business,
+      business to data, nothing reaches past its neighbour. A table or query is in
+      `Portfolio.Data`, a content rule in `Portfolio.Business`, HTTP and commands in `Portfolio.Api`.
+- [ ] A schema change is a new migration (never an edited old one), the schema rule is
+      tested in `SqlContentTests`, and `ContentMapper` and its round-trip test still agree.
 - [ ] Every ADR cited in a code comment is the current one (ADR-0007 for the
       Nuxt and API shape, ADR-0011, not the superseded ADR-0002).
 - [ ] No dead code, no unused files, no secrets, no machine paths.
@@ -40,10 +45,17 @@ the conflict and ask the owner; do not pick silently.
       reports nothing.
 - [ ] The API still sends its security headers and no cross-origin policy
       (`ContentApiTests`), and the export still refuses a relative path.
+- [ ] No connection string, password or token is in the repository, the workflow log or a test.
+      The app needs `ConnectionStrings__Portfolio` from the environment; local development uses
+      Windows authentication. All database access goes through Entity Framework Core (no
+      hand-built SQL), and `TrustServerCertificate=True` is only ever used for a database on the
+      same machine (ADR-0012).
 
 ## 3. Workflow and supply chain
 
 - [ ] Workflow permissions are per job and minimal; top level is `{}`.
+- [ ] The SQL Server container image is pinned by digest, bound to the runner's loopback
+      address, with a fresh masked password per run, and `deploy` runs only on `main`.
 - [ ] Every third-party action is pinned to a full commit hash with its tag in
       a comment. Resolve with
       `gh api repos/<owner>/<action>/git/ref/tags/<tag>`.
@@ -66,7 +78,7 @@ the conflict and ask the owner; do not pick silently.
 - [ ] Canonical link on indexable pages; `noindex` on the not-found page.
 - [ ] Title, description, Open Graph and Twitter tags are present and say what
       the page says; the preview image is an absolute address with its size.
-- [ ] `sitemap.xml` and `robots.txt` use `SiteInfo.Url`.
+- [ ] `sitemap.xml` and `robots.txt` use the address in `content/site.json`.
 
 ## 6. Documentation and honesty
 

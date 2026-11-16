@@ -1,6 +1,6 @@
 # ADR-0011: A .NET API feeding a Nuxt front end that is generated to static files
 
-- **Status:** Accepted. Supersedes the front-end half of ADR-0007 (Razor views); the .NET half stays.
+- **Status:** Accepted. Supersedes the front-end half of ADR-0007 (Razor views); the .NET half stays. Refined on 2026-11-17: the content now lives in JSON files and SQL Server (ADR-0012) and the backend is three projects, `Portfolio.Api`, `Portfolio.Business` and `Portfolio.Data` (ADR-0013). Where this record says the .NET app "builds one JSON document" or names `src/Portfolio.Api` for the content classes, read the business layer.
 - **Date:** 2026-11-16
 
 ## Context

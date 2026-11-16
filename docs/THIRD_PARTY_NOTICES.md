@@ -7,7 +7,7 @@ third-party material is embedded in the source, listed here.
 
 - **What:** eleven technology logos (.NET, Umbraco, Vue.js, React, Blazor,
   Docker, Jenkins, MongoDB, MySQL, GitHub, Next.js), embedded as inline vector
-  markup in `src/Portfolio.Api/Content/TechLogoData.cs`.
+  markup in `content/tech-logos.json`.
 - **Source:** the Simple Icons package, version 16.32.0
   (<https://simpleicons.org>), released under the CC0 1.0 Universal
   public-domain dedication.
@@ -15,21 +15,21 @@ third-party material is embedded in the source, listed here.
   shown only to indicate which technologies the site owner has used, and do not
   imply endorsement.
 - **The C# mark is not from that set.** Microsoft's C# logo is not part of the
-  public-domain icon set, so the C# mark in `TechLogoData.cs` is a simple
+  public-domain icon set, so the C# mark in `tech-logos.json` is a simple
   purple hexagon with the letters "C#", drawn for this site. It is a hand-drawn
   approximation, not the official artwork, and can be replaced with the
   official logo by editing that one entry.
 - **How the file was made:** generated from the package by a small script that
   copies each icon's shape and brand color. To add a logo, add its technology
   name to `Profile.BackdropTags` (it must also appear in a project or role stack)
-  and add an entry to `TechLogoData`.
+  and add an entry to `tech-logos.json`.
 
 ## Skills map icons
 
 - **Logos:** JavaScript, HTML5, Sass, OWASP, JSON Web Tokens, GitHub Copilot, Claude Code,
   Model Context Protocol, Redux, Unity and Ollama come from the same Simple Icons
   package, version 16.32.0, released under the CC0 1.0 public-domain dedication, embedded in
-  `src/Portfolio.Api/Content/SkillIconData.cs`. The C#, .NET, Umbraco, Vue.js, React, Blazor,
+  `content/skill-icons.json`. The C#, .NET, Umbraco, Vue.js, React, Blazor,
   Docker, Jenkins, MongoDB, MySQL, GitHub and Next.js spheres reuse the logos listed above.
   Trademarks belong to their owners; the logos only show which technologies the owner has
   used. (An earlier version also carried TypeScript, Figma, SQLite, React Query, Vite,
@@ -40,7 +40,7 @@ third-party material is embedded in the source, listed here.
   official artwork and can be replaced by editing the `angularjs` entry.
 - **Generic glyphs:** the database cylinder, table, bolt, check mark, braces, layers,
   shield, prompt, globe, history, window, layout, flow, code, cloud and lock in
-  `SkillIconData.cs` are simple line drawings made for this site. They are not any
+  `skill-icons.json` are simple line drawings made for this site. They are not any
   company's artwork. They stand in where the public-domain icon set has no logo for a
   technology (SQL Server, Entity Framework Core, Dapper, xUnit, Azure and AWS among
   them), because a generic symbol is more honest than a lookalike of a trademarked mark.
@@ -59,7 +59,7 @@ third-party material is embedded in the source, listed here.
 - **GitHub** uses the same public-domain Simple Icons shape as the technology
   logos above.
 - **LinkedIn** is not in that icon set, so its mark in
-  `src/Portfolio.Api/Content/SocialIconData.cs` is a rounded square with the
+  `content/social-icons.json` is a rounded square with the
   letters "in" cut out, drawn for this site. It is a hand-drawn approximation,
   not the official artwork, and can be replaced by editing that one entry.
 - Both icons are drawn in the surrounding text color and are decorative; the

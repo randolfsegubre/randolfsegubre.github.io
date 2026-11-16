@@ -7,6 +7,47 @@ snapshot.
 
 ---
 
+## 2026-11-17: content in JSON files and SQL Server, and a three-layer backend (branch `sql-content`)
+
+**Asked:** the data is all hard-coded, which is not best practice: put it in a file type made for data and in a Microsoft
+SQL Server database (not SQLite), after cleaning up and deploying. Then, mid-work: use a three-layer architecture. Then, as
+questions: is three-layer also N-tier, and what would the projects look like if it were N-tier.
+
+**Chosen with the owner:** JSON files in the repository are the source of truth; a seed step loads them into SQL Server;
+the build starts its own SQL Server container, because GitHub's build server cannot reach a laptop. Production stays
+static. (The alternative offered was the local database as the source of truth with a committed snapshot; not chosen.)
+
+**What was built (ADR-0012, ADR-0013):**
+- `content/` (12 JSON files plus a README carrying the rationale that used to sit in C# comments). They were produced by
+  a throwaway program that read the old classes, so nothing was retyped. The 13 hard-coded classes were deleted.
+- `Portfolio.Data`: row classes, `PortfolioDbContext` (schema `content`, one table per kind of thing, one-row tables
+  enforced by a check constraint, foreign keys for the skills tree, journey and icons, a filtered unique index for a
+  single centre star, status, color and length rules), the first migration, `ContentRepository` (read all, replace all in
+  one transaction), and a design-time factory.
+- `Portfolio.Business`: the models, the strict JSON reader (`ContentFiles`), `ContentMapper` (rows to records and back),
+  `ContentService` (`IContentSource` and `IContentMaintenance`), the builder, the skills-cloud layout.
+- `Portfolio.Api`: `Program.cs` with `--migrate`, `--seed`, `--export-content`; content is read once at start-up.
+- `LayeringTests` check the compiled assemblies: presentation to business only, business to data, data to nothing.
+
+**Proof:** the document built through SQL Server equals the one the C# classes produced, except line endings inside the
+decorative code lanes (the C# raw strings had Windows endings, so Windows and Linux builds used to differ; the data files
+use LF). The generated site is identical to the deployed one, file by file.
+
+**Tests:** 179 became 197 without a database (layering, mapper, service, strict file reading) plus 17 against a real SQL
+Server (round trip, idempotent seeding, empty database, and 13 ways the schema must refuse nonsense, each leaving the old
+content intact). Databases are throwaway with random names; none were left behind.
+
+**Found and fixed on the way:** (1) EF Core 11 targets net11 and does not install on net10: pinned the 10.0.15 line.
+(2) A deadlock in my own test helper: a static initializer waited on a worker thread that read another static of the same
+class. Found because the run hung; fixed by passing the folder as an argument, and `--blame-hang-timeout` is now in the
+skill. (3) A pipeline that cut the build command off early looked like a database failure; it was not.
+
+**Not verified:** the workflow's SQL Server container step has never run (Docker is not running locally; the SQL Server
+2025 image has no `sqlcmd`, so readiness waits for the server's own "ready" log line). A manual run of the workflow from
+the branch builds and tests but cannot deploy (`deploy` is limited to `main`). **Nothing from this change is pushed.**
+
+---
+
 ## 2026-11-16 (clean-up before the database): dead code, a blank-404 race, unused output files
 
 **Asked:** clean up unnecessary files and code without breaking logic, then push and deploy, then move the content into

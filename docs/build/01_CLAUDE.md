@@ -39,7 +39,8 @@ doubtful one, every time.
 - [ ] Read this file, `04_TASKS.md`, and the last two `05_DEVLOG.md` entries.
 - [ ] Run `git status` and `git log --oneline -10`; confirm the tree matches
       what the docs claim before trusting either.
-- [ ] Run `dotnet test Portfolio.slnx`; it must pass before you change
+- [ ] In `web/` run `npm ci && npm run generate` (it needs SQL Server running),
+      then `dotnet test Portfolio.slnx`; it must pass before you change
       anything.
 - [ ] Check `docs/adr/` before any structural decision.
 
@@ -49,7 +50,9 @@ doubtful one, every time.
 |---|---|
 | Static site on GitHub Pages, no live server | [ADR-0001](../adr/ADR-0001-static-site-on-github-pages.md) |
 | ~~Vite, React, TypeScript~~ (superseded) | [ADR-0002](../adr/ADR-0002-vite-react-typescript.md) |
-| Content as C# records behind an interface, enforced by a test | [ADR-0003](../adr/ADR-0003-typed-content-modules.md) |
+| Content behind an interface, enforced by a test (the data now lives in JSON files, ADR-0012) | [ADR-0003](../adr/ADR-0003-typed-content-modules.md) |
+| Content in JSON data files, stored in SQL Server, rebuilt in the pipeline; production stays static | [ADR-0012](../adr/ADR-0012-content-in-json-files-and-sql-server.md) |
+| Three-layer backend (presentation, business, data access), one-way dependencies enforced by tests; layers are not tiers | [ADR-0013](../adr/ADR-0013-three-layer-architecture-for-the-dotnet-backend.md) |
 | Plain CSS design tokens, light and dark | [ADR-0004](../adr/ADR-0004-plain-css-design-tokens.md) |
 | Deploy with the official GitHub Actions Pages workflow | [ADR-0005](../adr/ADR-0005-deploy-with-github-actions.md) |
 | Content honesty and safety policy | [ADR-0006](../adr/ADR-0006-content-honesty-and-safety-policy.md) |
@@ -116,16 +119,30 @@ A new significant decision (a new dependency, a reversal) gets a new
   3. `WALKTHROUGH.md` at the repo root, kept current whenever the request
      flow changes.
   Trivial one-line members do not need a block.
-- **Components draw, content lives in `src/Portfolio.Api/Content/`.** No claim
-  text in a Vue component; the front end only draws the content document.
-- **The API stays thin.** It serves `IPortfolioContent` through
-  `SiteContentBuilder`; logic that is not about HTTP goes elsewhere.
+- **Components draw, content lives in `content/*.json`.** No claim text in a Vue
+  component and none in C#; the front end only draws the content document, and
+  the words are data (ADR-0012). `content/README.md` lists the files and the rules.
+- **Three layers, one direction (ADR-0013).** `Portfolio.Api` (presentation)
+  talks only to `Portfolio.Business`, which talks to `Portfolio.Data`, which
+  talks to SQL Server. A rule about content or the document goes in business, a
+  table or a query goes in data, HTTP and commands go in presentation.
+  `LayeringTests` fail the build if a layer reaches past its neighbour.
+- **The API stays thin.** It serves the content the business layer loaded at
+  start-up; logic that is not about HTTP goes elsewhere.
+- **No secret in the repository, and no hand-built SQL.** The connection string
+  comes from `ConnectionStrings__Portfolio` (the environment, or user secrets);
+  local development uses Windows authentication. All database access goes
+  through Entity Framework Core. A schema change is a new migration
+  (`dotnet ef migrations add <Name> --project src/Portfolio.Data`), never an
+  edit to an old one.
 - **Never loosen security to make a tool work** (owner's rule, 2026-11-16): not
   the Content Security Policy, not npm's install-script rule, not a pinned
   version, not a failing test. Fix the cause, or remove the feature, or ask.
-- **Tests match the phase.** xUnit tests cover the content rules, the API and the
-  generated site (HTML, CSS, files). Run `npm run generate` in `web/` before
-  `dotnet test`. Do not add heavy infrastructure ahead of need.
+- **Tests match the phase.** xUnit tests cover the content rules (read from the
+  JSON files), the layering, the API, a real SQL Server (a throwaway database per
+  test, never skipped) and the generated site (HTML, CSS, files). Run
+  `npm run generate` in `web/` before `dotnet test`. Do not add heavy
+  infrastructure ahead of need.
 
 ## Working with Randolf on this project
 

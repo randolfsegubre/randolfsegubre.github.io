@@ -42,13 +42,21 @@ an email to Ben). Next is his content review, then Phase 3.
       keys, Turn and Pause buttons, spin paused on hover and focus, reduced
       motion respected. Tests 170 passing; checked in a real browser (desktop,
       phone width, reduced motion, drag, click-to-front, pause). Local only.
-- [x] A .NET API feeding a Nuxt front end (2026-11-16, ADR-0011), on branch `nuxt-rewrite`, NOT merged or
-      deployed: the .NET app renamed `Portfolio.Api` and reduced to the content API (`GET /api/content`,
-      `--export-content`, security headers); a Nuxt app in `web/` mirrors the Razor views as Vue components, with no
-      Nuxt JavaScript in the browser; assets moved to `web/public`; tests (179) now run against the generated
-      output; workflow updated (setup-node pinned, `npm ci`, both audits). The page matches the old one element
-      for element except the footer sentence. Rollback: tag `pre-nuxt-rewrite`. Open: owner to test locally, then
-      say whether to commit, merge and deploy.
+- [x] Content moved out of C# into JSON files and SQL Server, and the backend split into three layers
+      (2026-11-17, ADR-0012 and ADR-0013), on branch `sql-content`, **NOT merged, pushed or deployed**:
+      `content/*.json` (12 files, strict reading) is the source of truth; `Portfolio.Data` holds the SQL Server
+      schema (EF Core 10, a `content` schema, foreign keys, check constraints, a filtered unique index),
+      `Portfolio.Business` the models, document builder, mapper and service, `Portfolio.Api` the endpoint and
+      build commands. `npm run generate` migrates, seeds and reads back through SQL Server. The document built
+      through SQL Server equals the old hard-coded one; the generated site is identical to the deployed one.
+      Tests 197 plus 17 real-SQL-Server tests. The workflow starts a throwaway SQL Server container (digest
+      pinned, loopback only, per-run masked password) and `deploy` runs only on `main`. **Not yet verified:** the
+      workflow's container path on GitHub (Docker is not running on the owner's machine); a manual run from the
+      branch tests it without deploying. Open: owner's yes to push the branch for that test, then to merge.
+- [x] A .NET API feeding a Nuxt front end (2026-11-16, ADR-0011), **merged to `main` and deployed 2026-11-16**
+      (commit 729140e, run green on GitHub, live site verified): the .NET app renamed `Portfolio.Api` and reduced to
+      the content API; a Nuxt app in `web/` mirrors the Razor views as Vue components, with no Nuxt JavaScript in the
+      browser; tests run against the generated output; both audits in the workflow. Rollback: tag `pre-nuxt-rewrite`.
 - [x] JavaScript joined to React and AngularJS, Nuxt.js added (2026-11-16, ADR-0010 seventh
       amendment): two cross links, one sphere (45 now) with a generic caption added at his instruction.
       Tests 173 passing; real browser. Local only.

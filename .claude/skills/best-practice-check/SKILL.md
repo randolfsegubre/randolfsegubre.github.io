@@ -16,7 +16,9 @@ copy the checklist into other files.
 2. Run the mechanical checks and read the real output, not a memory of it:
    - `dotnet build Portfolio.slnx -warnaserror`
    - in `web/`: `npm ci`, `npm audit --audit-level=moderate`, then `npm run generate`
-   - `dotnet test Portfolio.slnx` (it tests the generated site)
+     (SQL Server must be running: it loads `content/*.json` into the database)
+   - `dotnet test Portfolio.slnx --blame-hang-timeout 120s` (it tests the layering, a real
+     SQL Server and the generated site)
    - `dotnet list Portfolio.slnx package --vulnerable --include-transitive`
    - `grep -rn "ADR-0002" src` must print nothing (that decision is superseded).
 3. Check what a tool cannot: open the page in a real browser (`npm run serve` in `web/`,

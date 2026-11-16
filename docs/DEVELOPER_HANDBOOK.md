@@ -6,7 +6,9 @@ Everything needed to run and change the site with no assistant.
 
 | Part | What it is | Where it runs |
 |---|---|---|
-| Backend (`src/Portfolio.Api`) | .NET 10 app that owns the content and serves it as JSON | On your machine only: for the build, and when you start it to try the API. It is **not** deployed. |
+| Content (`content/*.json`) | The site's words and drawings as JSON data files: the source of truth | In the repository. Read by the backend; never served directly. |
+| Database (SQL Server, schema `content`) | Holds the content for the length of a build and for local runs | Your local SQL Server (database `PortfolioSite`), or a throwaway container in the deploy workflow. **Not** in production. |
+| Backend, three layers (`src/Portfolio.Api`, `Portfolio.Business`, `Portfolio.Data`) | .NET 10 app: presentation (endpoint, build commands), business (models, rules, document builder, services), data access (schema, migrations, repository) | On your machine only: for the build, and when you start it to try the API. It is **not** deployed. |
 | Front end (`web/`) | Nuxt (Vue.js) app that is generated to static files | At build time only. What is published is plain files. |
 | Local site (`npm run serve`) | A small static server for `web/.output/public` | `http://localhost:5099/`, this machine only |
 
@@ -15,8 +17,11 @@ in production, so there is nothing there to patch or attack.
 
 ## Prerequisites
 
-- .NET SDK 10 (see `global.json`). It brings C# 14.
+- .NET SDK 10 (see `global.json`). It brings C# 14. For migrations, the Entity Framework tool: `dotnet tool install -g dotnet-ef`.
 - Node.js 24 (the front end requires `^22.22.3 || ^24.15.0`) and npm.
+- SQL Server (the Developer edition is enough), running on `localhost`. The build signs in with Windows
+  authentication, so no password is involved, and it creates the database `PortfolioSite` itself. The login
+  needs permission to create a database.
 - Git.
 
 ## First run
@@ -28,20 +33,23 @@ npm run generate
 npm run serve
 ```
 
-Open <http://localhost:5099/>. `npm run generate` asks the backend for the content
-(`web/data/content.json`, regenerated every time, not committed), then builds the site into
+Open <http://localhost:5099/>. `npm run generate` runs one backend command that creates or updates the
+database, makes it say what `content/*.json` say, and reads the content back out into
+`web/data/content.json` (regenerated every time, not committed). Then Nuxt builds the site into
 `web/.output/public`.
 
 ## Everyday commands
 
 | Command (from `web/` unless stated) | What it does |
 |---|---|
-| `npm run content` | Asks the .NET backend to write `data/content.json` |
+| `npm run content` | Migrates and seeds the database from `content/*.json`, then writes `data/content.json` from it |
 | `npm run generate` | Writes the content, builds the static site into `.output/public`, then prunes files no page loads |
 | `npm run serve` | Serves `.output/public` at `http://localhost:5099/` (localhost only; `PORT=` changes it) |
 | `npm run dev` | Writes the content, then runs Nuxt's development server with reload on edits |
-| `dotnet run --project src/Portfolio.Api` (repo root) | Runs the live API: `GET /api/content` |
-| `dotnet test Portfolio.slnx` (repo root) | Runs the content, API and generated-site tests (generate first) |
+| `dotnet run --project src/Portfolio.Api` (repo root) | Runs the live API: `GET /api/content`. Needs `ConnectionStrings__Portfolio` set and the database seeded (it stops with a clear message if empty). |
+| `dotnet run --project src/Portfolio.Api --no-launch-profile -- --migrate --seed <absolute folder> --export-content <absolute file>` | The build commands, which can be combined and always run in that order |
+| `dotnet ef migrations add <Name> --project src/Portfolio.Data --output-dir Migrations` (repo root) | A schema change: creates a new migration. Never edit an old one. |
+| `dotnet test Portfolio.slnx` (repo root) | Runs the content, layering, API, real-SQL-Server and generated-site tests (generate first) |
 | `dotnet build Portfolio.slnx` (repo root) | Builds the backend and tests (warnings are errors) |
 | `npm audit --audit-level=moderate` | Checks the front-end packages for known vulnerabilities |
 | `dotnet list Portfolio.slnx package --vulnerable --include-transitive` (repo root) | Checks the .NET packages |
@@ -52,16 +60,28 @@ stop only that one process, for example on Windows
 
 ## Changing content
 
-Edit the C# records in `src/Portfolio.Api/Content/`:
+Edit the JSON files in `content/` (`content/README.md` explains each one and the rules that come with it):
 
-- `ProfileData.cs`: name, headline, availability, contact links, resume link.
-- `ProjectData.cs`: project cards. Add a `Project`; no component changes needed.
-- `ExperienceData.cs`: roles, newest first.
-- `SkillData.cs`: grouped skills.
-- `SkillUniverseData.cs`: the skills cloud. Only technologies he has used himself (ADR-0010).
+- `profile.json`: name, headline, availability, contact links, resume link.
+- `projects.json`: project cards. Add an object; no component changes needed.
+- `experience.json`: roles, newest first.
+- `skills.json`: grouped skills.
+- `skill-universe.json`: the skills cloud. Only technologies he has used himself (ADR-0010).
+- `site.json`, `live-sites.json`, `hero-tags.json`, `code-streams.json`, `tech-logos.json`, `skill-icons.json`,
+  `social-icons.json`: the rest.
 
 Then update `docs/CONTENT_SOURCES.md` with where the new claim comes from, run `npm run generate`
-and `dotnet test Portfolio.slnx` (it enforces the writing rules), and check the page.
+(it reloads the database from the files) and `dotnet test Portfolio.slnx` (it enforces the writing rules),
+and check the page. The files are the source of truth: a row edited directly in the database is overwritten
+by the next build (ADR-0012).
+
+## Changing the database
+
+Only when the shape of the data changes (a new kind of content, a new column). Edit the row classes in
+`src/Portfolio.Data/Rows.cs` and the schema in `PortfolioDbContext.cs`, add a migration, then teach
+`ContentMapper` in the business layer to translate it. `SqlContentTests` and the mapper tests will tell you
+if anything was missed. The layers are in ADR-0013: a table or a query goes in the data layer, a content rule
+in the business layer, and the presentation layer never sees either.
 
 ## Changing the look
 
@@ -86,13 +106,18 @@ brackets only if reused; https-only links; unique identifiers; no empty fields.
 - Known and accepted: `deepmerge` (low severity, prototype poisoning in a build-time helper that
   only merges this repository's own configuration; no patched release exists upstream). Recheck at
   every update (ADR-0011).
-- GitHub Actions are pinned to full commit hashes (ADR-0009).
+- GitHub Actions are pinned to full commit hashes, and the SQL Server container image to a digest (ADR-0009,
+  ADR-0012).
+- .NET packages are pinned to exact versions. Entity Framework Core is on the 10.0.x line to match the .NET 10 runtime;
+  the 11.x packages target net11 and do not install here. `dotnet list package --vulnerable` gates the build.
 
 ## Deployment
 
 Pushing to `main` runs `.github/workflows/deploy.yml`: set up .NET and Node, check both package
-sets for known vulnerabilities, `npm ci`, generate the site, test it, publish `web/.output/public`
-to GitHub Pages. The repository must be named `randolfsegubre.github.io` and Pages must be set to
+sets for known vulnerabilities, `npm ci`, start a throwaway SQL Server container (loopback only, a fresh
+random password, image pinned by digest), generate the site through it, test the database path and the
+site, publish `web/.output/public` to GitHub Pages. A manual run of the workflow from another branch
+builds and tests but never deploys. The repository must be named `randolfsegubre.github.io` and Pages must be set to
 the "GitHub Actions" source (Settings, Pages, Build and deployment).
 
 ## Troubleshooting
@@ -101,7 +126,15 @@ the "GitHub Actions" source (Settings, Pages, Build and deployment).
   set `PORTFOLIO_SITE_DIR` to a generated folder.
 - **`--export-content needs an absolute file path`:** run `npm run content` (it passes an absolute
   path), not `dotnet run` by hand with a relative one.
-- **The content file is missing:** `npm run content`. The .NET SDK must be installed.
+- **The content file is missing:** `npm run content`. The .NET SDK must be installed and SQL Server running.
+- **`Cannot open server` or a login failure:** SQL Server is not running, or your Windows login may not create
+  databases. Start the service `MSSQLSERVER`. On another machine, set `ConnectionStrings__Portfolio`
+  (the connection string is never kept in the repository).
+- **`The content database is empty`:** it was never seeded. Run `npm run content`.
+- **`The content file 'x.json' is not valid`:** the message names the file and the problem. Reading is strict:
+  a misspelt field, a `null` where a value is required, or invalid JSON stops the build.
+- **A database test fails to connect:** the real-SQL-Server tests use your local server with Windows authentication,
+  or the server in `PORTFOLIO_TEST_SQL` (a connection string without a database name). They are never skipped.
 - **Wrong theme flash:** `theme-init.js` must stay in the head, before the stylesheet, and must not
   be `defer`red.
 - **A script or style is blocked in the browser:** the page has a Content Security Policy (ADR-0009).

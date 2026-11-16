@@ -1,6 +1,8 @@
 # ADR-0003: Content lives in typed data modules, not in components
 
-- **Status:** Accepted
+- **Status:** Accepted. **The data moved out of C# on 2026-11-17 (ADR-0012):** the words are now JSON files in `content/`,
+  stored in SQL Server, behind the same `IPortfolioContent` interface. The rule below is unchanged; only where the data
+  lives moved, which is what the interface was for.
 - **Date:** 2026-09-24
 
 ## Context
