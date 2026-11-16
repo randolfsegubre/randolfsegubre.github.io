@@ -8,7 +8,7 @@ criteria must hold before the next starts.
 | 0 | Architectural Design Phase and scaffold | whole repo | ADRs, operating manual, this plan, patterns guide, tasks, devlog, handbook |
 | 1 | Content model and page sections | `src/` | `CONTENT_SOURCES.md`, `WALKTHROUGH.md` |
 | 2 | Publish | GitHub repo, Pages settings | devlog entry with the live address |
-| 3 | Proof and polish | `Content/`, `wwwroot/` | updated sources, devlog |
+| 3 | Proof and polish | `Content/`, `web/public/` | updated sources, devlog |
 | 4 | Maintenance | content | devlog per change |
 
 ## Phase 0: Architectural Design Phase and scaffold

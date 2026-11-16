@@ -7,6 +7,113 @@ snapshot.
 
 ---
 
+## 2026-11-16 (clean-up before the database): dead code, a blank-404 race, unused output files
+
+**Asked:** clean up unnecessary files and code without breaking logic, then push and deploy, then move the content into
+a Microsoft SQL Server database.
+
+**Method:** saved the generated site as a baseline first, so the effect of every change could be proven. Machine checks:
+strict .NET analyzers (no unused usings, members or parameters), a script comparing every stylesheet class with the pages
+and scripts (151 of 151 used), a script for unused names in the scripts and unused Vue components (19 of 19 used), and a
+script for record fields nothing reads (127 of 127 read). The code was already tight, so the code clean-up is small.
+
+**Found and fixed (the important one):** the first regenerate after the clean-up failed four not-found tests.
+Nuxt prerenders its own empty fallback to `/404.html` as well as my real `/404` page, both to `404.html`; whichever finished
+last won, so a build could publish a blank 404 page. Earlier green runs were luck. Fixed with `nitro.prerender.ignore`,
+verified over three consecutive builds, and guarded by a new test. Also stopped publishing `200.html`, the `_nuxt/builds`
+manifest and `_nuxt/error-404|500.css` (unused), via config plus a guarded `scripts/prune-output.mjs`.
+
+**Small clean-ups:** an unused variable in `site.js`; a stale "controllers" comment on `IPortfolioContent`; three
+culture-sensitive calls in the tests made explicit (`CA1310`, `CA1305`).
+
+**Verified:** build with warnings as errors, 179 tests (one new), and a file-by-file comparison with the baseline: the only
+differences are the five unneeded files gone and the one dead variable.
+
+---
+
+## 2026-11-16 (page changes): "More projects" carousel, mouse dragging, theme switching hidden
+
+**Asked:** make "More projects" a carousel, draggable like the one on the Inghams site; hide theme switching for now;
+and opinions on an expandable (accordion) Experience and a better Let's talk section (answered in chat, not built yet).
+
+**Carousel:** `ProjectsSection.vue` now puts the compact cards in a scroll-snap strip (`.carousel-track` in `site.css`),
+which scrolls with no script at all (touch, wheel, scrollbar, and the arrow keys because the strip is focusable and
+labelled as a region). `site.js` step 8 reveals previous and next buttons (drawn hidden, like the theme button) only when
+the strip overflows, keeps a "Showing 1 to 2 of 4" count, uses `aria-disabled` so keyboard focus survives the ends, and
+adds mouse dragging: the strip follows the pointer with snapping paused, then glides to the card the flick was heading
+for; a drag swallows the click that ends it so a link under the pointer is not followed. Reduced motion jumps instead
+of gliding. No Content Security Policy change (an external script, no inline code).
+
+**Theme switching hidden:** `TOGGLE_ENABLED = false` at the top of `web/public/js/theme.js` removes the button and clears a
+saved "light" choice (otherwise a returning visitor would be stuck in light with no way back). Light styles, markup and
+tests are untouched; set the flag to `true` to restore it.
+
+**Verified:** 178 tests, a real browser (next, previous, ends, count, simulated mouse drag and flick, plain link click
+still works, console empty, no sideways page scroll at 390 px wide). **Not verified:** a real mouse (the drag was
+simulated with pointer events), Safari. Nothing committed.
+
+---
+
+## 2026-11-16 (cleanup): leftovers of the rewrite removed
+
+**Asked:** remove the folders and files that are not necessary.
+
+**Removed (all untracked build leftovers, nothing the repository tracks):** `src/Portfolio.Web/` (only an old `obj`
+folder was left), the root `dist/` (the old MVC export, referenced by nothing now), and the `web/dist` junction (a link
+to `web/.output/public`; only the link went, the output stayed). **Kept on purpose:** `web/.output` (the running local
+site), `web/.nuxt`, `web/data`, the `bin`/`obj` folders and `node_modules` (regenerable, but removing them only costs
+a rebuild), and every tracked asset (each one is still referenced: the hero video in both formats, photo, favicon,
+resume, robots, sitemap). **Stale text fixed:** `03_ARCHITECTURE_AND_PATTERNS_GUIDE.md` rewritten for the API plus Nuxt
+shape (it still described Razor views and `StaticExporter`), and old `Portfolio.Web`, `wwwroot` and "live MVC server"
+paths in `02_BUILD_PLAN.md` and `04_TASKS.md`. **Verified:** build with warnings as errors, 178 tests pass, site still
+answers 200 on port 5099.
+
+---
+
+## 2026-11-16 (later): a .NET API feeding a Nuxt front end, on the branch `nuxt-rewrite`
+
+**Asked:** can a portfolio use Vue.js with .NET as the API, and would it work on github.io; then: sketch the
+Nuxt plus .NET version, code it, follow best practice, keep the output page the same, and first commit, push
+and deploy the working version so it can be reverted. Mid-work: rename the project to match its new job, update
+folders and files accordingly, never bypass or turn off security, and leave localhost running.
+
+**Safety net first:** six logical commits of the redesign, pushed to `main`, deployed (run green, live page
+checked: 45 spheres, About Me), and tagged `pre-nuxt-rewrite`. The rewrite is on branch `nuxt-rewrite`, because a push
+to `main` deploys.
+
+**What I built (ADR-0011):**
+- `src/Portfolio.Web` became `src/Portfolio.Api` (folder, project, namespace, solution, tests, workflow, scripts,
+  living docs). Visual Studio held the old folder open, so the files were moved one by one.
+- The API: `SiteContentBuilder` builds one JSON document, served at `GET /api/content` and written by
+  `--export-content`; both use the same builder and serializer. The Razor views, controller and static exporter are gone.
+- `web/`: Nuxt 4.6.4 (Vue 3.5), 19 components mirroring the views, `features.noScripts` so no Nuxt JavaScript ships.
+  The stylesheet and the three page scripts are the same files, moved to `web/public`.
+- Tests: `SiteFactory` serves `web/.output/public`, so the existing 173 tests now check the real output (proof of
+  sameness), plus `ContentApiTests` and `SiteOutputTests` (178 in all).
+- Parity check: a structural comparison of the old exported page and the new one (every element, attribute and text)
+  found only the footer sentence, a trailing semicolon in an inline style, and the decorative code text that carries the
+  renamed namespace.
+
+**Security, as asked (nothing bypassed or turned off):**
+- The existing security test failed on the first run: Nuxt put the Content Security Policy after the theme script and the
+  stylesheet, and a meta policy only covers what follows it. Fixed by the tag priority, not by editing the test.
+- Nuxt added an inline speculation-rules script the policy blocks. Removed with a Nitro plugin; the policy is unchanged.
+- `npm audit` found 10 advisories; updating Nuxt to 4.6.4 and a `minimatch` override left one low finding
+  (`deepmerge`, no patched release exists), recorded as accepted in ADR-0011. npm install scripts are left unapproved.
+- The API got security headers, no cross-origin policy, no Server header, HTTPS and HSTS outside development; the local
+  static server is localhost-only, GET and HEAD only, with path-traversal and dotfile refusal. All tested.
+- The deploy workflow pins `setup-node` to a commit hash, installs with `npm ci`, and fails on a .NET vulnerability or a
+  moderate or worse npm one.
+
+**Two page captions corrected:** the ASP.NET MVC sphere no longer says the portfolio is built on it, and the Nuxt.js sphere
+now says the portfolio is generated with it (true from today).
+
+**Verified:** strict build, 178 tests, real browser on the generated output: console empty, 45 spheres, 3D cloud, theme toggle,
+policy first in head. **Not verified:** the new workflow on GitHub (it has not run), a real touch phone, Safari.
+**Nothing from the rewrite is committed, merged or deployed.**
+
+---
+
 ## 2026-11-16: JavaScript joined to React and AngularJS, Nuxt.js added
 
 **Asked:** "Nuxt.js is not on the map. Also, why JavaScript is not connect to react and angular like

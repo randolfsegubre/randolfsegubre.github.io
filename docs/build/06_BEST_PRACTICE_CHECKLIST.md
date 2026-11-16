@@ -16,11 +16,11 @@ the conflict and ask the owner; do not pick silently.
 - [ ] `dotnet build Portfolio.slnx -warnaserror` is clean: zero warnings, zero
       errors. Nullable and analyzers (`latest-recommended`) stay on; do not
       silence a rule without a comment that names why.
-- [ ] `dotnet test Portfolio.slnx` passes, and new behaviour has a test.
-- [ ] The conventions in the operating manual hold: controllers thin, content
-      in `Content/`, `<summary>` blocks and numbered `STEP N of M` comments.
+- [ ] `npm run generate` (in `web/`) succeeds, then `dotnet test Portfolio.slnx` passes, and new behaviour has a test.
+- [ ] The conventions in the operating manual hold: components draw, the API stays
+      thin, content in `Content/`, `<summary>` blocks and numbered `STEP N of M` comments.
 - [ ] Every ADR cited in a code comment is the current one (ADR-0007 for the
-      MVC shape, not the superseded ADR-0002).
+      Nuxt and API shape, ADR-0011, not the superseded ADR-0002).
 - [ ] No dead code, no unused files, no secrets, no machine paths.
 
 ## 2. Security
@@ -28,12 +28,18 @@ the conflict and ask the owner; do not pick silently.
 - [ ] The Content Security Policy is intact: no inline `<script>`, no inline
       event handlers, no third-party script, style, font or image, no
       `eval`. A new origin needs a new ADR (ADR-0009).
-- [ ] Outbound links go through `_ExternalLink` (`rel="noopener noreferrer"`).
-- [ ] `Html.Raw` is used only on constants the site owns, never on input.
+- [ ] Outbound links go through the `ExternalLink` component (`rel="noopener noreferrer"`).
+- [ ] `v-html` is used only on constants the site owns (logo markup), never on input.
+- [ ] Nothing was loosened to make a tool work: no weaker policy, no approved install
+      script, no `--force` on npm, no skipped or deleted test. `SiteOutputTests` and
+      `HeadSecurityAndSeoTests` pass (policy first in `<head>`, only the three same-origin
+      scripts, no Nuxt hints).
+- [ ] `npm audit --audit-level=moderate` reports nothing; the accepted low finding in
+      ADR-0011 is rechecked.
 - [ ] `dotnet list Portfolio.slnx package --vulnerable --include-transitive`
       reports nothing.
-- [ ] The exporter still refuses unsafe output folders
-      (`StaticExporter.EnsureSafeToEmpty`).
+- [ ] The API still sends its security headers and no cross-origin policy
+      (`ContentApiTests`), and the export still refuses a relative path.
 
 ## 3. Workflow and supply chain
 
@@ -41,7 +47,8 @@ the conflict and ask the owner; do not pick silently.
 - [ ] Every third-party action is pinned to a full commit hash with its tag in
       a comment. Resolve with
       `gh api repos/<owner>/<action>/git/ref/tags/<tag>`.
-- [ ] `global.json` pins the SDK feature band; the workflow reads it.
+- [ ] `global.json` pins the SDK feature band; the workflow reads it. npm packages are
+      pinned exactly and installed with `npm ci` from `web/package-lock.json`.
 - [ ] Tests gate the deploy; a failed export publishes nothing.
 
 ## 4. Accessibility and quality of the page

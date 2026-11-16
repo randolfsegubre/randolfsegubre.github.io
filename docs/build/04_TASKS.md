@@ -42,6 +42,13 @@ an email to Ben). Next is his content review, then Phase 3.
       keys, Turn and Pause buttons, spin paused on hover and focus, reduced
       motion respected. Tests 170 passing; checked in a real browser (desktop,
       phone width, reduced motion, drag, click-to-front, pause). Local only.
+- [x] A .NET API feeding a Nuxt front end (2026-11-16, ADR-0011), on branch `nuxt-rewrite`, NOT merged or
+      deployed: the .NET app renamed `Portfolio.Api` and reduced to the content API (`GET /api/content`,
+      `--export-content`, security headers); a Nuxt app in `web/` mirrors the Razor views as Vue components, with no
+      Nuxt JavaScript in the browser; assets moved to `web/public`; tests (179) now run against the generated
+      output; workflow updated (setup-node pinned, `npm ci`, both audits). The page matches the old one element
+      for element except the footer sentence. Rollback: tag `pre-nuxt-rewrite`. Open: owner to test locally, then
+      say whether to commit, merge and deploy.
 - [x] JavaScript joined to React and AngularJS, Nuxt.js added (2026-11-16, ADR-0010 seventh
       amendment): two cross links, one sphere (45 now) with a generic caption added at his instruction.
       Tests 173 passing; real browser. Local only.
@@ -96,7 +103,7 @@ an email to Ben). Next is his content review, then Phase 3.
 
 - [x] Pushed `main`; the workflow succeeded and the live address loads
       (checked over HTTPS and in a real browser, 2026-09-25).
-- [ ] Owner reviews the wording in `src/Portfolio.Web/Content/`, including the new star-map captions (`SkillUniverseData.cs`).
+- [ ] Owner reviews the wording in `src/Portfolio.Api/Content/`, including the new star-map captions (`SkillUniverseData.cs`).
 - [ ] Owner decides whether to deploy the new design, and whether to add the optional left navigation rail (ADR-0010, alternatives).
 - [ ] Add a link to the live site in the GitHub profile README (a separate
       repository; its stale claims also need fixing, see the devlog).
@@ -112,15 +119,15 @@ an email to Ben). Next is his content review, then Phase 3.
   animations" toggle in the header would meet it; not built, owner's call.
 
 - **Resume file refresh (done 2026-11-13, kept as the how-to).** The download (hero button and contact card) serves
-  `wwwroot/files/Randolf_Segubre_Resume.pdf`, a copy of his Final résumé from
+  `web/public/files/Randolf_Segubre_Resume.pdf`, a copy of his Final résumé from
   2026-10-11. When he corrects the résumé (two lines are flagged in the devlog,
   2026-11-02), replace that one file and push; no code change is needed.
 - **Custom domain.** Optional; costs money; not needed to launch.
 - **Per-project detail pages.** Cards are enough for now.
 - **Galaxy Survivor link.** Its repository is private, so the card carries no
   link by design.
-- **A live MVC server.** Not needed; the app runs unchanged with `dotnet run`
-  if ever wanted (ADR-0007).
+- **A live API server.** Not needed; the .NET API runs unchanged with
+  `dotnet run --project src/Portfolio.Api` if ever wanted (ADR-0011).
 
 ## Open questions
 

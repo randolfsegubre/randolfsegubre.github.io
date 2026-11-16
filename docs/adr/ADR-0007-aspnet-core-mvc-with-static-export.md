@@ -1,6 +1,6 @@
 # ADR-0007: ASP.NET Core MVC on .NET 10, exported to static files
 
-- **Status:** Accepted. Supersedes ADR-0002.
+- **Status:** Accepted. Supersedes ADR-0002. **The front end (Razor views, controller, static exporter) was replaced by ADR-0011 on 2026-11-16**; the .NET 10 content classes and tests remain.
 - **Date:** 2026-09-25
 
 ## Context

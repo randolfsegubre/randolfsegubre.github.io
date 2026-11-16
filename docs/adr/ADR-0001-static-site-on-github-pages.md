@@ -1,6 +1,6 @@
 # ADR-0001: A static site hosted on GitHub Pages, no backend
 
-- **Status:** Accepted
+- **Status:** Accepted. Amended by ADR-0011: "no backend" means no backend in production. A .NET content API now runs at build time and locally only; what is deployed is still static files.
 - **Date:** 2026-09-24
 
 ## Context
