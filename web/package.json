@@ -1,0 +1,25 @@
+{
+  "name": "portfolio-web",
+  "private": true,
+  "type": "module",
+  "description": "Nuxt front end for the portfolio (ADR-0011). The content comes from the .NET app as data/content.json.",
+  "engines": {
+    "node": "^22.22.3 || ^24.15.0"
+  },
+  "scripts": {
+    "content": "node scripts/export-content.mjs",
+    "dev": "npm run content && nuxt dev",
+    "generate": "npm run content && nuxt generate && node scripts/prune-output.mjs",
+    "serve": "node scripts/serve.mjs"
+  },
+  "dependencies": {
+    "nuxt": "4.6.4",
+    "vue": "3.5.45",
+    "vue-router": "5.5.1"
+  },
+  "overrides": {
+    "readdir-glob": {
+      "minimatch": "11.0.8"
+    }
+  }
+}

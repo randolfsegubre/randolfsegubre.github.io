@@ -1,0 +1,58 @@
+<!--
+  Sticky site header: the "RS" monogram with its crown (a link back to the top, so it is the Home link), in-page
+  anchor navigation and the theme toggle. The bar shows his initials rather than his name, which the hero
+  already shows as the page heading. The visible letters are the start of the link's accessible name, so a
+  voice-control user can say "click RS" (ADR-0010).
+
+  Anchor links: on the home page they are pure in-page anchors ("#projects"), so tapping one only scrolls
+  and works even when the page was opened with a query string, such as the tracking parameters email tools
+  add to links. On the not-found page the sections are not present, so the links go to the home page
+  ("/#projects") instead.
+
+  The crown is decoration (the link's name is "RS, home"). It is one path drawn with the even-odd rule, so the
+  cross inside it is a real hole: the header shows through, as if engraved on the front of the crown.
+
+  The toggle is rendered hidden and revealed by theme.js, so it never shows as a dead button when scripting
+  is unavailable. Theme switching is switched off for now (TOGGLE_ENABLED in theme.js, 2026-11-16): the script
+  removes this button instead of revealing it.
+-->
+<script setup>
+const props = defineProps({
+  // True on the home page, where the links are plain in-page anchors.
+  home: { type: Boolean, required: true },
+})
+
+const prefix = props.home ? '' : '/'
+
+const links = [
+  { href: '#about', text: 'About Me' },
+  { href: '#live-sites', text: 'Live sites' },
+  { href: '#projects', text: 'Projects' },
+  { href: '#experience', text: 'Experience' },
+  { href: '#contact', text: 'Contact' },
+]
+</script>
+
+<template>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="brand" :href="prefix + '#top'" aria-label="RS, home" title="Randolf Segubre, back to the top">
+        <svg class="brand-crown" viewBox="0 0 24 16" aria-hidden="true" focusable="false">
+          <path fill-rule="evenodd" d="M2 14.4 1.2 4.6 7 9 12 2.6 17 9l5.8-4.4L22 14.4Zm8.8-7.8h2.4v2h2v2h-2v3h-2.4v-3h-2v-2h2Z" />
+          <circle cx="1.2" cy="3.7" r="1.2" />
+          <circle cx="12" cy="1.8" r="1.3" />
+          <circle cx="22.8" cy="3.7" r="1.2" />
+        </svg>
+        <span class="brand-mark">RS</span>
+      </a>
+      <nav aria-label="Primary">
+        <ul class="nav-list">
+          <li v-for="link in links" :key="link.href"><a :href="prefix + link.href">{{ link.text }}</a></li>
+        </ul>
+      </nav>
+      <button type="button" id="theme-toggle" class="theme-toggle" aria-pressed="true" aria-label="Switch to light theme" hidden>
+        <span aria-hidden="true">Light</span>
+      </button>
+    </div>
+  </header>
+</template>
