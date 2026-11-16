@@ -1,0 +1,97 @@
+[
+  {
+    "id": "backend",
+    "label": "Backend",
+    "items": [
+      "C#",
+      "ASP.NET Core",
+      "ASP.NET MVC",
+      "Web API",
+      ".NET Framework",
+      "EF Core",
+      "MediatR",
+      "Clean Architecture",
+      "SOAP and REST integration",
+      "xUnit"
+    ]
+  },
+  {
+    "id": "frontend",
+    "label": "Front end",
+    "items": [
+      "React",
+      "Vue.js",
+      "Nuxt.js",
+      "Blazor",
+      "JavaScript",
+      "HTML and CSS",
+      "SCSS",
+      "Figma handoff"
+    ]
+  },
+  {
+    "id": "cms",
+    "label": "Content management",
+    "items": [
+      "Umbraco",
+      "Content-type modelling",
+      "Models Builder",
+      "Custom backoffice property editors"
+    ]
+  },
+  {
+    "id": "data",
+    "label": "Data",
+    "items": [
+      "SQL Server",
+      "T-SQL",
+      "MySQL",
+      "MongoDB",
+      "Search engine query debugging"
+    ]
+  },
+  {
+    "id": "security",
+    "label": "Security",
+    "items": [
+      "Content Security Policy",
+      "Trusted Types",
+      "Security headers",
+      "OWASP ZAP",
+      "JWT authentication",
+      "Code scanning remediation"
+    ]
+  },
+  {
+    "id": "cloud",
+    "label": "Cloud and delivery",
+    "items": [
+      "Azure diagnostics",
+      "AWS",
+      "Azure DevOps",
+      "Docker",
+      "Jenkins",
+      "Git and GitHub"
+    ]
+  },
+  {
+    "id": "ai",
+    "label": "AI-assisted engineering",
+    "items": [
+      "GitHub Copilot",
+      "Claude Code",
+      "Model Context Protocol configuration",
+      "Shared instruction files"
+    ]
+  },
+  {
+    "id": "practice",
+    "label": "Practice",
+    "items": [
+      "Code review",
+      "Legacy upgrades",
+      "Production support triage",
+      "Documentation-first delivery"
+    ]
+  }
+]

@@ -1,0 +1,42 @@
+[
+  {
+    "code": "using Microsoft.AspNetCore.Mvc;\n\nnamespace Portfolio.Api.Controllers;\n\npublic sealed class HomeController(\n    IPortfolioContent content) : Controller\n{\n    public IActionResult Index()\n    {\n        var model = new PortfolioViewModel(\n            content.Profile,\n            content.Projects,\n            content.Experience,\n            content.Skills);\n\n        return View(model);\n    }\n\n    [Route(\"not-found\")]\n    public IActionResult NotFoundPage()\n        => View(\"NotFound\", content.Profile);\n}",
+    "seconds": 64,
+    "reverse": false
+  },
+  {
+    "code": "public sealed record GetAccountsQuery(Guid UserId)\n    : IRequest<IReadOnlyList<AccountDto>>;\n\npublic sealed class GetAccountsHandler(AppDbContext db)\n    : IRequestHandler<GetAccountsQuery,\n        IReadOnlyList<AccountDto>>\n{\n    public async Task<IReadOnlyList<AccountDto>> Handle(\n        GetAccountsQuery request, CancellationToken ct)\n    {\n        return await db.Accounts\n            .Where(a => a.UserId == request.UserId)\n            .OrderBy(a => a.Name)\n            .Select(a => new AccountDto(\n                a.Id, a.Name, a.Balance))\n            .ToListAsync(ct);\n    }\n}",
+    "seconds": 78,
+    "reverse": true
+  },
+  {
+    "code": "@model IReadOnlyList<Project>\n\n<section id=\"projects\" class=\"section\">\n    <h2 class=\"section-title\">Selected projects</h2>\n    @foreach (var project in Model)\n    {\n        <partial name=\"_ProjectCard\"\n                 model=\"project\" />\n    }\n</section>\n\n@inject IPortfolioContent Content\n<footer class=\"site-footer\">\n    &copy; @DateTime.UtcNow.Year\n    @Content.Profile.Name\n</footer>",
+    "seconds": 58,
+    "reverse": false
+  },
+  {
+    "code": "<script setup>\nimport { ref, computed } from 'vue'\n\nconst bookings = ref([])\nconst open = computed(() =>\n  bookings.value.filter(b => !b.cancelled)\n)\n</script>\n\n<template>\n  <ul class=\"bookings\">\n    <li v-for=\"b in open\" :key=\"b.id\">\n      {{ b.reference }} - {{ b.status }}\n    </li>\n  </ul>\n</template>",
+    "seconds": 72,
+    "reverse": true
+  },
+  {
+    "code": "SELECT TOP (50)\n       m.MemberId,\n       m.PlanCode,\n       e.EffectiveDate\nFROM dbo.Member AS m\nINNER JOIN dbo.Enrollment AS e\n        ON e.MemberId = m.MemberId\nWHERE e.Status = 'Active'\n  AND e.EffectiveDate >= @Since\nORDER BY e.EffectiveDate DESC;\n\nUPDATE dbo.Availability\n   SET Remaining = Remaining - 1\n WHERE RoomId = @RoomId\n   AND Remaining > 0;",
+    "seconds": 66,
+    "reverse": false
+  },
+  {
+    "code": "[Fact]\npublic async Task Export_fails_loudly_when_a_page_fails()\n{\n    using var broken = new HttpClient(\n        new StatusHandler(HttpStatusCode.InternalServerError));\n\n    var error = await Assert.ThrowsAsync<\n        InvalidOperationException>(() =>\n            StaticExporter.ExportAsync(\n                broken, webRoot, output));\n\n    Assert.Contains(\"500\", error.Message);\n}\n\nconst { data } = useQuery({\n  queryKey: ['accounts'],\n  queryFn: fetchAccounts,\n})",
+    "seconds": 84,
+    "reverse": true
+  },
+  {
+    "code": "@inherits UmbracoViewPage<HomePage>\n\n@foreach (var block in\n    Model.Content.Children<ContentBlock>())\n{\n    @await Html.PartialAsync(\n        \"Blocks/\" + block.ContentType.Alias,\n        block)\n}\n\nconst nonce = document\n  .querySelector('meta[name=\"csp-nonce\"]')\n  .content\nconst script = document.createElement('script')\nscript.nonce = nonce",
+    "seconds": 70,
+    "reverse": false
+  },
+  {
+    "code": "FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build\nWORKDIR /src\nCOPY . .\nRUN dotnet test Portfolio.slnx\nRUN dotnet run --project src/Portfolio.Api \\\n    -- --export /out\n\npipeline {\n  agent any\n  stages {\n    stage('Build') {\n      steps { sh 'dotnet build' }\n    }\n    stage('Test') {\n      steps { sh 'dotnet test' }\n    }\n  }\n}",
+    "seconds": 76,
+    "reverse": true
+  }
+]

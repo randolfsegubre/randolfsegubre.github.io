@@ -1,0 +1,39 @@
+[
+  {
+    "id": "inghams",
+    "name": "Inghams",
+    "address": "inghams.co.uk",
+    "href": "https://www.inghams.co.uk/",
+    "summary": "The customer-facing website of Inghams, which describes itself as the ski, walking and Lapland holiday experts, with Hotelplan UK.",
+    "role": "One of a team of developers on this site, through Cloud Employee, from August 2024 to August 2026.",
+    "highlights": [
+      "Contributed full-stack development to visitor-facing features and page templates, including the saved-holiday wishlist and the resort and country content pages.",
+      "Fixed defects and reviewed changes in a large shared codebase with many contributors."
+    ],
+    "honestNote": "A team maintains this site and it has changed since my engagement ended in August 2026, so what you see today is not all my work.",
+    "stack": [
+      "C#",
+      "ASP.NET Core",
+      "Umbraco",
+      "Vue.js"
+    ]
+  },
+  {
+    "id": "santas-lapland",
+    "name": "Santa's Lapland",
+    "address": "santaslapland.com",
+    "href": "https://www.santaslapland.com/",
+    "summary": "The website of Santa's Lapland, which offers family Lapland holidays including flights, hotels and a private trip to see Santa.",
+    "role": "One of the developers on this site, through Cloud Employee, from November 2025 to July 2026.",
+    "highlights": [
+      "Contributed web security and standards work: response headers, cookie attributes and subresource integrity."
+    ],
+    "honestNote": "A team maintains this site and it has changed since my engagement ended in August 2026, so what you see today is not all my work.",
+    "stack": [
+      "C#",
+      "ASP.NET Core",
+      "Umbraco",
+      "JavaScript"
+    ]
+  }
+]

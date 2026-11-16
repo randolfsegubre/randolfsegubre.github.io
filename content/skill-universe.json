@@ -1,0 +1,429 @@
+{
+  "intro": "Everything here connects back to .NET, and everything here is something I have used myself, at work or in my own projects. Choose a sphere to see where, drag the cloud to turn it, or walk the journey from the centre outward.",
+  "stars": [
+    {
+      "id": "dotnet",
+      "label": ".NET",
+      "caption": "The centre of the map. More than 9 years of C# and .NET, and everything else here connects back to it.",
+      "icon": ".NET 10",
+      "main": false
+    },
+    {
+      "id": "aspnet-core",
+      "label": "ASP.NET Core",
+      "parentId": "dotnet",
+      "caption": "Web platforms and APIs, including moving a codebase from ASP.NET Core 2.x to 6 at Accenture.",
+      "icon": "globe",
+      "main": true
+    },
+    {
+      "id": "web-api",
+      "label": "Web API",
+      "parentId": "aspnet-core",
+      "caption": "Backend services for client platforms and for my own projects.",
+      "icon": "braces",
+      "main": false
+    },
+    {
+      "id": "vuejs",
+      "label": "Vue.js",
+      "parentId": "web-api",
+      "caption": "Front-end work on top of the backend, in two of my roles.",
+      "icon": "Vue.js",
+      "main": true
+    },
+    {
+      "id": "javascript",
+      "label": "JavaScript",
+      "parentId": "vuejs",
+      "caption": "Behind the Vue.js and Umbraco front-end work.",
+      "icon": "javascript",
+      "main": false
+    },
+    {
+      "id": "nuxtjs",
+      "label": "Nuxt.js",
+      "parentId": "vuejs",
+      "caption": "The framework built on Vue.js; this portfolio is generated with it.",
+      "icon": "nuxt",
+      "main": false
+    },
+    {
+      "id": "react",
+      "label": "React",
+      "parentId": "web-api",
+      "caption": "About six months of React and Redux work in 2020, and the front end of my Lakbay project.",
+      "icon": "React",
+      "main": false
+    },
+    {
+      "id": "redux",
+      "label": "Redux",
+      "parentId": "react",
+      "caption": "State handling for the React work in 2020, and Redux Toolkit in my Lakbay project.",
+      "icon": "redux",
+      "main": false
+    },
+    {
+      "id": "nextjs",
+      "label": "Next.js",
+      "parentId": "react",
+      "caption": "The headless front end of my Lakbay project.",
+      "icon": "Next.js",
+      "main": false
+    },
+    {
+      "id": "mongodb",
+      "label": "MongoDB",
+      "parentId": "web-api",
+      "caption": "Document storage, in an earlier role and in the Lakbay project.",
+      "icon": "MongoDB",
+      "main": false
+    },
+    {
+      "id": "jwt",
+      "label": "JWT authentication",
+      "parentId": "web-api",
+      "caption": "Sign-in with access and refresh tokens, in my own BudgetPH and AI Tutor projects.",
+      "icon": "jwt",
+      "main": false
+    },
+    {
+      "id": "aspnet-mvc",
+      "label": "ASP.NET MVC",
+      "parentId": "aspnet-core",
+      "caption": "Controllers and views, the pattern of the ASP.NET web applications in my earlier roles.",
+      "icon": "layout",
+      "main": false
+    },
+    {
+      "id": "html-css",
+      "label": "HTML and CSS",
+      "parentId": "aspnet-mvc",
+      "caption": "The markup and styling behind the pages I build, this portfolio included.",
+      "icon": "html",
+      "main": false
+    },
+    {
+      "id": "scss",
+      "label": "SCSS",
+      "parentId": "html-css",
+      "caption": "Styling for the customer-facing sites in my latest role.",
+      "icon": "sass",
+      "main": false
+    },
+    {
+      "id": "razor-pages",
+      "label": "Razor Pages",
+      "parentId": "aspnet-core",
+      "caption": "Page-based web applications at Accenture.",
+      "icon": "code",
+      "main": false
+    },
+    {
+      "id": "blazor",
+      "label": "Blazor",
+      "parentId": "aspnet-core",
+      "caption": "The Blazor WebAssembly front end of AI Tutor, and the interface of DevHub.",
+      "icon": "Blazor",
+      "main": false
+    },
+    {
+      "id": "ollama",
+      "label": "Ollama",
+      "parentId": "blazor",
+      "caption": "The local language model behind my AI Tutor project, running on my own machine.",
+      "icon": "ollama",
+      "main": false
+    },
+    {
+      "id": "umbraco",
+      "label": "Umbraco",
+      "parentId": "aspnet-core",
+      "caption": "Content platform work on the customer-facing sites, including editing tools for the editors.",
+      "icon": "Umbraco",
+      "main": true
+    },
+    {
+      "id": "angularjs",
+      "label": "AngularJS",
+      "parentId": "umbraco",
+      "caption": "The framework I built Umbraco backoffice property editors in, for editors on two content platforms.",
+      "icon": "angularjs",
+      "main": false
+    },
+    {
+      "id": "security-headers",
+      "label": "Security headers",
+      "parentId": "aspnet-core",
+      "caption": "Content Security Policy hardening: I took the initiative on removing unsafe-inline and unsafe-eval on the customer-facing sites.",
+      "icon": "shield",
+      "main": false
+    },
+    {
+      "id": "csp",
+      "label": "Content Security Policy",
+      "parentId": "security-headers",
+      "caption": "Removing unsafe-inline and unsafe-eval and adding per-request nonces on two customer-facing sites.",
+      "icon": "lock",
+      "main": false
+    },
+    {
+      "id": "trusted-types",
+      "label": "Trusted Types",
+      "parentId": "security-headers",
+      "caption": "Adopted as part of the same Content Security Policy hardening.",
+      "icon": "shield",
+      "main": false
+    },
+    {
+      "id": "owasp-zap",
+      "label": "OWASP ZAP",
+      "parentId": "security-headers",
+      "caption": "Security scans of sites, including checks for missing security headers.",
+      "icon": "owasp",
+      "main": false
+    },
+    {
+      "id": "docker",
+      "label": "Docker",
+      "parentId": "dotnet",
+      "caption": "Containers, part of the delivery setup in my latest role.",
+      "icon": "Docker",
+      "main": false
+    },
+    {
+      "id": "jenkins",
+      "label": "Jenkins",
+      "parentId": "docker",
+      "caption": "Build and deploy pipelines in my latest role.",
+      "icon": "Jenkins",
+      "main": false
+    },
+    {
+      "id": "azure",
+      "label": "Azure",
+      "parentId": "docker",
+      "caption": "Diagnosing a layered Azure hosting setup to find which layer produced a response header.",
+      "icon": "cloud",
+      "main": false
+    },
+    {
+      "id": "azure-devops",
+      "label": "Azure DevOps",
+      "parentId": "azure",
+      "caption": "Where some legacy projects were hosted at Accenture, formerly Team Foundation Server.",
+      "icon": "cloud",
+      "main": false
+    },
+    {
+      "id": "aws",
+      "label": "AWS",
+      "parentId": "docker",
+      "caption": "Hosting for the airline booking tools at Scoot, on Amazon Web Services.",
+      "icon": "cloud",
+      "main": false
+    },
+    {
+      "id": "ef-core",
+      "label": "EF Core",
+      "parentId": "dotnet",
+      "caption": "Entity Framework Core with Code First, on MySQL, for the Scoot work.",
+      "icon": "table",
+      "main": false
+    },
+    {
+      "id": "sql-server",
+      "label": "SQL Server",
+      "parentId": "ef-core",
+      "caption": "Relational data work across my roles, from my first desktop application onward.",
+      "icon": "database",
+      "main": true
+    },
+    {
+      "id": "t-sql",
+      "label": "T-SQL",
+      "parentId": "sql-server",
+      "caption": "The query language I use with SQL Server.",
+      "icon": "query",
+      "main": false
+    },
+    {
+      "id": "dapper",
+      "label": "Dapper",
+      "parentId": "sql-server",
+      "caption": "Data access in my first professional role, a desktop certificate application at F. Gurrea.",
+      "icon": "bolt",
+      "main": false
+    },
+    {
+      "id": "mysql",
+      "label": "MySQL",
+      "parentId": "ef-core",
+      "caption": "The database behind the Code First work for Scoot.",
+      "icon": "MySQL",
+      "main": false
+    },
+    {
+      "id": "csharp",
+      "label": "C#",
+      "parentId": "dotnet",
+      "caption": "The language I have worked in professionally since 2017.",
+      "icon": "C#",
+      "main": true
+    },
+    {
+      "id": "xunit",
+      "label": "xUnit",
+      "parentId": "csharp",
+      "caption": "Unit tests, written at Scoot toward a team target of at least 90 percent coverage.",
+      "icon": "check",
+      "main": false
+    },
+    {
+      "id": "mediatr",
+      "label": "MediatR",
+      "parentId": "csharp",
+      "caption": "Command and query handling in my Lakbay booking service and in AI Tutor.",
+      "icon": "flow",
+      "main": false
+    },
+    {
+      "id": "clean-architecture",
+      "label": "Clean Architecture",
+      "parentId": "csharp",
+      "caption": "The layered structure of BudgetPH and AI Tutor.",
+      "icon": "layers",
+      "main": false
+    },
+    {
+      "id": "unity",
+      "label": "Unity",
+      "parentId": "csharp",
+      "caption": "Galaxy Survivor, a mobile game I specified documentation-first.",
+      "icon": "unity",
+      "main": false
+    },
+    {
+      "id": "dotnet-framework",
+      "label": ".NET Framework",
+      "parentId": "dotnet",
+      "caption": "Legacy platform work, including the upgrade from version 4.6 to 4.8 at Collabera.",
+      "icon": "history",
+      "main": false
+    },
+    {
+      "id": "wpf",
+      "label": "WPF",
+      "parentId": "dotnet-framework",
+      "caption": "Maintained a legacy Windows Presentation Foundation desktop companion app at Collabera.",
+      "icon": "window",
+      "main": false
+    },
+    {
+      "id": "winforms",
+      "label": "WinForms",
+      "parentId": "dotnet-framework",
+      "caption": "The Windows desktop application of my first professional role, at F. Gurrea.",
+      "icon": "window",
+      "main": false
+    },
+    {
+      "id": "git",
+      "label": "Git and GitHub",
+      "parentId": "dotnet",
+      "caption": "Version control for all my work, with GitHub for review and code scanning.",
+      "icon": "GitHub",
+      "main": false
+    },
+    {
+      "id": "copilot",
+      "label": "GitHub Copilot",
+      "parentId": "git",
+      "caption": "In use since 2022, when Accenture began encouraging its adoption.",
+      "icon": "copilot",
+      "main": false
+    },
+    {
+      "id": "claude-code",
+      "label": "Claude Code",
+      "parentId": "git",
+      "caption": "Part of my own workflow, following the same shared conventions as Copilot.",
+      "icon": "claude-code",
+      "main": false
+    },
+    {
+      "id": "mcp",
+      "label": "Model Context Protocol configuration",
+      "parentId": "claude-code",
+      "caption": "Model Context Protocol servers set up for my own workflow; I configured existing ones and did not write one.",
+      "icon": "mcp",
+      "main": false
+    }
+  ],
+  "crossLinks": [
+    {
+      "fromId": "csharp",
+      "toId": "aspnet-core"
+    },
+    {
+      "fromId": "csharp",
+      "toId": "ef-core"
+    },
+    {
+      "fromId": "javascript",
+      "toId": "react"
+    },
+    {
+      "fromId": "javascript",
+      "toId": "angularjs"
+    }
+  ],
+  "journey": [
+    "dotnet",
+    "csharp",
+    "winforms",
+    "dapper",
+    "sql-server",
+    "t-sql",
+    "aspnet-core",
+    "aspnet-mvc",
+    "html-css",
+    "scss",
+    "web-api",
+    "ef-core",
+    "mysql",
+    "xunit",
+    "vuejs",
+    "javascript",
+    "nuxtjs",
+    "react",
+    "redux",
+    "mongodb",
+    "dotnet-framework",
+    "wpf",
+    "razor-pages",
+    "git",
+    "azure-devops",
+    "umbraco",
+    "angularjs",
+    "security-headers",
+    "csp",
+    "trusted-types",
+    "owasp-zap",
+    "jwt",
+    "docker",
+    "jenkins",
+    "azure",
+    "aws",
+    "blazor",
+    "ollama",
+    "mediatr",
+    "clean-architecture",
+    "nextjs",
+    "unity",
+    "copilot",
+    "claude-code",
+    "mcp"
+  ]
+}
