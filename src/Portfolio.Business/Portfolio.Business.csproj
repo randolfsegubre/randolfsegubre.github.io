@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    Business layer (ADR-0013): the content models, the rules that turn content into the page's document, and the
+    services that move content between the data layer and the presentation layer. It knows the data layer and never
+    the presentation layer.
+  -->
+  <PropertyGroup>
+    <RootNamespace>Portfolio.Business</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Portfolio.Data\Portfolio.Data.csproj" />
+  </ItemGroup>
+
+</Project>

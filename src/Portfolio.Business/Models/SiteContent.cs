@@ -1,4 +1,4 @@
-namespace Portfolio.Api.Models;
+namespace Portfolio.Business.Models;
 
 /// <summary>
 /// Everything the front end needs to draw the whole site, as one JSON document (ADR-0011).

@@ -1,4 +1,4 @@
-namespace Portfolio.Api.Models;
+namespace Portfolio.Business.Models;
 
 /// <summary>
 /// A labelled outbound link. The href must be https (enforced by a content test).
@@ -30,7 +30,7 @@ public sealed record Stat(string Value, string Label);
 /// <param name="Phones">Phone and messaging-app numbers, exactly as the owner supplied them. Public on the site by his choice.</param>
 /// <param name="SignatureStack">The few product names shown in the hero's code card. Exempt from the abbreviation rule.</param>
 /// <param name="Stats">Facts for the stats strip. Replaces skill percentage bars, which cannot be verified.</param>
-/// <param name="BackdropTags">Technologies shown as floating logos. Each must appear in the projects, roles or skills (ADR-0006) and have a logo in <c>TechLogoData</c>.</param>
+/// <param name="BackdropTags">Technologies shown as floating logos. Each must appear in the projects, roles or skills (ADR-0006) and have a logo in <c>content/tech-logos.json</c>.</param>
 /// <param name="PhotoUrl">Site-relative path to the portrait under web/public, or null for no photo.</param>
 /// <param name="PhotoAlt">Alternative text describing the portrait for screen reader users.</param>
 /// <param name="PhotoWebpUrl">Optional smaller WebP copy of the portrait for the page itself (320 by 320, twice its display size). <see cref="PhotoUrl"/> stays the fallback and the link-preview image, because LinkedIn and some other sharing crawlers do not reliably show WebP.</param>
@@ -139,7 +139,7 @@ public sealed record SkillGroup(string Id, string Label, IReadOnlyList<string> I
 /// <param name="Label">The product name shown on the star. Must appear in the roles, projects or skills (a test enforces this).</param>
 /// <param name="ParentId">The star this one grows out of, or null for the single centre. The parent decides the ring and the direction.</param>
 /// <param name="Caption">One sentence about where the technology was used. Prose, so it follows the writing rules (ADR-0006).</param>
-/// <param name="Icon">The key of the icon drawn inside the sphere: a technology logo or a generic glyph (<c>SkillIconData</c>). Every star needs one.</param>
+/// <param name="Icon">The key of the icon drawn inside the sphere: a technology logo or a generic glyph (<c>content/skill-icons.json</c>). Every star needs one.</param>
 /// <param name="Main">True for the owner's main stack (the profile's signature stack), which is drawn as a larger sphere than the rest. A test keeps this in step with <c>Profile.SignatureStack</c>.</param>
 public sealed record SkillStar(string Id, string Label, string? ParentId, string Caption, string Icon, bool Main = false);
 

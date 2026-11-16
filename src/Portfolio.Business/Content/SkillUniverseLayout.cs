@@ -1,6 +1,6 @@
-using Portfolio.Api.Models;
+using Portfolio.Business.Models;
 
-namespace Portfolio.Api.Content;
+namespace Portfolio.Business.Content;
 
 /// <summary>
 /// Turns a tree of skills into an even spread over three spheres for the 3D cloud (ADR-0010).

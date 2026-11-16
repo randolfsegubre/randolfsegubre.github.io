@@ -1,17 +1,17 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using Portfolio.Api.Models;
+using Portfolio.Business.Models;
 
-namespace Portfolio.Api.Content;
+namespace Portfolio.Business.Content;
 
 /// <summary>
 /// Builds the one JSON document the Nuxt front end reads, from the content classes (ADR-0011).
 /// </summary>
 /// <remarks>
-/// This class does what the old Razor views did while rendering that was not markup: choosing the
-/// page titles, the project status wording, each sphere's icon and where the floating logos go. It is a
-/// pure function of the content, so a test can check it without a browser, and the same JSON is served by
-/// <c>GET /api/content</c> and written by <c>--export-content</c> for the static build.
+/// This class works out what the front end should not decide for itself: the page titles, the project status
+/// wording, each sphere's icon and where the floating logos go. It is a pure function of the content (which
+/// holds every word and drawing, ADR-0012), so a test can check it without a browser or a database, and the same
+/// JSON is served by <c>GET /api/content</c> and written by <c>--export-content</c> for the static build.
 /// </remarks>
 public static class SiteContentBuilder
 {
@@ -22,11 +22,9 @@ public static class SiteContentBuilder
         Converters = { new JsonStringEnumConverter(JsonNamingPolicy.CamelCase) },
     };
 
-    private const string ShareDescription = "Selected projects, experience and skills of a full-stack .NET developer based in Metro Manila, Philippines.";
-
-    private const string Description = "Portfolio of Randolf Segubre, a full-stack .NET developer with 9+ years of C# and .NET experience across travel, healthcare and construction. Selected projects, experience and contact.";
-
-    // x = left; either y (from the top) or b (from the bottom); edge = keep on phones.
+    // Where the floating logos go is a presentation decision tied to the stylesheet, so it stays in code; which
+    // technologies float, and how many go in the hero, are content. x = left; either y (from the top) or b (from the
+    // bottom); edge = keep on phones.
     // Hero slots sit in the hero's top padding (a fixed 1rem from its top edge), which is about 4rem tall and
     // never holds content at any screen size, so these logos can never land on the portrait, name or text.
     private static readonly (string X, string? Y, string? B, bool Edge, int Seconds, int Delay)[] HeroSlots =
@@ -58,20 +56,21 @@ public static class SiteContentBuilder
     public static SiteContent Build(IPortfolioContent content, int year)
     {
         var profile = content.Profile;
+        var site = content.Site;
 
         // STEP 1 of 5: the head of each page.
         var meta = new SiteMeta(
-            SiteUrl: SiteInfo.Url,
+            SiteUrl: site.Url,
             HomeTitle: $"{profile.Name} | {profile.Title}",
             NotFoundTitle: $"Page not found | {profile.Name}",
-            Description: Description,
-            ShareDescription: ShareDescription,
-            ShareImageUrl: profile.PhotoUrl is null ? null : SiteInfo.Url + profile.PhotoUrl,
+            Description: site.Description,
+            ShareDescription: site.ShareDescription,
+            ShareImageUrl: profile.PhotoUrl is null ? null : site.Url + profile.PhotoUrl,
             ShareImageAlt: profile.PhotoAlt,
             Year: year);
 
         // STEP 2 of 5: profile links with their icons, and project cards with their status wording.
-        var links = profile.Links.Select(l => new ProfileLink(l.Label, l.Href, SocialIconData.Find(l.Label))).ToList();
+        var links = profile.Links.Select(l => new ProfileLink(l.Label, l.Href, content.FindSocialIconMarkup(l.Label))).ToList();
         var projects = content.Projects.Select(p => p.Status switch
         {
             ProjectStatus.InDevelopment => new ProjectCard(p, "In development", "badge-in-development"),
@@ -81,7 +80,7 @@ public static class SiteContentBuilder
         // STEP 3 of 5: the skills cloud, each star carrying the icon it draws.
         var stars = content.Universe.Stars.Select(placed =>
         {
-            var icon = SkillIconData.Find(placed.Star.Icon)
+            var icon = content.ResolveSkillIcon(placed.Star.Icon)
                 ?? throw new InvalidOperationException($"Star '{placed.Star.Id}' has no icon '{placed.Star.Icon}'.");
             return new StarView(
                 placed.Star.Id, placed.Star.Label, placed.Star.Caption, placed.Star.Main, placed.Depth,
@@ -91,16 +90,16 @@ public static class SiteContentBuilder
 
         // STEP 4 of 5: the sprites, and where the floating logos go. The hero takes the first few tags and the
         // page layer the rest, so each logo appears once.
-        var logos = TechLogoData.Logos.Select(l => new LogoSymbol(l.Key, l.SymbolId, l.Markup)).ToList();
-        var skillIcons = SkillIconData.Icons.Select(i => new LogoSymbol(i.Key, i.SymbolId, i.Markup)).ToList();
-        var heroLogos = PlaceLogos(profile.BackdropTags.Take(TechLogoData.HeroLogoCount), HeroSlots);
-        var pageLogos = PlaceLogos(profile.BackdropTags.Skip(TechLogoData.HeroLogoCount), PageSlots);
+        var logos = content.TechLogos.Select(l => new LogoSymbol(l.Key, l.SymbolId, l.Markup)).ToList();
+        var skillIcons = content.SkillIcons.Select(i => new LogoSymbol(i.Key, i.SymbolId, i.Markup)).ToList();
+        var heroLogos = PlaceLogos(content, profile.BackdropTags.Take(site.HeroLogoCount), HeroSlots);
+        var pageLogos = PlaceLogos(content, profile.BackdropTags.Skip(site.HeroLogoCount), PageSlots);
 
         // STEP 5 of 5: assemble.
         return new SiteContent(
             meta, profile, links, content.LiveSites, projects, content.Experience, content.Skills, universe,
-            HeroTagData.Tags, logos, skillIcons, heroLogos, pageLogos,
-            BackdropCode.Streams.Select(s => new CodeLane(s.Code, s.Seconds, s.Reverse)).ToList());
+            content.HeroTags, logos, skillIcons, heroLogos, pageLogos,
+            content.CodeStreams.Select(s => new CodeLane(s.Code, s.Seconds, s.Reverse)).ToList());
     }
 
     /// <summary>The JSON text for the document, with the settings every consumer shares.</summary>
@@ -109,12 +108,12 @@ public static class SiteContentBuilder
     /// <summary>
     /// Gives each technology that has a logo the next free slot, skipping technologies with no logo.
     /// </summary>
-    private static List<LogoSlot> PlaceLogos(IEnumerable<string> technologies, (string X, string? Y, string? B, bool Edge, int Seconds, int Delay)[] slots)
+    private static List<LogoSlot> PlaceLogos(IPortfolioContent content, IEnumerable<string> technologies, (string X, string? Y, string? B, bool Edge, int Seconds, int Delay)[] slots)
     {
         var placed = new List<LogoSlot>();
         foreach (var tech in technologies)
         {
-            var logo = TechLogoData.Find(tech);
+            var logo = content.FindTechLogo(tech);
             if (logo is null || placed.Count >= slots.Length)
             {
                 continue;

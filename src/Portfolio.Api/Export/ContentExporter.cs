@@ -1,4 +1,4 @@
-using Portfolio.Api.Content;
+using Portfolio.Business.Content;
 
 namespace Portfolio.Api.Export;
 

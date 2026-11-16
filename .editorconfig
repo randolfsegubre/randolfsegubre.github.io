@@ -24,3 +24,8 @@ dotnet_sort_system_directives_first = true
 # CA1711 flags any type name ending in "Stream". `CodeStream` is a visual lane of
 # code lines in the page background, not a System.IO.Stream, so the naming rule does not apply.
 dotnet_diagnostic.CA1711.severity = none
+
+# Entity Framework migrations are generated code: the analyzers and style rules do not apply to them.
+[**/Migrations/*.cs]
+generated_code = true
+dotnet_analyzer_diagnostic.severity = none
