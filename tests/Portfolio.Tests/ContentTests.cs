@@ -1,5 +1,5 @@
 using System.Text.RegularExpressions;
-using Portfolio.Web.Content;
+using Portfolio.Api.Content;
 
 namespace Portfolio.Tests;
 
@@ -117,7 +117,7 @@ public sealed partial class ContentTests
     {
         var links = Content.Profile.Links
             .Concat(Content.Projects.SelectMany(p => p.Links))
-            .Concat(Content.LiveSites.Select(s => new Portfolio.Web.Models.Link(s.Address, s.Href)))
+            .Concat(Content.LiveSites.Select(s => new Portfolio.Api.Models.Link(s.Address, s.Href)))
             .ToList();
 
         Assert.NotEmpty(links);

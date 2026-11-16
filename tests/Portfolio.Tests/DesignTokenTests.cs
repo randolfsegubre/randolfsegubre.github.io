@@ -1,8 +1,5 @@
 using System.Globalization;
 using System.Text.RegularExpressions;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc.Testing;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace Portfolio.Tests;
 
@@ -14,7 +11,7 @@ namespace Portfolio.Tests;
 /// background pair must meet the Web Content Accessibility Guidelines (WCAG) minimum,
 /// in both themes, and the two places that define the dark theme must never drift apart.
 /// </remarks>
-public sealed partial class DesignTokenTests(WebApplicationFactory<Program> factory) : IClassFixture<WebApplicationFactory<Program>>
+public sealed partial class DesignTokenTests(SiteFactory factory) : IClassFixture<SiteFactory>
 {
     /// <summary>Minimum contrast for normal text (WCAG AA).</summary>
     private const double TextMinimum = 4.5;
@@ -33,7 +30,7 @@ public sealed partial class DesignTokenTests(WebApplicationFactory<Program> fact
     [GeneratedRegex(@"--(?<name>[a-z0-9-]+):\s*(?<value>#[0-9a-fA-F]{6})\s*;")]
     private static partial Regex HexToken();
 
-    private string Css() => File.ReadAllText(Path.Combine(factory.Services.GetRequiredService<IWebHostEnvironment>().WebRootPath, "css", "site.css"));
+    private string Css() => File.ReadAllText(Path.Combine(factory.WebRootPath, "css", "site.css"));
 
     private static Dictionary<string, string> Tokens(Regex block, string css)
     {

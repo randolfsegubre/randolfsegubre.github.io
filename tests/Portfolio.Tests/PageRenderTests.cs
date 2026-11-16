@@ -1,18 +1,15 @@
 using AngleSharp.Dom;
 using AngleSharp.Html.Parser;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc.Testing;
-using Microsoft.Extensions.DependencyInjection;
-using Portfolio.Web.Content;
+using Portfolio.Api.Content;
 
 namespace Portfolio.Tests;
 
 /// <summary>
 /// Render tests: the page shows what the data says, and its accessibility and safety
-/// details hold. The app is hosted in memory (real MVC pipeline and real Razor views)
+/// details hold. The generated Nuxt site is served from its output folder (SiteFactory)
 /// and the returned HTML is parsed the way a browser would.
 /// </summary>
-public sealed class PageRenderTests(WebApplicationFactory<Program> factory) : IClassFixture<WebApplicationFactory<Program>>
+public sealed class PageRenderTests(SiteFactory factory) : IClassFixture<SiteFactory>
 {
     private static readonly PortfolioContent Content = new();
 
@@ -100,7 +97,7 @@ public sealed class PageRenderTests(WebApplicationFactory<Program> factory) : IC
 
         // The link is only worth showing if the file behind it is real: a dead download is worse than none.
         Assert.NotNull(Content.Profile.ResumeUrl);
-        var webRoot = factory.Services.GetRequiredService<IWebHostEnvironment>().WebRootPath;
+        var webRoot = factory.WebRootPath;
         var file = new FileInfo(Path.Combine(webRoot, Content.Profile.ResumeUrl.TrimStart('/')));
         Assert.True(file.Exists);
         Assert.True(file.Length > 10_000);
@@ -252,8 +249,8 @@ public sealed class PageRenderTests(WebApplicationFactory<Program> factory) : IC
             Assert.NotNull(contactLink.QuerySelector("svg.link-icon path"));
         });
 
-        Assert.Contains(Content.Profile.Links, l => l.Label == "GitHub" && l.Href.StartsWith("https://github.com/"));
-        Assert.Contains(Content.Profile.Links, l => l.Label == "LinkedIn" && l.Href.StartsWith("https://www.linkedin.com/in/"));
+        Assert.Contains(Content.Profile.Links, l => l.Label == "GitHub" && l.Href.StartsWith("https://github.com/", StringComparison.Ordinal));
+        Assert.Contains(Content.Profile.Links, l => l.Label == "LinkedIn" && l.Href.StartsWith("https://www.linkedin.com/in/", StringComparison.Ordinal));
     }
 
     [Fact]
@@ -335,8 +332,8 @@ public sealed class PageRenderTests(WebApplicationFactory<Program> factory) : IC
         Assert.NotNull(video.GetAttribute("width"));
         Assert.NotNull(video.GetAttribute("height"));
 
-        // Both formats and a poster are real files in wwwroot, and each stays small (a background must not weigh more than the page).
-        var webRoot = factory.Services.GetRequiredService<IWebHostEnvironment>().WebRootPath;
+        // Both formats and a poster are real files in web/public, and each stays small (a background must not weigh more than the page).
+        var webRoot = factory.WebRootPath;
         var sources = video.QuerySelectorAll("source").Select(s => (Src: s.GetAttribute("src")!, Type: s.GetAttribute("type"))).ToList();
         Assert.Equal(["video/webm", "video/mp4"], sources.Select(s => s.Type));
         // The still frame comes from the stylesheet (so phones, which hide the video, never fetch it), not a poster attribute.
@@ -455,7 +452,7 @@ public sealed class PageRenderTests(WebApplicationFactory<Program> factory) : IC
     [Fact]
     public async Task Logos_stay_faint_in_the_stylesheet_so_they_never_compete_with_content()
     {
-        var webRoot = factory.Services.GetRequiredService<IWebHostEnvironment>().WebRootPath;
+        var webRoot = factory.WebRootPath;
         var css = await File.ReadAllTextAsync(Path.Combine(webRoot, "css", "site.css"));
 
         foreach (System.Text.RegularExpressions.Match match in System.Text.RegularExpressions.Regex.Matches(css,@"\.tech-logo[^{]*\{[^}]*?opacity:\s*(?<o>[\d.]+)"))
@@ -502,7 +499,7 @@ public sealed class PageRenderTests(WebApplicationFactory<Program> factory) : IC
     [Fact]
     public async Task Background_lanes_are_grid_columns_so_they_cannot_overlap()
     {
-        var webRoot = factory.Services.GetRequiredService<IWebHostEnvironment>().WebRootPath;
+        var webRoot = factory.WebRootPath;
         var css = await File.ReadAllTextAsync(Path.Combine(webRoot, "css", "site.css"));
 
         // Lanes have no absolute positions of their own: the container lays them out as equal grid columns.
@@ -558,7 +555,7 @@ public sealed class PageRenderTests(WebApplicationFactory<Program> factory) : IC
 
         // The file must be a real WebP (RIFF container, WEBP marker) and meaningfully smaller than the JPEG.
         Assert.NotNull(Content.Profile.PhotoWebpUrl);
-        var webRoot = factory.Services.GetRequiredService<IWebHostEnvironment>().WebRootPath;
+        var webRoot = factory.WebRootPath;
         var webp = new FileInfo(Path.Combine(webRoot, Content.Profile.PhotoWebpUrl.TrimStart('/')));
         var jpeg = new FileInfo(Path.Combine(webRoot, Content.Profile.PhotoUrl!.TrimStart('/')));
         Assert.True(webp.Exists);
@@ -577,7 +574,7 @@ public sealed class PageRenderTests(WebApplicationFactory<Program> factory) : IC
     {
         var page = await GetPageAsync("/");
 
-        var webRoot = factory.Services.GetRequiredService<IWebHostEnvironment>().WebRootPath;
+        var webRoot = factory.WebRootPath;
         Assert.True(File.Exists(Path.Combine(webRoot, Content.Profile.PhotoUrl!.TrimStart('/'))));
 
         var preview = page.QuerySelector("meta[property='og:image']")?.GetAttribute("content");

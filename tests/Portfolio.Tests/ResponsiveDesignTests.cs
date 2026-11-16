@@ -1,8 +1,5 @@
 using System.Text.RegularExpressions;
 using AngleSharp.Html.Parser;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc.Testing;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace Portfolio.Tests;
 
@@ -13,7 +10,7 @@ namespace Portfolio.Tests;
 /// These cannot replace looking at real screen sizes in a browser (the devlog records those checks),
 /// but they stop the rules that make the layout adapt from being quietly removed or contradicted.
 /// </remarks>
-public sealed partial class ResponsiveDesignTests(WebApplicationFactory<Program> factory) : IClassFixture<WebApplicationFactory<Program>>
+public sealed partial class ResponsiveDesignTests(SiteFactory factory) : IClassFixture<SiteFactory>
 {
     [GeneratedRegex(@"@media \(max-width: 41\.99rem\) \{(?<body>(?:[^{}]|\{[^{}]*\})*)\}", RegexOptions.Singleline)]
     private static partial Regex PhoneMediaBlock();
@@ -21,7 +18,7 @@ public sealed partial class ResponsiveDesignTests(WebApplicationFactory<Program>
     [GeneratedRegex(@"width:\s*\d{3,}px")]
     private static partial Regex FixedPixelWidth();
 
-    private string Css() => File.ReadAllText(Path.Combine(factory.Services.GetRequiredService<IWebHostEnvironment>().WebRootPath, "css", "site.css"));
+    private string Css() => File.ReadAllText(Path.Combine(factory.WebRootPath, "css", "site.css"));
 
     /// <summary>All the phone-width media blocks joined together (the stylesheet has several).</summary>
     private string PhoneRules() => string.Join("\n", PhoneMediaBlock().Matches(Css()).Select(m => m.Groups["body"].Value));

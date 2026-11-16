@@ -1,7 +1,6 @@
 using AngleSharp.Html.Parser;
-using Microsoft.AspNetCore.Mvc.Testing;
-using Portfolio.Web.Content;
-using Portfolio.Web.Models;
+using Portfolio.Api.Content;
+using Portfolio.Api.Models;
 
 namespace Portfolio.Tests;
 
@@ -13,7 +12,7 @@ namespace Portfolio.Tests;
 /// What a person sees at real screen sizes is checked by looking (the devlog records it); these tests stop
 /// the structure from quietly breaking in between.
 /// </remarks>
-public sealed class SkillUniverseTests(WebApplicationFactory<Program> factory) : IClassFixture<WebApplicationFactory<Program>>
+public sealed class SkillUniverseTests(SiteFactory factory) : IClassFixture<SiteFactory>
 {
     private static readonly PortfolioContent Content = new();
 
@@ -302,7 +301,7 @@ public sealed class SkillUniverseTests(WebApplicationFactory<Program> factory) :
         foreach (var placed in Map.Stars)
         {
             var star = universe.QuerySelector($"li.star[data-star='{placed.Star.Id}']")!;
-            Assert.Equal(placed.Depth.ToString(), star.GetAttribute("data-depth"));
+            Assert.Equal(placed.Depth.ToString(System.Globalization.CultureInfo.InvariantCulture), star.GetAttribute("data-depth"));
             Assert.Equal(placed.Azimuth, number("data-azimuth", star), 1);
             Assert.Equal(placed.Elevation, number("data-elevation", star), 1);
             Assert.Equal(placed.Radius, number("data-radius", star), 1);

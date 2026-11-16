@@ -1,9 +1,6 @@
 using AngleSharp.Dom;
 using AngleSharp.Html.Parser;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc.Testing;
-using Microsoft.Extensions.DependencyInjection;
-using Portfolio.Web.Content;
+using Portfolio.Api.Content;
 
 namespace Portfolio.Tests;
 
@@ -15,7 +12,7 @@ namespace Portfolio.Tests;
 /// The policy only protects the page while the page obeys it, so these tests also check
 /// the page itself: no inline script, no inline event handler, nothing third-party.
 /// </remarks>
-public sealed class HeadSecurityAndSeoTests(WebApplicationFactory<Program> factory) : IClassFixture<WebApplicationFactory<Program>>
+public sealed class HeadSecurityAndSeoTests(SiteFactory factory) : IClassFixture<SiteFactory>
 {
     private async Task<IDocument> GetPageAsync(string path)
     {
@@ -126,7 +123,7 @@ public sealed class HeadSecurityAndSeoTests(WebApplicationFactory<Program> facto
     [Fact]
     public async Task Stylesheet_reserves_the_hidden_theme_toggle_space_and_keeps_decorative_code_readable()
     {
-        var webRoot = factory.Services.GetRequiredService<IWebHostEnvironment>().WebRootPath;
+        var webRoot = factory.WebRootPath;
 
         var css = await File.ReadAllTextAsync(Path.Combine(webRoot, "css", "site.css"));
 
@@ -142,7 +139,7 @@ public sealed class HeadSecurityAndSeoTests(WebApplicationFactory<Program> facto
     [Fact]
     public async Task Sitemap_and_robots_point_at_the_one_site_address_and_the_theme_script_exists()
     {
-        var webRoot = factory.Services.GetRequiredService<IWebHostEnvironment>().WebRootPath;
+        var webRoot = factory.WebRootPath;
 
         var sitemap = await File.ReadAllTextAsync(Path.Combine(webRoot, "sitemap.xml"));
         var robots = await File.ReadAllTextAsync(Path.Combine(webRoot, "robots.txt"));
