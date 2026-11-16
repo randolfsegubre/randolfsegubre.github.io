@@ -15,11 +15,12 @@ copy the checklist into other files.
    manual `docs/build/01_CLAUDE.md` if this is a new session.
 2. Run the mechanical checks and read the real output, not a memory of it:
    - `dotnet build Portfolio.slnx -warnaserror`
-   - `dotnet test Portfolio.slnx`
+   - in `web/`: `npm ci`, `npm audit --audit-level=moderate`, then `npm run generate`
+   - `dotnet test Portfolio.slnx` (it tests the generated site)
    - `dotnet list Portfolio.slnx package --vulnerable --include-transitive`
    - `grep -rn "ADR-0002" src` must print nothing (that decision is superseded).
-3. Check what a tool cannot: open the page in a real browser (`dotnet run
-   --project src/Portfolio.Web --no-launch-profile --urls http://localhost:5099`),
+3. Check what a tool cannot: open the page in a real browser (`npm run serve` in `web/`,
+   then `http://localhost:5099/`),
    confirm the console is empty (no Content Security Policy violations), the
    theme toggle works and survives a reload, and the layout holds at phone and
    desktop width. Stop only the server you started.

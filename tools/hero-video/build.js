@@ -1,6 +1,6 @@
 /**
  * Builds the hero background video: renders scene.html frame by frame in headless Chrome, then encodes
- * WebM (VP9), MP4 (H.264) and a still poster (WebP) into src/Portfolio.Web/wwwroot/media.
+ * WebM (VP9), MP4 (H.264) and a still poster (WebP) into web/public/media.
  *
  * Usage (from this folder):  npm install   then   npm run build
  * Chrome is found through the CHROME_PATH environment variable, or the usual Windows location.
@@ -20,7 +20,7 @@ const LOOP_SECONDS = 12; // must match LOOP in scene.html, or the video will not
 const POSTER_FRAME = 144; // the frame at 6 seconds
 const chrome = process.env.CHROME_PATH || 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe';
 const work = path.join(__dirname, '.work');
-const media = path.resolve(__dirname, '..', '..', 'src', 'Portfolio.Web', 'wwwroot', 'media');
+const media = path.resolve(__dirname, '..', '..', 'web', 'public', 'media');
 
 async function renderFrames() {
   fs.rmSync(work, { recursive: true, force: true });

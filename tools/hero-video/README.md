@@ -32,7 +32,7 @@ npm run build
 
 Set `CHROME_PATH` if Chrome is not in the usual Windows location. The build
 renders 288 frames (12 seconds at 24 per second), encodes
-`src/Portfolio.Web/wwwroot/media/hero.webm` (VP9, about 250 KB) and `hero.mp4`
+`web/public/media/hero.webm` (VP9, about 250 KB) and `hero.mp4`
 (H.264, about 390 KB), and saves `hero-poster.webp` (about 15 KB) from the
 frame at 6 seconds. Nothing here runs in the website build or in the deploy
 workflow; the three output files are committed. A rebuild gives an identical
@@ -58,7 +58,7 @@ because the VP9 encoder runs on several threads.
 
 ## How the page uses it
 
-`_CodeBackdrop.cshtml` holds the `<video>`: muted, looping, `playsinline`,
+`web/app/components/CodeBackdrop.vue` holds the `<video>`: muted, looping, `playsinline`,
 `preload="none"`, no `autoplay` attribute and no controls, hidden from
 assistive technology with the rest of the backdrop. `site.js` (step 4 of 4)
 plays it only when the visitor has not asked for reduced motion or data saving

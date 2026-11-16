@@ -1,7 +1,7 @@
 {
   "name": "hero-video-tools",
   "private": true,
-  "description": "Builds the portfolio hero background video (wwwroot/media) from scene.html. Not part of the website or its build.",
+  "description": "Builds the portfolio hero background video (web/public/media) from scene.html. Not part of the website or its build.",
   "scripts": {
     "build": "node build.js"
   },
