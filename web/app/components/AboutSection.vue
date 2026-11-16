@@ -2,7 +2,7 @@
   "About Me" and the skills together (ADR-0010): his own paragraphs, then every technology he has used as a
   cloud of spheres with .NET at the centre, on a purple band like the hero and footer, and the full grouped
   list kept in an ordinary section underneath. This component only draws what the data says; the words live in
-  the backend's ProfileData and SkillUniverseData, and the positions come from SkillUniverseLayout (ADR-0003).
+  the content files profile.json and skill-universe.json, and the positions come from SkillUniverseLayout (ADR-0003).
 
   Works without script: the cloud is a 3D scene, so without script the map is hidden and every caption is
   listed instead. With script (site.js, STEP 5) the markup becomes a floating, rotatable 3D cloud: each star

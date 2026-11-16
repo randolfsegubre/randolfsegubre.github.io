@@ -1,18 +1,24 @@
 name: Deploy to GitHub Pages
 
 # Runs on every push to main. Tests gate the deploy: a failing test means
-# nothing is published (ADR-0005). The .NET backend writes the content, Nuxt
-# generates the static site from it, and the tests then check that generated
-# folder, which is exactly what gets published (ADR-0011). GitHub Pages cannot
-# run a server, so only static files are deployed (ADR-0001).
+# nothing is published (ADR-0005). The content lives in JSON files and in SQL
+# Server (ADR-0012): the build starts a throwaway SQL Server, the .NET backend
+# loads the files into it and reads the content back out, Nuxt generates the
+# static site from that, and the tests then check the database path and the
+# generated folder, which is exactly what gets published (ADR-0011). GitHub Pages
+# cannot run a server, so only static files are deployed (ADR-0001): the database
+# exists only for the length of this build.
 #
-# Security (ADR-0009, ADR-0011): permissions are granted per job, least
-# privilege first, and every third-party action is pinned to a full commit hash,
-# because a version tag such as v4 can be moved after the fact. The comment after
-# each hash names the tag it was resolved from; refresh them together when
-# updating. Dependencies are installed from the lock files only (npm ci), npm
-# install scripts are not run, and the build fails on a known vulnerability in
-# the .NET packages or a moderate or worse one in the npm packages.
+# Security (ADR-0009, ADR-0011, ADR-0012): permissions are granted per job, least
+# privilege first, and every third-party action and container image is pinned to
+# a full commit hash or digest, because a tag such as v4 or latest can be moved
+# after the fact. The comment after each hash names the tag it was resolved from;
+# refresh them together when updating. Dependencies are installed from the lock
+# files only (npm ci), npm install scripts are not run, and the build fails on a
+# known vulnerability in the .NET packages or a moderate or worse one in the npm
+# packages. The database password is generated fresh for each run, masked in the
+# log, never stored, and the database only listens on the runner's own loopback
+# address.
 on:
   push:
     branches: [main]
@@ -50,13 +56,39 @@ jobs:
       - name: Check the front-end packages for known vulnerabilities (moderate or worse fails)
         working-directory: web
         run: npm audit --audit-level=moderate
-      - name: Generate the static site (the .NET backend writes the content, then Nuxt builds from it)
+      - name: Start a throwaway SQL Server for the content database
+        run: |
+          # A fresh random password each run. It is masked in the log and written only to this job's environment.
+          password="Pf$(openssl rand -hex 12)aA1!"
+          echo "::add-mask::$password"
+          # mssql/server 2025-latest, pinned by digest. Bound to the runner's loopback address, so nothing outside it can connect.
+          docker run -d --name portfolio-sql -p 127.0.0.1:1433:1433 \
+            -e ACCEPT_EULA=Y -e "MSSQL_SA_PASSWORD=$password" \
+            mcr.microsoft.com/mssql/server:2025-latest@sha256:05644dad1266ca3d445d1e8f6d2ebb9a6a03df9a39376e0f7b48917356dca9d9
+          server="Server=127.0.0.1,1433;User Id=sa;Password=$password;TrustServerCertificate=True;Encrypt=True"
+          echo "ConnectionStrings__Portfolio=$server;Database=PortfolioSite" >> "$GITHUB_ENV"
+          echo "PORTFOLIO_TEST_SQL=$server" >> "$GITHUB_ENV"
+          # The 2025 image has no sqlcmd, so wait for the server's own "ready" line.
+          for attempt in $(seq 1 60); do
+            if docker logs portfolio-sql 2>&1 | grep -q "ready for client connections"; then
+              echo "SQL Server is ready."
+              exit 0
+            fi
+            sleep 2
+          done
+          docker logs portfolio-sql
+          echo "SQL Server did not become ready in time." >&2
+          exit 1
+      - name: Generate the static site (the backend fills the database from the content files and reads it back, then Nuxt builds)
         working-directory: web
         run: npm run generate
-      - name: Test the generated site and the backend
+      - name: Test the database path, the backend and the generated site
         run: dotnet test Portfolio.slnx --configuration Release
         env:
           PORTFOLIO_SITE_DIR: ${{ github.workspace }}/web/.output/public
+      - name: Stop the throwaway SQL Server
+        if: always()
+        run: docker rm -f portfolio-sql
       - uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
         with:
           path: web/.output/public
@@ -65,6 +97,8 @@ jobs:
 
   deploy:
     needs: build
+    # Only the main branch is ever published. A manual run of this workflow from another branch builds and tests, and stops there.
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     permissions:
       pages: write
