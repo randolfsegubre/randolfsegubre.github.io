@@ -1,6 +1,6 @@
 using AngleSharp.Html.Parser;
-using Portfolio.Api.Content;
-using Portfolio.Api.Models;
+using Portfolio.Business.Content;
+using Portfolio.Business.Models;
 
 namespace Portfolio.Tests;
 
@@ -14,7 +14,7 @@ namespace Portfolio.Tests;
 /// </remarks>
 public sealed class SkillUniverseTests(SiteFactory factory) : IClassFixture<SiteFactory>
 {
-    private static readonly PortfolioContent Content = new();
+    private static readonly ContentSnapshot Content = TestContent.Snapshot;
 
     private static UniverseMap Map => Content.Universe;
 
@@ -124,10 +124,10 @@ public sealed class SkillUniverseTests(SiteFactory factory) : IClassFixture<Site
     [Fact]
     public void Gives_every_star_an_icon_that_exists_and_every_icon_a_unique_valid_id()
     {
-        Assert.All(Map.Stars, star => Assert.True(SkillIconData.Find(star.Star.Icon) is not null, $"{star.Star.Id}: no icon '{star.Star.Icon}'"));
+        Assert.All(Map.Stars, star => Assert.True(Content.ResolveSkillIcon(star.Star.Icon) is not null, $"{star.Star.Id}: no icon '{star.Star.Icon}'"));
 
-        Assert.Equal(SkillIconData.Icons.Count, SkillIconData.Icons.Select(i => i.Key).Distinct(StringComparer.OrdinalIgnoreCase).Count());
-        Assert.All(SkillIconData.Icons, icon =>
+        Assert.Equal(Content.SkillIcons.Count, Content.SkillIcons.Select(i => i.Key).Distinct(StringComparer.OrdinalIgnoreCase).Count());
+        Assert.All(Content.SkillIcons, icon =>
         {
             Assert.Matches("^skillicon-[a-z0-9-]+$", icon.SymbolId);
             Assert.False(string.IsNullOrWhiteSpace(icon.Markup));
@@ -140,7 +140,7 @@ public sealed class SkillUniverseTests(SiteFactory factory) : IClassFixture<Site
 
         // Nothing is defined without being used: dead icons would drift.
         var used = Map.Stars.Select(s => s.Star.Icon).ToHashSet(StringComparer.OrdinalIgnoreCase);
-        Assert.All(SkillIconData.Icons, icon => Assert.Contains(icon.Key, used));
+        Assert.All(Content.SkillIcons, icon => Assert.Contains(icon.Key, used));
     }
 
     [Fact]
@@ -152,7 +152,7 @@ public sealed class SkillUniverseTests(SiteFactory factory) : IClassFixture<Site
         foreach (var placed in Map.Stars)
         {
             var star = page.QuerySelector($"li.star[data-star='{placed.Star.Id}']")!;
-            var icon = SkillIconData.Find(placed.Star.Icon)!;
+            var icon = Content.ResolveSkillIcon(placed.Star.Icon)!;
 
             Assert.NotNull(star.QuerySelector(".orb"));
             Assert.Equal("true", star.QuerySelector(".orb")!.GetAttribute("aria-hidden"));

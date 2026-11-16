@@ -1,6 +1,6 @@
 using AngleSharp.Dom;
 using AngleSharp.Html.Parser;
-using Portfolio.Api.Content;
+using Portfolio.Business.Content;
 
 namespace Portfolio.Tests;
 
@@ -11,7 +11,13 @@ namespace Portfolio.Tests;
 /// </summary>
 public sealed class PageRenderTests(SiteFactory factory) : IClassFixture<SiteFactory>
 {
-    private static readonly PortfolioContent Content = new();
+    private static readonly ContentSnapshot Content = TestContent.Snapshot;
+
+    /// <summary>
+    /// How many faint code tags the stylesheet has positions for (<c>hero-tag-1</c> to <c>hero-tag-6</c>). The tags are
+    /// content, but where they sit is CSS, so the two must agree.
+    /// </summary>
+    private const int HeroTagSlots = 6;
 
     private async Task<IDocument> GetPageAsync(string path)
     {
@@ -297,7 +303,7 @@ public sealed class PageRenderTests(SiteFactory factory) : IClassFixture<SiteFac
 
         // The page layer behind the other sections still holds every lane, each with its code twice so the loop has no jump.
         var streams = page.QuerySelectorAll(".code-streams--page .code-stream").ToList();
-        Assert.Equal(BackdropCode.Streams.Count, streams.Count);
+        Assert.Equal(Content.CodeStreams.Count, streams.Count);
         Assert.All(streams, stream =>
         {
             var text = stream.QuerySelector("pre")!.TextContent;
@@ -307,8 +313,8 @@ public sealed class PageRenderTests(SiteFactory factory) : IClassFixture<SiteFac
 
         // The hero layer holds its share of the logos: the first few of the profile's list.
         var heroLogos = backdrop.QuerySelectorAll(".tech-logos--hero .tech-logo").ToList();
-        Assert.Equal(Content.Profile.BackdropTags.Take(TechLogoData.HeroLogoCount), heroLogos.Select(l => l.GetAttribute("data-tech")));
-        Assert.Equal(TechLogoData.HeroLogoCount, heroLogos.Count);
+        Assert.Equal(Content.Profile.BackdropTags.Take(Content.Site.HeroLogoCount), heroLogos.Select(l => l.GetAttribute("data-tech")));
+        Assert.Equal(Content.Site.HeroLogoCount, heroLogos.Count);
         Assert.All(heroLogos, logo => Assert.NotNull(logo.QuerySelector("svg use")));
     }
 
@@ -413,8 +419,8 @@ public sealed class PageRenderTests(SiteFactory factory) : IClassFixture<SiteFac
 
         var container = page.QuerySelector(".hero-tags")!;
         Assert.Equal("true", container.GetAttribute("aria-hidden"));
-        Assert.Equal(HeroTagData.Tags, container.QuerySelectorAll(".hero-tag").Select(t => t.TextContent));
-        Assert.Equal(HeroTagData.Count, HeroTagData.Tags.Count);
+        Assert.Equal(Content.HeroTags, container.QuerySelectorAll(".hero-tag").Select(t => t.TextContent));
+        Assert.Equal(HeroTagSlots, Content.HeroTags.Count);
     }
 
     [Fact]
@@ -468,7 +474,7 @@ public sealed class PageRenderTests(SiteFactory factory) : IClassFixture<SiteFac
 
         // Two sprites live on the page: the technology logos (this test) and the skills map's own icons (SkillUniverseTests).
         var symbolIds = page.QuerySelectorAll("svg symbol").Select(s => s.GetAttribute("id")!).Where(id => id.StartsWith("logo-", StringComparison.Ordinal)).ToHashSet();
-        Assert.Equal(TechLogoData.Logos.Count, symbolIds.Count);
+        Assert.Equal(Content.TechLogos.Count, symbolIds.Count);
 
         var references = page.QuerySelectorAll("svg use").Select(u => u.GetAttribute("href")!.TrimStart('#')).Where(id => id.StartsWith("logo-", StringComparison.Ordinal)).ToList();
         Assert.NotEmpty(references);
@@ -519,7 +525,7 @@ public sealed class PageRenderTests(SiteFactory factory) : IClassFixture<SiteFac
         Assert.NotNull(layer);
         Assert.Equal("true", layer.GetAttribute("aria-hidden"));
         Assert.Null(layer.Closest("main"));
-        Assert.Equal(BackdropCode.Streams.Count, layer.QuerySelectorAll(".code-stream").Length);
+        Assert.Equal(Content.CodeStreams.Count, layer.QuerySelectorAll(".code-stream").Length);
 
         var logos = page.QuerySelector(".tech-logos--page");
         Assert.NotNull(logos);

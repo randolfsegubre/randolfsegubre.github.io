@@ -1,17 +1,17 @@
 using System.Text.Json;
-using Microsoft.AspNetCore.Mvc.Testing;
-using Portfolio.Api.Content;
 using Portfolio.Api.Export;
+using Portfolio.Business.Content;
 
 namespace Portfolio.Tests;
 
 /// <summary>
 /// Tests for the .NET backend that feeds the Nuxt front end (ADR-0011): the content document, the file export
-/// the static build uses, and the security of the API.
+/// the static build uses, and the security of the API. The API runs for real, with content from the data files
+/// (see <see cref="ApiFactory"/>).
 /// </summary>
-public sealed class ContentApiTests(WebApplicationFactory<Program> factory) : IClassFixture<WebApplicationFactory<Program>>
+public sealed class ContentApiTests(ApiFactory factory) : IClassFixture<ApiFactory>
 {
-    private static readonly PortfolioContent Content = new();
+    private static readonly ContentSnapshot Content = TestContent.Snapshot;
 
     [Fact]
     public async Task The_API_returns_the_content_document_as_JSON()

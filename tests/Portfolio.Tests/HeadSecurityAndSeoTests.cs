@@ -1,6 +1,6 @@
 using AngleSharp.Dom;
 using AngleSharp.Html.Parser;
-using Portfolio.Api.Content;
+using Portfolio.Business.Content;
 
 namespace Portfolio.Tests;
 
@@ -14,6 +14,8 @@ namespace Portfolio.Tests;
 /// </remarks>
 public sealed class HeadSecurityAndSeoTests(SiteFactory factory) : IClassFixture<SiteFactory>
 {
+    private static readonly ContentSnapshot Content = TestContent.Snapshot;
+
     private async Task<IDocument> GetPageAsync(string path)
     {
         using var client = factory.CreateClient();
@@ -94,9 +96,9 @@ public sealed class HeadSecurityAndSeoTests(SiteFactory factory) : IClassFixture
     {
         var page = await GetPageAsync("/");
 
-        Assert.Equal(SiteInfo.Url + "/", page.QuerySelector("link[rel='canonical']")?.GetAttribute("href"));
+        Assert.Equal(Content.Site.Url + "/", page.QuerySelector("link[rel='canonical']")?.GetAttribute("href"));
         Assert.Null(page.QuerySelector("meta[name='robots']"));
-        Assert.Equal(SiteInfo.Url + "/", page.QuerySelector("meta[property='og:url']")?.GetAttribute("content"));
+        Assert.Equal(Content.Site.Url + "/", page.QuerySelector("meta[property='og:url']")?.GetAttribute("content"));
     }
 
     [Fact]
@@ -115,7 +117,7 @@ public sealed class HeadSecurityAndSeoTests(SiteFactory factory) : IClassFixture
 
         Assert.False(string.IsNullOrWhiteSpace(page.QuerySelector("meta[name='twitter:title']")?.GetAttribute("content")));
         Assert.False(string.IsNullOrWhiteSpace(page.QuerySelector("meta[name='twitter:description']")?.GetAttribute("content")));
-        Assert.StartsWith(SiteInfo.Url + "/", page.QuerySelector("meta[property='og:image']")?.GetAttribute("content"));
+        Assert.StartsWith(Content.Site.Url + "/", page.QuerySelector("meta[property='og:image']")?.GetAttribute("content"));
         Assert.Equal("640", page.QuerySelector("meta[property='og:image:width']")?.GetAttribute("content"));
         Assert.Equal("640", page.QuerySelector("meta[property='og:image:height']")?.GetAttribute("content"));
     }
@@ -144,8 +146,8 @@ public sealed class HeadSecurityAndSeoTests(SiteFactory factory) : IClassFixture
         var sitemap = await File.ReadAllTextAsync(Path.Combine(webRoot, "sitemap.xml"));
         var robots = await File.ReadAllTextAsync(Path.Combine(webRoot, "robots.txt"));
 
-        Assert.Contains($"<loc>{SiteInfo.Url}/</loc>", sitemap);
-        Assert.Contains($"Sitemap: {SiteInfo.Url}/sitemap.xml", robots);
+        Assert.Contains($"<loc>{Content.Site.Url}/</loc>", sitemap);
+        Assert.Contains($"Sitemap: {Content.Site.Url}/sitemap.xml", robots);
         Assert.True(File.Exists(Path.Combine(webRoot, "js", "theme-init.js")));
     }
 }

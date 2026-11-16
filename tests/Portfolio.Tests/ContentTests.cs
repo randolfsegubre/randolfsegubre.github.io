@@ -1,5 +1,5 @@
 using System.Text.RegularExpressions;
-using Portfolio.Api.Content;
+using Portfolio.Business.Content;
 
 namespace Portfolio.Tests;
 
@@ -16,7 +16,7 @@ public sealed partial class ContentTests
     /// <summary>Product names that legitimately contain capital-letter runs in prose. Longest first: ".NET" would otherwise strand "ASP".</summary>
     private static readonly string[] AllowedCapitals = ["ASP.NET", ".NET", "SQL Server", "UK", "AI Tutor"];
 
-    private static readonly PortfolioContent Content = new();
+    private static readonly ContentSnapshot Content = TestContent.Snapshot;
 
     [GeneratedRegex(@"\([A-Z]{2,}\)")]
     private static partial Regex ParenthesisedShortForm();
@@ -32,6 +32,8 @@ public sealed partial class ContentTests
             ("profile.headline", Content.Profile.Headline),
             ("profile.availability", Content.Profile.Availability),
             ("universe.intro", Content.Universe.Intro),
+            ("site.description", Content.Site.Description),
+            ("site.shareDescription", Content.Site.ShareDescription),
         };
 
         prose.AddRange((Content.Profile.About ?? []).Select((text, i) => ($"profile.about[{i}]", text)));
@@ -117,7 +119,7 @@ public sealed partial class ContentTests
     {
         var links = Content.Profile.Links
             .Concat(Content.Projects.SelectMany(p => p.Links))
-            .Concat(Content.LiveSites.Select(s => new Portfolio.Api.Models.Link(s.Address, s.Href)))
+            .Concat(Content.LiveSites.Select(s => new Portfolio.Business.Models.Link(s.Address, s.Href)))
             .ToList();
 
         Assert.NotEmpty(links);
@@ -281,27 +283,27 @@ public sealed partial class ContentTests
     {
         Assert.All(Content.Profile.BackdropTags, tech =>
         {
-            var logo = TechLogoData.Find(tech);
+            var logo = Content.FindTechLogo(tech);
             Assert.True(logo is not null, $"No logo for '{tech}'");
             Assert.Matches("^#[0-9A-Fa-f]{6}$", logo.Hex);
             Assert.Contains("<path", logo.Markup);
         });
 
         // Each logo's sprite id must be unique and a valid HTML id, since pages reference it with <use>.
-        Assert.Equal(TechLogoData.Logos.Count, TechLogoData.Logos.Select(l => l.SymbolId).Distinct().Count());
-        Assert.All(TechLogoData.Logos, logo => Assert.Matches("^logo-[a-z0-9-]+$", logo.SymbolId));
+        Assert.Equal(Content.TechLogos.Count, Content.TechLogos.Select(l => l.SymbolId).Distinct().Count());
+        Assert.All(Content.TechLogos, logo => Assert.Matches("^logo-[a-z0-9-]+$", logo.SymbolId));
 
         // Logo keys are unique, and none is defined without being used (dead data would drift).
-        Assert.Equal(TechLogoData.Logos.Count, TechLogoData.Logos.Select(l => l.Key).Distinct().Count());
-        Assert.All(TechLogoData.Logos, logo => Assert.Contains(logo.Key, Content.Profile.BackdropTags));
+        Assert.Equal(Content.TechLogos.Count, Content.TechLogos.Select(l => l.Key).Distinct().Count());
+        Assert.All(Content.TechLogos, logo => Assert.Contains(logo.Key, Content.Profile.BackdropTags));
     }
 
     [Fact]
     public void Backdrop_code_lanes_each_have_code_and_a_sensible_speed()
     {
         // Eight lanes fill a wide screen edge to edge; the stylesheet shows fewer on tablets and phones.
-        Assert.Equal(8, BackdropCode.Streams.Count);
-        Assert.All(BackdropCode.Streams, stream =>
+        Assert.Equal(8, Content.CodeStreams.Count);
+        Assert.All(Content.CodeStreams, stream =>
         {
             Assert.False(string.IsNullOrWhiteSpace(stream.Code));
             Assert.InRange(stream.Seconds, 30, 180);

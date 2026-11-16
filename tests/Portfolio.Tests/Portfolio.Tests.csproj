@@ -20,8 +20,11 @@
     <Using Include="Xunit" />
   </ItemGroup>
 
+  <!-- The tests reach every layer: the API through its entry point, the business rules, and the data layer's schema. -->
   <ItemGroup>
     <ProjectReference Include="..\..\src\Portfolio.Api\Portfolio.Api.csproj" />
+    <ProjectReference Include="..\..\src\Portfolio.Business\Portfolio.Business.csproj" />
+    <ProjectReference Include="..\..\src\Portfolio.Data\Portfolio.Data.csproj" />
   </ItemGroup>
 
 </Project>
